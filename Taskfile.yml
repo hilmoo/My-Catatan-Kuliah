@@ -10,3 +10,29 @@ tasks:
     cmds:
       - echo "{{.GREETING}}"
     silent: true
+
+  migrate-add:*:
+    desc: Create a new database migration
+    vars:
+      MIGRATE_NAME: '{{index .MATCH 0}}'
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: ./apps/migration
+    cmds:
+      - goose -s create {{.MIGRATE_NAME}} sql
+  
+  migrate-up:
+    desc: Apply all up database migration
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: ./apps/migration
+    cmds:
+      - GOOSE_DBSTRING=$DATABASE_URL goose up
+
+  migrate-down:
+    desc: Apply all down database migration
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: ./apps/migration
+    cmds:
+      - GOOSE_DBSTRING=$DATABASE_URL goose down
