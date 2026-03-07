@@ -230,6 +230,54 @@
         }
       }
     },
+    "pnpm@10.29.2": {
+      "last_modified": "2026-03-05T01:30:23Z",
+      "resolved": "github:NixOS/nixpkgs/66d9241e3dc2296726dc522e62dbfe89c7b449f3#pnpm",
+      "source": "devbox-search",
+      "version": "10.29.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zhi5rp16mv20ixbk1wzxk694k9kd4ywl-pnpm-10.29.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zhi5rp16mv20ixbk1wzxk694k9kd4ywl-pnpm-10.29.2"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/v829b24rpcl97zh767bfifx9ggvnvg5j-pnpm-10.29.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/v829b24rpcl97zh767bfifx9ggvnvg5j-pnpm-10.29.2"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ks9l9hj8xrfr62afzl1lgcxbl9106zlp-pnpm-10.29.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ks9l9hj8xrfr62afzl1lgcxbl9106zlp-pnpm-10.29.2"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hzfx2jjklyfa3lyrwa0n9h037dnsf1i7-pnpm-10.29.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/hzfx2jjklyfa3lyrwa0n9h037dnsf1i7-pnpm-10.29.2"
+        }
+      }
+    },
     "uv@0.10.6": {
       "last_modified": "2026-02-27T06:27:13Z",
       "resolved": "github:NixOS/nixpkgs/c0f3d81a7ddbc2b1332be0d8481a672b4f6004d6#uv",
