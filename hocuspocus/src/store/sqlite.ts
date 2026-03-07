@@ -2,7 +2,7 @@ import type { DatabaseConfiguration } from "@hocuspocus/extension-database";
 import { Database } from "@hocuspocus/extension-database";
 import BetterSqlite3 from "better-sqlite3";
 import { TiptapTransformer } from "@hocuspocus/transformer";
-import { renderToMarkdown } from "@tiptap/static-renderer";
+import { renderToHTMLString } from "@tiptap/static-renderer";
 import StarterKit from "@tiptap/starter-kit";
 
 export const schema = `CREATE TABLE IF NOT EXISTS "documents" (
@@ -55,7 +55,7 @@ export class SQLite extends Database {
       const json = TiptapTransformer.fromYdoc(document, "default");
 
       // 2. Render directly to HTML using pure static JS
-      const HTML = renderToMarkdown({
+      const HTML = renderToHTMLString({
         extensions: [
           StarterKit,
           // Add other extensions here if your frontend uses them

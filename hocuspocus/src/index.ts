@@ -4,16 +4,20 @@ import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { createNodeWebSocket } from "@hono/node-ws";
 import { SQLite } from "./store/sqlite.js";
+import { Postgres } from "./store/postgres.js";
 
 const adapterName = process.env.ADAPTER ?? "sqlite";
 
 function createAdapter() {
   switch (adapterName.toLowerCase()) {
-    case "sqlite":
+    case "sqlite_test":
       return new SQLite();
     default:
-      console.warn(`Unknown ADAPTER "${adapterName}", falling back to sqlite.`);
-      return new SQLite();
+      return new Postgres({
+        poolConfig: {
+          connectionString: process.env.DATABASE_URL,
+        },
+      });
   }
 }
 
