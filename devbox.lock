@@ -101,6 +101,54 @@
         }
       }
     },
+    "goose@3.26.0": {
+      "last_modified": "2026-02-23T15:40:43Z",
+      "resolved": "github:NixOS/nixpkgs/80d901ec0377e19ac3f7bb8c035201e2e098cc97#goose",
+      "source": "devbox-search",
+      "version": "3.26.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zsgmla60lap32s9rmi755bnzq7sqv0ix-goose-3.26.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zsgmla60lap32s9rmi755bnzq7sqv0ix-goose-3.26.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pgira5sdbw3bbhjs5y5cwsagycyrwagg-goose-3.26.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/pgira5sdbw3bbhjs5y5cwsagycyrwagg-goose-3.26.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/07qh2bs5spwd8afhsw93x4vg062adk0r-goose-3.26.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/07qh2bs5spwd8afhsw93x4vg062adk0r-goose-3.26.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2fmwklf2chxcrr4kbb7wslvv8a70n2mc-goose-3.26.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2fmwklf2chxcrr4kbb7wslvv8a70n2mc-goose-3.26.0"
+        }
+      }
+    },
     "nodejs@24.12.0": {
       "last_modified": "2025-12-29T16:45:58Z",
       "plugin_version": "0.0.2",
