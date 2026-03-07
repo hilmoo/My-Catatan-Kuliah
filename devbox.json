@@ -1,15 +1,16 @@
 {
-    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
-    "packages": [
-        "air@1.63.0",
-        "go@1.26.0",
-        "uv@0.10.6",
-        "nodejs@24.12.0"
-    ],
-    "shell": {
-        "init_hook": [
-            "export \"GOROOT=$(go env GOROOT)\""
-        ]
-    },
-    "env_from": ".env"
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
+  "packages": [
+    "air@1.63.0",
+    "go@1.26.0",
+    "uv@0.10.6",
+    "nodejs@24.12.0",
+    "pnpm@10.29.2"
+  ],
+  "shell": {
+    "init_hook": [
+      "export \"GOROOT=$(go env GOROOT)\""
+    ]
+  },
+  "env_from": ".env"
 }
