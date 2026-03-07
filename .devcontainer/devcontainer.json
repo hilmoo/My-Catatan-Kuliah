@@ -1,0 +1,22 @@
+{
+	"name": "My Devcontainer",
+	"image": "ghcr.io/hilmoo/containers/my-devcontainer:v0.3.0",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": "false"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				"ms-python.python",
+				"golang.go",
+				"jetpack-io.devbox",
+				"mkhl.direnv"
+			]
+		}
+	},
+	"remoteUser": "vscode",
+	"postCreateCommand": ".devcontainer/post-create.sh"
+}
