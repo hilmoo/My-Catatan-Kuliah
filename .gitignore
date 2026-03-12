@@ -1,3 +1,6 @@
 .env
 .devbox/
 .pnpm-store/
+.DS_Store
+__pycache__/
+.venv/
