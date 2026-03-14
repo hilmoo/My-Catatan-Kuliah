@@ -2,9 +2,13 @@ name: CI - AI
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "ai/**"
   pull_request:
+    branches:
+      - main
     paths:
       - "ai/**"
 

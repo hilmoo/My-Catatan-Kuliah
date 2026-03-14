@@ -2,9 +2,13 @@ name: CI - Embedder
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "embedder/**"
   pull_request:
+    branches:
+      - main
     paths:
       - "embedder/**"
 

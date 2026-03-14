@@ -2,9 +2,13 @@ name: CI - Frontend
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "apps/frontend/**"
   pull_request:
+    branches:
+      - main
     paths:
       - "apps/frontend/**"
 
