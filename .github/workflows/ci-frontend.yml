@@ -1,0 +1,30 @@
+name: CI - Frontend
+
+on:
+  push:
+    paths:
+      - "apps/frontend/**"
+  pull_request:
+    paths:
+      - "apps/frontend/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+
+  format:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run fmt:check

@@ -5,7 +5,7 @@ _model: SentenceTransformer | None = None
 
 def get_model(model_name: str) -> SentenceTransformer:
     """Load model lazily (singleton). First call downloads the model if needed."""
-    global _model
+    global _model  # noqa: PLW0603
     if _model is None:
         _model = SentenceTransformer(model_name)
     return _model

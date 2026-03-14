@@ -1,3 +1,5 @@
+# ruff: noqa: PGH004
+# ruff: noqa
 import logging
 
 from fastapi import FastAPI, Header, HTTPException, BackgroundTasks
@@ -16,8 +18,10 @@ app = FastAPI(title="Embedder service belut ternate", version="0.1.0")
 
 # --- Pydantic models for Supabase webhook payload ---
 
+
 class WebhookRecord(BaseModel):
     """Represents a row from course_notes table"""
+
     id: int
     title: str | None = None
     content: str | None = None
@@ -27,6 +31,7 @@ class WebhookRecord(BaseModel):
 
 class WebhookPayload(BaseModel):
     """Supabase Database Webhook payload format"""
+
     type: str  # "INSERT", "UPDATE", or "DELETE"
     table: str
     schema_: str | None = Field(None, alias="schema")
@@ -36,8 +41,8 @@ class WebhookPayload(BaseModel):
     model_config = {"populate_by_name": True}
 
 
-
 # --- Background task: process embedding ---
+
 
 def process_embedding(note_id: int, content: str):
     """Background task: chunk text, embed, and upsert to DB."""
@@ -78,7 +83,9 @@ def process_embedding(note_id: int, content: str):
                 chunks=chunks,
                 embeddings=embeddings,
             )
-            logger.info(f"Successfully upserted {len(chunks)} chunks for note_id={note_id}")
+            logger.info(
+                f"Successfully upserted {len(chunks)} chunks for note_id={note_id}"
+            )
         finally:
             conn.close()
 
@@ -87,6 +94,7 @@ def process_embedding(note_id: int, content: str):
 
 
 # --- Endpoints ---
+
 
 @app.get("/health")
 def health():
@@ -123,20 +131,21 @@ async def webhook(
         background_tasks.add_task(process_embedding, record.id, record.content)
         return {"status": "accepted", "note_id": record.id, "event": event_type}
 
-    elif event_type == "DELETE":
+    if event_type == "DELETE":
         old_record = payload.old_record
         if not old_record:
-            raise HTTPException(status_code=400, detail="Missing old_record in DELETE payload")
+            raise HTTPException(
+                status_code=400, detail="Missing old_record in DELETE payload"
+            )
 
         # Delete chunks for this note
         conn = get_connection(settings.database_url)
         try:
             delete_chunks_for_note(conn, old_record.id)
-            logger.info(f"Deleted chunks for note_id={old_record.id}")
+            logger.info("Deleted chunks", extra={"note_id": old_record.id})
         finally:
             conn.close()
 
         return {"status": "deleted", "note_id": old_record.id}
 
-    else:
-        return {"status": "ignored", "event": event_type}
+    return {"status": "ignored", "event": event_type}

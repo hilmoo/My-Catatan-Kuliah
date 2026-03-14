@@ -18,4 +18,40 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "httpx>=0.28.0",
+    "pyright>=1.1.408",
+    "ruff==0.15.6",
+    "taskipy>=1.14.1",
 ]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # ignore all pydocstyle
+    "D",
+
+    # ignore all TODO
+    "TD",
+
+    "PLR0911", # allow many return
+    "PLR0913", # allow many argument
+
+    # conflict with formatter https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "E501",
+]
+
+[tool.taskipy.tasks]
+check = "ruff check && pyright"
+format = "ruff format"
+lint = "ruff check && pyright"
