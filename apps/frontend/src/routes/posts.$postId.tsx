@@ -25,7 +25,6 @@ export function PostErrorComponent({ error }: ErrorComponentProps) {
     return <div>{error.message}</div>;
   }
 
-
   return (
     <div>
       <button
