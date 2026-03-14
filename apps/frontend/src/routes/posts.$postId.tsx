@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import * as React from "react";
 import { ErrorComponent, useRouter } from "@tanstack/react-router";
 import { useQueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
 import { PostNotFoundError } from "../posts";
 import { postQueryOptions } from "../postQueryOptions";
 import type { ErrorComponentProps } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/posts/$postId")({
   loader: ({ context: { queryClient }, params: { postId } }) => {
@@ -16,14 +16,15 @@ export const Route = createFileRoute("/posts/$postId")({
 
 export function PostErrorComponent({ error }: ErrorComponentProps) {
   const router = useRouter();
+  const queryErrorResetBoundary = useQueryErrorResetBoundary();
+  useEffect(() => {
+    queryErrorResetBoundary.reset();
+  }, [queryErrorResetBoundary]);
+
   if (error instanceof PostNotFoundError) {
     return <div>{error.message}</div>;
   }
-  const queryErrorResetBoundary = useQueryErrorResetBoundary();
 
-  React.useEffect(() => {
-    queryErrorResetBoundary.reset();
-  }, [queryErrorResetBoundary]);
 
   return (
     <div>

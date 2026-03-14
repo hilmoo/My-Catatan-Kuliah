@@ -4,5 +4,5 @@ export const Route = createFileRoute("/_pathlessLayout/_nested-layout/route-a")(
 });
 
 function LayoutAComponent() {
-  return <div>I'm layout A!</div>;
+  return <div>I&apos;m layout A!</div>;
 }

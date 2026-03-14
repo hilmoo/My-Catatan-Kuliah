@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Link, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -46,15 +45,6 @@ function RootComponent() {
           }}
         >
           Pathless Layout
-        </Link>{" "}
-        <Link
-          // @ts-expect-error
-          to="/this-route-does-not-exist"
-          activeProps={{
-            className: "font-bold",
-          }}
-        >
-          This Route Does Not Exist
         </Link>
       </div>
       <hr />

@@ -1,6 +1,6 @@
 import axios from "redaxios";
 
-export type PostType = {
+export interface PostType {
   id: string;
   title: string;
   body: string;
@@ -28,6 +28,6 @@ export const fetchPosts = async () => {
   console.info("Fetching posts...");
   await new Promise((r) => setTimeout(r, 500));
   return axios
-    .get<Array<PostType>>("https://jsonplaceholder.typicode.com/posts")
+    .get<PostType[]>("https://jsonplaceholder.typicode.com/posts")
     .then((r) => r.data.slice(0, 10));
 };
