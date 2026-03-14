@@ -7,7 +7,7 @@ name = "ai"
 version = "0.1.0"
 source = { virtual = "." }
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "pyright" },
     { name = "ruff" },
@@ -15,12 +15,13 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.408" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = "==0.15.6" },
-    { name = "taskipy", marker = "extra == 'dev'", specifier = ">=1.14.1" },
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pyright", specifier = ">=1.1.408" },
+    { name = "ruff", specifier = "==0.15.6" },
+    { name = "taskipy", specifier = ">=1.14.1" },
 ]
-provides-extras = ["dev"]
 
 [[package]]
 name = "colorama"
