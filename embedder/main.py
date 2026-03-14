@@ -11,7 +11,7 @@ from db import get_connection, get_note_metadata, upsert_chunks, delete_chunks_f
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Embedder Service", version="0.1.0")
+app = FastAPI(title="Embedder service belut ternate", version="0.1.0")
 
 
 # --- Pydantic models for Supabase webhook payload ---
