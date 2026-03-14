@@ -1,22 +1,13 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "react",
-    "jsx-a11y"
-  ],
+  "plugins": ["typescript", "react", "jsx-a11y"],
   "categories": {
     "correctness": "off"
   },
   "env": {
     "builtin": true
   },
-  "ignorePatterns": [
-    "**/node_modules/**",
-    "**/dist/**",
-    "src/api/**",
-    "postcss.config.cjs"
-  ],
+  "ignorePatterns": ["**/node_modules/**", "**/dist/**", "src/api/**", "postcss.config.cjs"],
   "rules": {
     "constructor-super": "error",
     "for-direction": "error",
@@ -170,9 +161,7 @@
       "error",
       {
         "tags": [],
-        "roles": [
-          "tabpanel"
-        ],
+        "roles": ["tabpanel"],
         "allowExpressionValues": true
       }
     ],
@@ -181,14 +170,7 @@
       "error",
       {
         "allowExpressionValues": true,
-        "handlers": [
-          "onClick",
-          "onMouseDown",
-          "onMouseUp",
-          "onKeyPress",
-          "onKeyDown",
-          "onKeyUp"
-        ]
+        "handlers": ["onClick", "onMouseDown", "onMouseUp", "onKeyPress", "onKeyDown", "onKeyUp"]
       }
     ],
     "jsx-a11y/role-has-required-aria-props": "error",
@@ -205,18 +187,10 @@
     "@tanstack/router/create-route-property-order": "warn",
     "@tanstack/router/route-param-names": "error"
   },
-  "jsPlugins": [
-    "@tanstack/eslint-plugin-query",
-    "@tanstack/eslint-plugin-router"
-  ],
+  "jsPlugins": ["@tanstack/eslint-plugin-query", "@tanstack/eslint-plugin-router"],
   "overrides": [
     {
-      "files": [
-        "**/*.ts",
-        "**/*.tsx",
-        "**/*.mts",
-        "**/*.cts"
-      ],
+      "files": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "constructor-super": "off",
         "no-class-assign": "off",

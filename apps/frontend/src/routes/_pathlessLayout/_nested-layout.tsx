@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Link, Outlet } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { Link, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_pathlessLayout/_nested-layout')({
+export const Route = createFileRoute("/_pathlessLayout/_nested-layout")({
   component: LayoutComponent,
-})
+});
 
 function LayoutComponent() {
   return (
@@ -13,7 +13,7 @@ function LayoutComponent() {
         <Link
           to="/route-a"
           activeProps={{
-            className: 'font-bold',
+            className: "font-bold",
           }}
         >
           Go to route A
@@ -21,7 +21,7 @@ function LayoutComponent() {
         <Link
           to="/route-b"
           activeProps={{
-            className: 'font-bold',
+            className: "font-bold",
           }}
         >
           Go to route B
@@ -31,5 +31,5 @@ function LayoutComponent() {
         <Outlet />
       </div>
     </div>
-  )
+  );
 }
