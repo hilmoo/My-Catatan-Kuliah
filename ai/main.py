@@ -1,5 +1,5 @@
-def main():
-    print("Hello from ai!")
+def main() -> None:
+    print("Hello from ai!")  # noqa: T201
 
 
 if __name__ == "__main__":

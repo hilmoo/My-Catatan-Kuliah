@@ -9,7 +9,7 @@ def get_connection(database_url: str) -> psycopg.Connection:
 
 def get_note_metadata(conn: psycopg.Connection, note_id: int) -> dict | None:
     """Fetch course_id and workspace_id for a given note"""
-    result = conn.execute(
+    return conn.execute(
         """
         SELECT cn.course_id, c.workspace_id
         FROM course_notes cn
@@ -18,7 +18,6 @@ def get_note_metadata(conn: psycopg.Connection, note_id: int) -> dict | None:
         """,
         [note_id],
     ).fetchone()
-    return result
 
 
 def upsert_chunks(
@@ -33,12 +32,12 @@ def upsert_chunks(
     with conn.transaction():
         # Delete existing chunks for this note
         conn.execute(
-            'DELETE FROM document_chunks WHERE note_id = %s',
+            "DELETE FROM document_chunks WHERE note_id = %s",
             [note_id],
         )
 
         # Insert new chunks
-        for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+        for i, (chunk, embedding) in enumerate(zip(chunks, embeddings, strict=True)):
             conn.execute(
                 """
                 INSERT INTO document_chunks
@@ -52,6 +51,6 @@ def upsert_chunks(
 def delete_chunks_for_note(conn: psycopg.Connection, note_id: int) -> None:
     """Delete all chunks for a given note (used on DELETE events)."""
     conn.execute(
-        'DELETE FROM document_chunks WHERE note_id = %s',
+        "DELETE FROM document_chunks WHERE note_id = %s",
         [note_id],
     )

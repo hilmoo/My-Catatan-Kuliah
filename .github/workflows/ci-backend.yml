@@ -1,0 +1,25 @@
+name: CI - Golang
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/backend/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "apps/backend/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.11.3

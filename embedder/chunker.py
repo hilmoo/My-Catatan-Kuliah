@@ -5,8 +5,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 def html_to_plain_text(html: str) -> str:
     """Strip HTML tags and return clean plain text"""
     soup = BeautifulSoup(html, "html.parser")
-    text = soup.get_text(separator="\n", strip=True)
-    return text
+    return soup.get_text(separator="\n", strip=True)
 
 
 def chunk_text(text: str, chunk_size: int = 500, chunk_overlap: int = 50) -> list[str]:
