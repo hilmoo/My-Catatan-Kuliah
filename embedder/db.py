@@ -1,27 +1,36 @@
-import psycopg
-from psycopg.rows import dict_row
+import asyncpg
 
 
-def get_connection(database_url: str) -> psycopg.Connection:
-    """Create a new database connection"""
-    return psycopg.connect(database_url, row_factory=dict_row, autocommit=True)
+async def get_connection(database_url: str) -> asyncpg.Connection:
+    """Create a new async database connection"""
+    return await asyncpg.connect(database_url)
 
 
-def get_note_metadata(conn: psycopg.Connection, note_id: int) -> dict | None:
+async def get_note_metadata(
+    conn: asyncpg.Connection, note_id: int
+) -> asyncpg.Record | None:
     """Fetch course_id and workspace_id for a given note"""
-    return conn.execute(
+    return await conn.fetchrow(
         """
         SELECT cn.course_id, c.workspace_id
         FROM course_notes cn
         JOIN courses c ON cn.course_id = c.id
-        WHERE cn.id = %s
+        WHERE cn.id = $1
         """,
-        [note_id],
-    ).fetchone()
+        note_id,
+    )
 
 
-def upsert_chunks(
-    conn: psycopg.Connection,
+async def fetch_note_content(conn: asyncpg.Connection, note_id: int) -> str | None:
+    """Fetch content for a given note (LISTEN only sends id, not content)"""
+    return await conn.fetchval(
+        "SELECT content FROM course_notes WHERE id = $1",
+        note_id,
+    )
+
+
+async def upsert_chunks(
+    conn: asyncpg.Connection,
     note_id: int,
     course_id: int,
     workspace_id: int,
@@ -29,28 +38,30 @@ def upsert_chunks(
     embeddings: list[list[float]],
 ) -> None:
     """Delete old chunks for note_id, then insert new chunks (transactional)"""
-    with conn.transaction():
-        # Delete existing chunks for this note
-        conn.execute(
-            "DELETE FROM document_chunks WHERE note_id = %s",
-            [note_id],
+    async with conn.transaction():
+        await conn.execute(
+            "DELETE FROM document_chunks WHERE note_id = $1",
+            note_id,
         )
 
-        # Insert new chunks
-        for i, (chunk, embedding) in enumerate(zip(chunks, embeddings, strict=True)):
-            conn.execute(
-                """
-                INSERT INTO document_chunks
-                    (note_id, course_id, workspace_id, chunk_index, content, embedding)
-                VALUES (%s, %s, %s, %s, %s, %s::vector)
-                """,
-                [note_id, course_id, workspace_id, i, chunk, str(embedding)],
-            )
+        values = [
+            (note_id, course_id, workspace_id, i, chunk, str(embedding))
+            for i, (chunk, embedding) in enumerate(zip(chunks, embeddings, strict=True))
+        ]
+
+        await conn.executemany(
+            """
+            INSERT INTO document_chunks
+                (note_id, course_id, workspace_id, chunk_index, content, embedding)
+            VALUES ($1, $2, $3, $4, $5, $6::vector)
+            """,
+            values,
+        )
 
 
-def delete_chunks_for_note(conn: psycopg.Connection, note_id: int) -> None:
-    """Delete all chunks for a given note (used on DELETE events)."""
-    conn.execute(
-        "DELETE FROM document_chunks WHERE note_id = %s",
-        [note_id],
+async def delete_chunks_for_note(conn: asyncpg.Connection, note_id: int) -> None:
+    """Delete all chunks for a given note (used on DELETE events)"""
+    await conn.execute(
+        "DELETE FROM document_chunks WHERE note_id = $1",
+        note_id,
     )
