@@ -1,6 +1,6 @@
 # Embedder
 
-Process notes into vector embedding. Receive a webhook from supabase, breaks HTML contents into chunks, produce embeddings, and save it to `document_chunks` table.
+Listens for PostgreSQL NOTIFY events on `course_notes`, breaks HTML content into chunks, produces embeddings, and saves them to `document_chunks` table.
 
 ## Setup
 
