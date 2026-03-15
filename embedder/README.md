@@ -27,21 +27,5 @@ cd embedder
 uv run uvicorn main:app --port 8001 --reload
 ```
 
-## webhook payload
 
-Formatnya Supabase Webhook Payload
-
-```json
-{
-  "type": "INSERT",
-  "table": "course_notes",
-  "schema": "public",
-  "record": {
-    "id": 1,
-    "title": "Anu",
-    "content": "<h1>Anu</h1><p>...</p>",
-    "course_id": 1
-  }
-}
-```
 
