@@ -6,7 +6,9 @@ async def get_connection(database_url: str) -> asyncpg.Connection:
     return await asyncpg.connect(database_url)
 
 
-async def get_note_metadata(conn: asyncpg.Connection, note_id: int) -> asyncpg.Record | None:
+async def get_note_metadata(
+    conn: asyncpg.Connection, note_id: int
+) -> asyncpg.Record | None:
     """Fetch course_id and workspace_id for a given note"""
     return await conn.fetchrow(
         """
@@ -44,7 +46,7 @@ async def upsert_chunks(
 
         values = [
             (note_id, course_id, workspace_id, i, chunk, str(embedding))
-            for i, (chunk, embedding) in enumerate(zip(chunks, embeddings))
+            for i, (chunk, embedding) in enumerate(zip(chunks, embeddings, strict=True))
         ]
 
         await conn.executemany(
