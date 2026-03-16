@@ -9,6 +9,7 @@ dependencies = [
     "uvicorn[standard]>=0.34.0",
     "sentence-transformers>=3.4.0",
     "asyncpg>=0.30.0",
+    "asyncpg-listen>=0.0.7",
     "beautifulsoup4>=4.13.0",
     "langchain-text-splitters>=0.3.0",
     "pydantic-settings>=2.7.0",

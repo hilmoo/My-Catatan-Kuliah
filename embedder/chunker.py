@@ -1,30 +1,36 @@
-from bs4 import BeautifulSoup
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from bs4 import Tag
+from langchain_text_splitters import HTMLSemanticPreservingSplitter
 
 
-def html_to_plain_text(html: str) -> str:
-    """Strip HTML tags and return clean plain text"""
-    soup = BeautifulSoup(html, "html.parser")
-    return soup.get_text(separator="\n", strip=True)
-
-
-def chunk_text(text: str, chunk_size: int = 500, chunk_overlap: int = 50) -> list[str]:
-    """Split plain text into overlapping chunks"""
-    if not text or not text.strip():
-        return []
-
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        length_function=len,
-        separators=["\n\n", "\n", ". ", " ", ""],
-    )
-    return splitter.split_text(text)
+def li_handler(tag: Tag) -> str:
+    """format list: number for <ol> and bullet (dash -) for <ul>"""
+    parent = tag.parent
+    if parent and parent.name == "ol":
+        index = list(parent.find_all("li")).index(tag) + 1
+        return f" \n{index}. {tag.get_text().strip()} "
+    return f" \n- {tag.get_text().strip()} "
 
 
 def process_html_to_chunks(
-    html: str, chunk_size: int = 500, chunk_overlap: int = 50
+    html: str,
+    chunk_size: int = 500,
+    chunk_overlap: int = 50,  # noqa: ARG001
 ) -> list[str]:
-    """Full pipeline: HTML → plain text → chunks."""
-    plain_text = html_to_plain_text(html)
-    return chunk_text(plain_text, chunk_size, chunk_overlap)
+    """Split HTML into semantic chunks, preserving lists and tables."""
+    if not html or not html.strip():
+        return []
+
+    splitter = HTMLSemanticPreservingSplitter(
+        headers_to_split_on=[
+            ("h1", "Header 1"),
+            ("h2", "Header 2"),
+            ("h3", "Header 3"),
+        ],
+        max_chunk_size=chunk_size,
+        separators=["\n\n", "\n", ". ", " "],
+        elements_to_preserve=["table", "ul", "ol"],
+        custom_handlers={"li": li_handler},
+    )
+
+    docs = splitter.split_text(html)
+    return [doc.page_content for doc in docs if doc.page_content.strip()]

@@ -4,7 +4,7 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-import asyncpg
+import asyncpg_listen
 from fastapi import FastAPI
 
 from chunker import process_html_to_chunks
@@ -37,11 +37,10 @@ async def process_embedding(note_id: int) -> None:
 
         logger.info("Processing note_id=%s, content length=%s", note_id, len(content))
 
-        # 2. Chunk the HTML content
+        # 2. Chunk the HTML content (semantic, preserves lists/tables)
         chunks = process_html_to_chunks(
             content,
             chunk_size=settings.chunk_size,
-            chunk_overlap=settings.chunk_overlap,
         )
 
         if not chunks:
@@ -79,18 +78,22 @@ async def process_embedding(note_id: int) -> None:
         await conn.close()
 
 
-# --- LISTEN/NOTIFY handler ---
+# --- LISTEN/NOTIFY handler (asyncpg-listen) ---
 
 
 async def handle_notification(
-    _conn: asyncpg.Connection,  # type: ignore[type-arg]
-    _pid: int,
-    _channel: str,
-    payload: str,
+    notification: asyncpg_listen.NotificationOrTimeout,
 ) -> None:
     """Called when a NOTIFY event is received on 'note_changed' channel"""
+    if isinstance(notification, asyncpg_listen.Timeout):
+        return
+
     try:
-        data = json.loads(payload)
+        if not notification.payload:
+            logger.warning("Received NOTIFY without payload")
+            return
+
+        data = json.loads(notification.payload)
         note_id = data["id"]
         event_type = data["type"]
 
@@ -111,45 +114,34 @@ async def handle_notification(
         logger.exception("Error handling notification")
 
 
-async def start_listener() -> None:
-    """Connect to Postgres and LISTEN for note changes"""
-    stop_event = asyncio.Event()
-
-    while not stop_event.is_set():
-        try:
-            conn = await asyncpg.connect(settings.database_url)
-            logger.info("Connected to Postgres, listening on 'note_changed' channel")
-
-            await conn.add_listener("note_changed", handle_notification)
-
-            # Keep connection alive until event is set
-            await stop_event.wait()
-
-        except (asyncpg.PostgresConnectionError, OSError):
-            logger.exception("Listener connection lost, reconnecting in 5s...")
-            await asyncio.sleep(5)
-        except Exception:
-            logger.exception("Unexpected listener error")
-            await asyncio.sleep(5)
-
-
 # --- FastAPI lifespan ---
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    # Startup: launch listener as background task
-    listener_task = asyncio.create_task(start_listener())
-    logger.info("Embedder service started, LISTEN loop running")
+    # Create listener with auto-reconnect
+    listener = asyncpg_listen.NotificationListener(
+        asyncpg_listen.connect_func(dsn=settings.database_url)
+    )
+
+    # Start listener task — LAST policy = only process latest notification (debounce)
+    listener_task = asyncio.create_task(
+        listener.run(
+            {"note_changed": handle_notification},
+            policy=asyncpg_listen.ListenPolicy.LAST,
+            notification_timeout=30,
+        )
+    )
+    logger.info("Embedder service started, listening on 'note_changed' channel")
     yield
-    # Shutdown: cancel listener
+    # Shutdown
     listener_task.cancel()
     logger.info("Embedder service shutting down")
 
 
 app = FastAPI(
     title="Embedder service belut ternate",
-    version="0.2.0",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
