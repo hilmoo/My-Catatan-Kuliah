@@ -1,14 +1,15 @@
 [project]
 name = "embedder"
 version = "0.1.0"
-description = "Webhook receiver that chunks and embeds course notes for RAG pipeline"
+description = "Listens for Postgres NOTIFY events on course_notes, chunks and embeds content for RAG pipeline"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.34.0",
     "sentence-transformers>=3.4.0",
-    "psycopg[binary]>=3.2.0",
+    "asyncpg>=0.30.0",
+    "asyncpg-listen>=0.0.7",
     "beautifulsoup4>=4.13.0",
     "langchain-text-splitters>=0.3.0",
     "pydantic-settings>=2.7.0",
