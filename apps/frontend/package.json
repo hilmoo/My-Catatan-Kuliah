@@ -10,7 +10,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint && eslint",
-    "lint:fix": "oxlint --fix && eslint --fix"
+    "lint:fix": "oxlint --fix && eslint --fix",
+    "orval": "orval"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -38,6 +39,7 @@
     "eslint-plugin-oxlint": "^1.55.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "orval": "^8.5.3",
     "oxfmt": "^0.40.0",
     "oxlint": "^1.55.0",
     "typescript": "^5.7.2",
