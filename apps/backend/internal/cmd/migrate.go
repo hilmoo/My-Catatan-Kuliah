@@ -60,7 +60,13 @@ func runMigration(cfg app.Config, command string, args cli.Args) error {
 	if err != nil {
 		return fmt.Errorf("failed to open DB: %w", err)
 	}
-	defer db.Close()
+
+	defer func() {
+		closeErr := db.Close()
+		if err == nil {
+			err = closeErr
+		}
+	}()
 
 	if err := goose.SetDialect("postgres"); err != nil {
 		return fmt.Errorf("failed to set goose dialect: %w", err)
