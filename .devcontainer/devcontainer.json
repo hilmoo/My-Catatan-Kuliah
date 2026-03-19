@@ -8,7 +8,11 @@
 	},
 	"customizations": {
 		"vscode": {
-			"settings": {},
+			"settings": {
+				"json.schemaDownload.trustedDomains": {
+					"https://raw.githubusercontent.com/jetify-com/devbox/": true
+				}
+			},
 			"extensions": [
 				"ms-python.python",
 				"golang.go",

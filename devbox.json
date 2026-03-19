@@ -6,11 +6,13 @@
     "uv@0.10.6",
     "nodejs@24.12.0",
     "pnpm@10.29.2",
-    "goose@3.26.0"
+    "goose@3.26.0",
+    "sqlc@1.30.0"
   ],
   "shell": {
     "init_hook": [
-      "export \"GOROOT=$(go env GOROOT)\""
+      "export \"GOROOT=$(go env GOROOT)\"",
+      "export PATH=$PATH:$(go env GOPATH)/bin"
     ]
   },
   "env_from": ".env"

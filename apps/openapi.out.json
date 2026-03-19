@@ -1,0 +1,3872 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Course Management API",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Workspaces"
+    },
+    {
+      "name": "Courses"
+    },
+    {
+      "name": "Course Notes"
+    },
+    {
+      "name": "Assignments"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Auth",
+          "Auth"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterRequest"
+              },
+              "example": {
+                "username": "johndoe",
+                "email": "john@example.com",
+                "password": "s3cr3tP@ss"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "409": {
+            "description": "Unique constraint violation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "conflict",
+                  "message": "A user with that email already exists."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Log in and receive a session cookie",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Auth",
+          "Auth"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "email": "john@example.com",
+                "password": "s3cr3tP@ss"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated – session cookie is set",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "headers": {
+              "Set-Cookie": {
+                "description": "Session cookie (HttpOnly, Secure, SameSite=Lax)",
+                "schema": {
+                  "type": "string",
+                  "example": "session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Log out and invalidate the session",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Auth",
+          "Auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Logged out",
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Return the currently authenticated user",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Auth",
+          "Auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List all users",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "username",
+                "email",
+                "created_at"
+              ],
+              "default": "id"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Filter by username (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Filter by email (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "summary": "Get a user by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Update a user",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              },
+              "example": {
+                "username": "janedoe",
+                "email": "jane@example.com"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "409": {
+            "description": "Unique constraint violation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "conflict",
+                  "message": "A user with that email already exists."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Delete a user",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted",
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/workspaces": {
+      "get": {
+        "summary": "List workspaces",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Workspaces",
+          "Workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "name",
+                "created_at"
+              ],
+              "default": "id"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by workspace name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner_id",
+            "in": "query",
+            "description": "Filter by owner user ID",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of workspaces",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceListResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Create a workspace",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Workspaces",
+          "Workspaces"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceCreateRequest"
+              },
+              "example": {
+                "name": "My Workspace",
+                "owner_id": 1
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Workspace created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/workspaces/{workspaceId}": {
+      "get": {
+        "summary": "Get a workspace by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Workspaces",
+          "Workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workspace found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Update a workspace",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Workspaces",
+          "Workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceUpdateRequest"
+              },
+              "example": {
+                "name": "Renamed Workspace"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Delete a workspace",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Workspaces",
+          "Workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Workspace deleted",
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/workspaces/{workspaceId}/courses": {
+      "get": {
+        "summary": "List courses in a workspace",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Courses",
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "name",
+                "day",
+                "start_time"
+              ],
+              "default": "id"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "day",
+            "in": "query",
+            "description": "Filter by day of week",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/DayOfWeek"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by course name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lecturer_name",
+            "in": "query",
+            "description": "Filter by lecturer name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseListResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/courses": {
+      "post": {
+        "summary": "Create a course in a workspace",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Courses",
+          "Courses"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseCreateRequest"
+              },
+              "example": {
+                "name": "Introduction to Algorithms",
+                "lecturer_name": "Dr. Smith",
+                "day": "monday",
+                "start_time": "09:00:00",
+                "end_time": "10:30:00"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Course created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "get": {
+        "summary": "List all courses (across all workspaces)",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Courses",
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "day",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/DayOfWeek"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "name",
+                "day",
+                "start_time"
+              ],
+              "default": "id"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseListResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/courses/{courseId}": {
+      "get": {
+        "summary": "Get a course by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Courses",
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Update a course",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Courses",
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpdateRequest"
+              },
+              "example": {
+                "day": "tuesday",
+                "start_time": "10:00:00",
+                "end_time": "11:30:00"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Delete a course",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Courses",
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Course deleted",
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/notes": {
+      "get": {
+        "summary": "List notes for a course",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Course Notes",
+          "Course Notes"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "created_at",
+                "updated_at"
+              ],
+              "default": "created_at"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Filter by title (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "created_by",
+            "in": "query",
+            "description": "Filter by creator user ID",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "created_after",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "created_before",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "updated_after",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of course notes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseNoteListResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Create a note for a course",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Course Notes",
+          "Course Notes"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseNoteCreateRequest"
+              },
+              "example": {
+                "title": "Week 1 Notes",
+                "content": "Today we covered Big-O notation."
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Note created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseNoteResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/notes/{noteId}": {
+      "get": {
+        "summary": "Get a course note by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Course Notes",
+          "Course Notes"
+        ],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseNoteResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Update a course note",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Course Notes",
+          "Course Notes"
+        ],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseNoteUpdateRequest"
+              },
+              "example": {
+                "title": "Week 1 Notes (revised)",
+                "content": "Covers Big-O and Omega notation."
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated note",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseNoteResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Delete a course note",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Course Notes",
+          "Course Notes"
+        ],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Note deleted",
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/assignments": {
+      "get": {
+        "summary": "List assignments for a course",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Assignments",
+          "Assignments"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "deadline",
+                "status",
+                "created_at",
+                "updated_at"
+              ],
+              "default": "deadline"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/AssignmentStatus"
+            }
+          },
+          {
+            "name": "created_by",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "deadline_before",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "deadline_after",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of assignments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentListResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Create an assignment for a course",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Assignments",
+          "Assignments"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignmentCreateRequest"
+              },
+              "example": {
+                "title": "Problem Set 1",
+                "description": "Solve exercises 1–10 from Chapter 2.",
+                "deadline": "2026-04-01T23:59:00Z",
+                "status": "pending"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Assignment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/assignments/{assignmentId}": {
+      "get": {
+        "summary": "Get an assignment by ID",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Assignments",
+          "Assignments"
+        ],
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Assignment found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Update an assignment",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Assignments",
+          "Assignments"
+        ],
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignmentUpdateRequest"
+              },
+              "example": {
+                "status": "in_progress",
+                "deadline": "2026-04-05T23:59:00Z"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated assignment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Invalid request body or parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "bad_request",
+                  "message": "Validation failed: 'end_time' must be after 'start_time'."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Delete an assignment",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Assignments",
+          "Assignments"
+        ],
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Assignment deleted",
+            "headers": {}
+          },
+          "401": {
+            "description": "Missing or invalid session cookie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "unauthorized",
+                  "message": "Authentication required."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "not_found",
+                  "message": "The requested resource could not be found."
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "internal_server_error",
+                  "message": "An unexpected error occurred."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DayOfWeek": {
+        "type": "string",
+        "enum": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+        ],
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,oneof=monday tuesday wednesday thursday friday saturday sunday"
+        }
+      },
+      "AssignmentStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "in_progress",
+          "submitted",
+          "graded",
+          "overdue"
+        ],
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,oneof=pending in_progress submitted graded overdue"
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total",
+          "total_pages"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "examples": [
+              1
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "limit": {
+            "type": "integer",
+            "examples": [
+              20
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "examples": [
+              42
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "total_pages": {
+            "type": "integer",
+            "examples": [
+              3
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "reason",
+          "status",
+          "error",
+          "code",
+          "details"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "reason": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "status": {
+            "type": "string",
+            "examples": [
+              "The requested resource could not be found."
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "error": {
+            "type": "string",
+            "examples": [
+              "not_found"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "code": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "details": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "email",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "examples": [
+              1
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "username": {
+            "type": "string",
+            "examples": [
+              "johndoe"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "examples": [
+              "john@example.com"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,email"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-01-15T08:30:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        }
+      },
+      "UserRegisterRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "examples": [
+              "johndoe"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,min=3,max=50"
+            }
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "examples": [
+              "john@example.com"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,email"
+            }
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "examples": [
+              "s3cr3tP@ss"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,min=8,password"
+            }
+          }
+        }
+      },
+      "UserUpdateRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,min=3,max=50"
+            }
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,email"
+            }
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,min=8,password"
+            }
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "examples": [
+              "john@example.com"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,email"
+            }
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "examples": [
+              "s3cr3tP@ss"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,password"
+            }
+          }
+        }
+      },
+      "UserListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserResponse"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        }
+      },
+      "WorkspaceResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "owner_id",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "examples": [
+              10
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "CS 2026"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "owner_id": {
+            "type": "integer",
+            "description": "ID of the owning user",
+            "examples": [
+              1
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-01-20T09:00:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        }
+      },
+      "WorkspaceCreateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "owner_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "examples": [
+              "CS 2026"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,min=1,max=255"
+            }
+          },
+          "owner_id": {
+            "type": "integer",
+            "examples": [
+              1
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        }
+      },
+      "WorkspaceUpdateRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,min=1,max=255"
+            }
+          }
+        }
+      },
+      "WorkspaceListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkspaceResponse"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        }
+      },
+      "CourseResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "day",
+          "start_time",
+          "end_time",
+          "workspace_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "examples": [
+              5
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "Introduction to Algorithms"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "lecturer_name": {
+            "type": "string",
+            "examples": [
+              "Dr. Smith"
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "day": {
+            "$ref": "#/components/schemas/DayOfWeek"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "time",
+            "examples": [
+              "09:00:00"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=15:04:05"
+            }
+          },
+          "end_time": {
+            "type": "string",
+            "format": "time",
+            "examples": [
+              "10:30:00"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=15:04:05"
+            }
+          },
+          "workspace_id": {
+            "type": "integer",
+            "examples": [
+              10
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/WorkspaceResponse"
+          }
+        }
+      },
+      "CourseCreateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "day",
+          "start_time",
+          "end_time"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "examples": [
+              "Introduction to Algorithms"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,min=1,max=255"
+            }
+          },
+          "lecturer_name": {
+            "type": "string",
+            "examples": [
+              "Dr. Smith"
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "day": {
+            "$ref": "#/components/schemas/DayOfWeek"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "time",
+            "examples": [
+              "09:00:00"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=15:04:05"
+            }
+          },
+          "end_time": {
+            "type": "string",
+            "format": "time",
+            "description": "Must be after start_time",
+            "examples": [
+              "10:30:00"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=15:04:05"
+            }
+          }
+        }
+      },
+      "CourseUpdateRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,min=1,max=255"
+            }
+          },
+          "lecturer_name": {
+            "type": "string",
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "day": {
+            "$ref": "#/components/schemas/DayOfWeek"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,datetime=15:04:05"
+            }
+          },
+          "end_time": {
+            "type": "string",
+            "format": "time",
+            "description": "Must be after start_time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,datetime=15:04:05"
+            }
+          }
+        }
+      },
+      "CourseListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CourseResponse"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        }
+      },
+      "CourseNoteResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "course_id",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "examples": [
+              100
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "examples": [
+              "Week 1 Notes"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "content": {
+            "type": "string",
+            "examples": [
+              "Today we covered Big-O notation."
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "content_blob_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Presigned URL to download the binary content blob. Null when no blob is stored.\n",
+            "examples": [
+              "https://storage.example.com/notes/100/blob?token=xyz"
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,uri"
+            }
+          },
+          "course_id": {
+            "type": "integer",
+            "examples": [
+              5
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_by": {
+            "type": "integer",
+            "examples": [
+              1
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "author": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-02-01T10:00:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-02-05T14:30:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        }
+      },
+      "CourseNoteCreateRequest": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "examples": [
+              "Week 1 Notes"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,min=1,max=500"
+            }
+          },
+          "content": {
+            "type": "string",
+            "examples": [
+              "Today we covered Big-O notation."
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        }
+      },
+      "CourseNoteUpdateRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,min=1,max=500"
+            }
+          },
+          "content": {
+            "type": "string",
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        }
+      },
+      "CourseNoteListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CourseNoteResponse"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        }
+      },
+      "AssignmentResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "deadline",
+          "status",
+          "course_id",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "examples": [
+              20
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "examples": [
+              "Problem Set 1"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "description": {
+            "type": "string",
+            "examples": [
+              "Solve exercises 1–10 from Chapter 2."
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-04-01T23:59:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentStatus"
+          },
+          "course_id": {
+            "type": "integer",
+            "examples": [
+              5
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_by": {
+            "type": "integer",
+            "examples": [
+              1
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "author": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-03-01T08:00:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-03-10T12:00:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        }
+      },
+      "AssignmentCreateRequest": {
+        "type": "object",
+        "required": [
+          "title",
+          "deadline"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "examples": [
+              "Problem Set 1"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,min=1,max=500"
+            }
+          },
+          "description": {
+            "type": "string",
+            "examples": [
+              "Solve exercises 1–10 from Chapter 2."
+            ],
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "examples": [
+              "2026-04-01T23:59:00Z"
+            ],
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentStatus"
+          }
+        }
+      },
+      "AssignmentUpdateRequest": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,min=1,max=500"
+            }
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentStatus"
+          }
+        }
+      },
+      "AssignmentListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssignmentResponse"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        }
+      },
+      "BadRequest": {
+        "$ref": "#/components/schemas/ErrorResponse"
+      },
+      "Unauthorized": {
+        "$ref": "#/components/schemas/ErrorResponse"
+      },
+      "NotFound": {
+        "$ref": "#/components/schemas/ErrorResponse"
+      },
+      "Conflict": {
+        "$ref": "#/components/schemas/ErrorResponse"
+      },
+      "InternalError": {
+        "$ref": "#/components/schemas/ErrorResponse"
+      }
+    },
+    "securitySchemes": {}
+  },
+  "servers": []
+}

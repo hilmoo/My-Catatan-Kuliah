@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  GREETING: Hello, world!
+
+tasks:
+  default:
+    desc: Print a greeting message
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  gen-api:
+    desc: Generate API code using oapi-codegen
+    vars:
+      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/602be1555261817e203a6b71e8910844cda49207/transform_openapi.py
+    cmds:
+      - uv run {{.SCRIPT}} ../openapi.json ../openapi.out.json
+      - go tool oapi-codegen -config=oapi-codegen.models.yml ../openapi.out.json
+      - go tool oapi-codegen -config=oapi-codegen.server.yml ../openapi.out.json
