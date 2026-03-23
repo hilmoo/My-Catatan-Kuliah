@@ -12,12 +12,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func googleLoginService(ctx context.Context) (string, *herodot.DefaultError) {
-	user, err := msession.GetUserFromContext(ctx)
-	if user != nil {
-		return "", herodot.ErrBadRequest.WithID(AlreadAuthenticated)
-	}
-
+func googleLoginService() (string, *herodot.DefaultError) {
 	state, err := genereateRandomString()
 	if err != nil {
 		return "", herodot.ErrInternalServerError.WithReason("failed to generate state").WithDebug(err.Error())
@@ -60,7 +55,9 @@ func googleCallbackService(
 	if err != nil {
 		return "", herodot.ErrInternalServerError.WithReason("failed to get user info from Google").WithDebug(err.Error())
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var userInfo googleUserInfo
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {

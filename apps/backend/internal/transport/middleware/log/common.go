@@ -19,10 +19,8 @@ const (
 
 type customAttributesCtxKeyType struct{}
 type requestIDCtxKeyType struct{}
-type reqMcpAttributesCtxKeyType struct{}
 
 var (
 	customAttributesCtxKey = customAttributesCtxKeyType{}
 	requestIDCtxKey        = requestIDCtxKeyType{}
-	reqMcpAttributesCtxKey = reqMcpAttributesCtxKeyType{}
 )

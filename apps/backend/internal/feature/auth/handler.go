@@ -40,7 +40,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 }
 
 func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
-	state, err := googleLoginService(c.Request().Context())
+	state, err := googleLoginService()
 	if err != nil {
 		if err.IDField == AlreadAuthenticated {
 			return c.Redirect(http.StatusTemporaryRedirect, "/")

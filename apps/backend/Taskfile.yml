@@ -29,3 +29,8 @@ tasks:
     cmds:
       - rm -rf internal/gen/sqlc
       - sqlc generate -f sqlc.yaml
+  
+  lint:
+    desc: Run linters
+    cmds:
+      - golangci-lint run ./...
