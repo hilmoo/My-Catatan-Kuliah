@@ -2,8 +2,4 @@
 package: api
 output: internal/gen/server/server.go
 generate:
-  echo5-server: true
   embedded-spec: true
-additional-imports:
-  - package: backend/internal/gen/models
-    alias: .

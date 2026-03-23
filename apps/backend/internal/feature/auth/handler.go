@@ -1,36 +1,113 @@
 package auth
 
 import (
-	sql "backend/internal/gen/sqlc"
+	"backend/internal/gen/models"
+	"backend/internal/gen/sqlc"
+	"backend/internal/transport/error"
+	"backend/internal/transport/helper"
+	"backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
+	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v5"
+	"github.com/ory/herodot"
+	"golang.org/x/oauth2"
 )
 
-type AuthHttpHandler struct {
-	validate *validation.Vld
-	queries  *sql.Queries
+type httpHandler struct {
+	validate          *validation.Vld
+	queries           *db.Queries
+	googleOauthConfig *oauth2.Config
+	secret            string
 }
 
-func NewAuthHttpHandler(vld *validation.Vld, queries *sql.Queries) *AuthHttpHandler {
-	return &AuthHttpHandler{
-		validate: vld,
-		queries:  queries,
+func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
+	return &httpHandler{
+		validate:          args.Validate,
+		queries:           args.Queries,
+		googleOauthConfig: args.Config.GoogleOauthConfig,
+		secret:            args.Config.Secret,
 	}
 }
 
-func (h *AuthHttpHandler) PostAuthLogin(ctx *echo.Context) error {
-	return nil
+func (h *httpHandler) RegisterRoutes(e *echo.Group) {
+	group := e.Group("/auth")
+
+	group.GET("/oauth", h.oauthGoogleLogin)
+	group.GET("/oauth/callback/google", h.oauthGoogleCallback)
+	group.POST("/logout", h.logout)
 }
 
-func (h *AuthHttpHandler) PostAuthLogout(ctx *echo.Context) error {
-	return nil
+func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
+	state, err := googleLoginService(c.Request().Context())
+	if err != nil {
+		if err.IDField == AlreadAuthenticated {
+			return c.Redirect(http.StatusTemporaryRedirect, "/")
+		}
+
+		return errort.HttpError(c, err)
+	}
+
+	c.SetCookie(&http.Cookie{
+		Name:     "state",
+		Value:    state,
+		Path:     "/",
+		Expires:  time.Now().Add(10 * time.Minute),
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	authUrl := h.googleOauthConfig.AuthCodeURL(state)
+	return c.Redirect(http.StatusTemporaryRedirect, authUrl)
 }
 
-func (h *AuthHttpHandler) GetAuthMe(ctx *echo.Context) error {
-	return nil
+func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
+	stateCookie, err := c.Cookie("state")
+	if err != nil {
+		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("state cookie not found").WithDebug(err.Error()))
+	}
+
+	params, errH := validation.BindValidatePayload[models.HandleGoogleOAuthCallbackParams](c, h.validate)
+	if errH != nil {
+		return errort.HttpError(c, errH)
+	}
+
+	if params.State != stateCookie.Value {
+		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("invalid state parameter"))
+	}
+
+	sessionToken, errH := googleCallbackService(c.Request().Context(), googleCallbackServiceParams{
+		code:        params.Code,
+		ipAddress:   c.RealIP(),
+		userAgent:   c.Request().UserAgent(),
+		oauthConfig: h.googleOauthConfig,
+		queries:     h.queries,
+		secret:      h.secret,
+	})
+	if errH != nil {
+		return errort.HttpError(c, errH)
+	}
+
+	msession.SetnewCookies(c, sessionToken)
+	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 
-func (h *AuthHttpHandler) PostAuthRegister(ctx *echo.Context) error {
-	return nil
+func (h *httpHandler) logout(c *echo.Context) error {
+	token, err := msession.GetSessionToken(c)
+	if err != nil {
+		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("session token not found").WithDebug(err.Error()))
+	}
+
+	errH := logoutService(c.Request().Context(), logoutServiceParams{
+		token:   token,
+		secret:  h.secret,
+		queries: h.queries,
+	})
+	if errH != nil {
+		return errort.HttpError(c, errH)
+	}
+
+	msession.ClearSessionCookies(c)
+	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }

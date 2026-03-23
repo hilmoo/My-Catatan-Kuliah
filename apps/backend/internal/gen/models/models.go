@@ -5,687 +5,269 @@ package models
 
 import (
 	"time"
-
-	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
-// Defines values for AssignmentStatus.
 const (
-	Graded     AssignmentStatus = "graded"
-	InProgress AssignmentStatus = "in_progress"
-	Overdue    AssignmentStatus = "overdue"
-	Pending    AssignmentStatus = "pending"
-	Submitted  AssignmentStatus = "submitted"
+	CookieAuthScopes cookieAuthContextKey = "cookieAuth.Scopes"
 )
 
-// Valid indicates whether the value is a known member of the AssignmentStatus enum.
-func (e AssignmentStatus) Valid() bool {
+// Defines values for PageType.
+const (
+	Assignment PageType = "assignment"
+	Course     PageType = "course"
+	Folder     PageType = "folder"
+	Note       PageType = "note"
+)
+
+// Valid indicates whether the value is a known member of the PageType enum.
+func (e PageType) Valid() bool {
 	switch e {
-	case Graded:
+	case Assignment:
 		return true
-	case InProgress:
+	case Course:
 		return true
-	case Overdue:
+	case Folder:
 		return true
-	case Pending:
-		return true
-	case Submitted:
+	case Note:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for DayOfWeek.
-const (
-	Friday    DayOfWeek = "friday"
-	Monday    DayOfWeek = "monday"
-	Saturday  DayOfWeek = "saturday"
-	Sunday    DayOfWeek = "sunday"
-	Thursday  DayOfWeek = "thursday"
-	Tuesday   DayOfWeek = "tuesday"
-	Wednesday DayOfWeek = "wednesday"
-)
+// Error defines model for Error.
+type Error struct {
+	// Code Application-specific error code.
+	Code int `json:"code" validate:"required"`
 
-// Valid indicates whether the value is a known member of the DayOfWeek enum.
-func (e DayOfWeek) Valid() bool {
-	switch e {
-	case Friday:
-		return true
-	case Monday:
-		return true
-	case Saturday:
-		return true
-	case Sunday:
-		return true
-	case Thursday:
-		return true
-	case Tuesday:
-		return true
-	case Wednesday:
-		return true
-	default:
-		return false
-	}
+	// Details Additional details about the error.
+	Details *map[string]interface{} `json:"details,omitempty" validate:"omitempty"`
+
+	// Error Error type.
+	Error string `json:"error" validate:"required"`
+
+	// Id Error instance ID.
+	Id string `json:"id" validate:"required"`
+
+	// Reason Human-readable reason.
+	Reason string `json:"reason" validate:"required"`
+
+	// Status Status string (e.g., 'error').
+	Status string `json:"status" validate:"required"`
 }
 
-// Defines values for GetAssignmentsParamsSort.
-const (
-	GetAssignmentsParamsSortCreatedAt GetAssignmentsParamsSort = "created_at"
-	GetAssignmentsParamsSortDeadline  GetAssignmentsParamsSort = "deadline"
-	GetAssignmentsParamsSortId        GetAssignmentsParamsSort = "id"
-	GetAssignmentsParamsSortStatus    GetAssignmentsParamsSort = "status"
-	GetAssignmentsParamsSortTitle     GetAssignmentsParamsSort = "title"
-	GetAssignmentsParamsSortUpdatedAt GetAssignmentsParamsSort = "updated_at"
-)
+// Page defines model for Page.
+type Page struct {
+	// ContentBlob Binary content encoded in Base64.
+	ContentBlob *[]byte   `json:"contentBlob,omitempty" validate:"omitempty,byte"`
+	ContentHtml *string   `json:"contentHtml,omitempty" validate:"omitempty"`
+	CreatedAt   time.Time `json:"createdAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 
-// Valid indicates whether the value is a known member of the GetAssignmentsParamsSort enum.
-func (e GetAssignmentsParamsSort) Valid() bool {
-	switch e {
-	case GetAssignmentsParamsSortCreatedAt:
-		return true
-	case GetAssignmentsParamsSortDeadline:
-		return true
-	case GetAssignmentsParamsSortId:
-		return true
-	case GetAssignmentsParamsSortStatus:
-		return true
-	case GetAssignmentsParamsSortTitle:
-		return true
-	case GetAssignmentsParamsSortUpdatedAt:
-		return true
-	default:
-		return false
-	}
+	// CreatedBy ID of the user who created the page.
+	CreatedBy string  `json:"createdBy" validate:"required"`
+	Icon      *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// Id Unique identifier.
+	Id string `json:"id" validate:"required"`
+
+	// ParentId ID of the parent page.
+	ParentId *string `json:"parentId,omitempty" validate:"omitempty"`
+
+	// Properties JSON object containing page properties.
+	Properties *map[string]interface{} `json:"properties,omitempty" validate:"omitempty"`
+	Title      string                  `json:"title" validate:"required"`
+
+	// Type Type of the page.
+	Type      PageType  `json:"type" validate:"omitempty,oneof=folder note course assignment"`
+	UpdatedAt time.Time `json:"updatedAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace.
+	WorkspaceId string `json:"workspaceId" validate:"required"`
 }
 
-// Defines values for GetAssignmentsParamsOrder.
-const (
-	GetAssignmentsParamsOrderAsc  GetAssignmentsParamsOrder = "asc"
-	GetAssignmentsParamsOrderDesc GetAssignmentsParamsOrder = "desc"
-)
+// PageCreate defines model for PageCreate.
+type PageCreate struct {
+	ContentBlob *[]byte `json:"contentBlob,omitempty" validate:"omitempty,byte"`
+	ContentHtml *string `json:"contentHtml,omitempty" validate:"omitempty"`
 
-// Valid indicates whether the value is a known member of the GetAssignmentsParamsOrder enum.
-func (e GetAssignmentsParamsOrder) Valid() bool {
-	switch e {
-	case GetAssignmentsParamsOrderAsc:
-		return true
-	case GetAssignmentsParamsOrderDesc:
-		return true
-	default:
-		return false
-	}
+	// CreatedBy ID of the creator.
+	CreatedBy  string                  `json:"createdBy" validate:"required"`
+	Icon       *string                 `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *string                 `json:"parentId,omitempty" validate:"omitempty"`
+	Properties *map[string]interface{} `json:"properties,omitempty" validate:"omitempty"`
+	Title      *string                 `json:"title,omitempty" validate:"omitempty"`
+
+	// Type Type of the page.
+	Type        PageType `json:"type" validate:"omitempty,oneof=folder note course assignment"`
+	WorkspaceId string   `json:"workspaceId" validate:"required"`
 }
 
-// Defines values for GetCoursesParamsSort.
-const (
-	GetCoursesParamsSortDay       GetCoursesParamsSort = "day"
-	GetCoursesParamsSortId        GetCoursesParamsSort = "id"
-	GetCoursesParamsSortName      GetCoursesParamsSort = "name"
-	GetCoursesParamsSortStartTime GetCoursesParamsSort = "start_time"
-)
+// PageType Type of the page.
+type PageType string
 
-// Valid indicates whether the value is a known member of the GetCoursesParamsSort enum.
-func (e GetCoursesParamsSort) Valid() bool {
-	switch e {
-	case GetCoursesParamsSortDay:
-		return true
-	case GetCoursesParamsSortId:
-		return true
-	case GetCoursesParamsSortName:
-		return true
-	case GetCoursesParamsSortStartTime:
-		return true
-	default:
-		return false
-	}
+// PageUpdate defines model for PageUpdate.
+type PageUpdate struct {
+	ContentBlob *[]byte                 `json:"contentBlob,omitempty" validate:"omitempty,byte"`
+	ContentHtml *string                 `json:"contentHtml,omitempty" validate:"omitempty"`
+	Icon        *string                 `json:"icon,omitempty" validate:"omitempty"`
+	ParentId    *string                 `json:"parentId,omitempty" validate:"omitempty"`
+	Properties  *map[string]interface{} `json:"properties,omitempty" validate:"omitempty"`
+	Title       *string                 `json:"title,omitempty" validate:"omitempty"`
+
+	// Type Type of the page.
+	Type *PageType `json:"type,omitempty" validate:"omitempty,oneof=folder note course assignment"`
 }
 
-// Defines values for GetCoursesParamsOrder.
-const (
-	GetCoursesParamsOrderAsc  GetCoursesParamsOrder = "asc"
-	GetCoursesParamsOrderDesc GetCoursesParamsOrder = "desc"
-)
-
-// Valid indicates whether the value is a known member of the GetCoursesParamsOrder enum.
-func (e GetCoursesParamsOrder) Valid() bool {
-	switch e {
-	case GetCoursesParamsOrderAsc:
-		return true
-	case GetCoursesParamsOrderDesc:
-		return true
-	default:
-		return false
-	}
+// Pagination defines model for Pagination.
+type Pagination struct {
+	HasMore *bool `json:"hasMore,omitempty" validate:"omitempty"`
+	Limit   *int  `json:"limit,omitempty" validate:"omitempty"`
+	Page    *int  `json:"page,omitempty" validate:"omitempty"`
 }
 
-// Defines values for GetNotesParamsSort.
-const (
-	GetNotesParamsSortCreatedAt GetNotesParamsSort = "created_at"
-	GetNotesParamsSortId        GetNotesParamsSort = "id"
-	GetNotesParamsSortTitle     GetNotesParamsSort = "title"
-	GetNotesParamsSortUpdatedAt GetNotesParamsSort = "updated_at"
-)
+// Session User session
+type Session struct {
+	CreatedAt time.Time `json:"createdAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	ExpiresAt time.Time `json:"expiresAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 
-// Valid indicates whether the value is a known member of the GetNotesParamsSort enum.
-func (e GetNotesParamsSort) Valid() bool {
-	switch e {
-	case GetNotesParamsSortCreatedAt:
-		return true
-	case GetNotesParamsSortId:
-		return true
-	case GetNotesParamsSortTitle:
-		return true
-	case GetNotesParamsSortUpdatedAt:
-		return true
-	default:
-		return false
-	}
+	// Id Session token (identifier).
+	Id        string  `json:"id" validate:"required"`
+	IpAddress *string `json:"ipAddress,omitempty" validate:"omitempty"`
+	UserAgent *string `json:"userAgent,omitempty" validate:"omitempty"`
+
+	// UserId User ID, empty for the current authenticated session.
+	UserId string `json:"userId" validate:"required"`
 }
 
-// Defines values for GetNotesParamsOrder.
-const (
-	GetNotesParamsOrderAsc  GetNotesParamsOrder = "asc"
-	GetNotesParamsOrderDesc GetNotesParamsOrder = "desc"
-)
+// Workspace defines model for Workspace.
+type Workspace struct {
+	CreatedAt time.Time `json:"createdAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 
-// Valid indicates whether the value is a known member of the GetNotesParamsOrder enum.
-func (e GetNotesParamsOrder) Valid() bool {
-	switch e {
-	case GetNotesParamsOrderAsc:
-		return true
-	case GetNotesParamsOrderDesc:
-		return true
-	default:
-		return false
-	}
+	// Id Unique identifier.
+	Id string `json:"id" validate:"required"`
+
+	// Name Name of the workspace.
+	Name string `json:"name" validate:"required"`
+
+	// OwnerId ID of the user who owns the workspace, empty for the current authenticated session.
+	OwnerId string `json:"ownerId" validate:"required"`
 }
 
-// Defines values for GetUsersParamsSort.
-const (
-	GetUsersParamsSortCreatedAt GetUsersParamsSort = "created_at"
-	GetUsersParamsSortEmail     GetUsersParamsSort = "email"
-	GetUsersParamsSortId        GetUsersParamsSort = "id"
-	GetUsersParamsSortUsername  GetUsersParamsSort = "username"
-)
+// WorkspaceCreate defines model for WorkspaceCreate.
+type WorkspaceCreate struct {
+	Name string `json:"name" validate:"required"`
 
-// Valid indicates whether the value is a known member of the GetUsersParamsSort enum.
-func (e GetUsersParamsSort) Valid() bool {
-	switch e {
-	case GetUsersParamsSortCreatedAt:
-		return true
-	case GetUsersParamsSortEmail:
-		return true
-	case GetUsersParamsSortId:
-		return true
-	case GetUsersParamsSortUsername:
-		return true
-	default:
-		return false
-	}
+	// OwnerId ID of the owner.
+	OwnerId string `json:"ownerId" validate:"required"`
 }
 
-// Defines values for GetUsersParamsOrder.
-const (
-	GetUsersParamsOrderAsc  GetUsersParamsOrder = "asc"
-	GetUsersParamsOrderDesc GetUsersParamsOrder = "desc"
-)
-
-// Valid indicates whether the value is a known member of the GetUsersParamsOrder enum.
-func (e GetUsersParamsOrder) Valid() bool {
-	switch e {
-	case GetUsersParamsOrderAsc:
-		return true
-	case GetUsersParamsOrderDesc:
-		return true
-	default:
-		return false
-	}
+// WorkspaceUpdate defines model for WorkspaceUpdate.
+type WorkspaceUpdate struct {
+	Name *string `json:"name,omitempty" validate:"omitempty"`
 }
 
-// Defines values for GetWorkspacesParamsSort.
-const (
-	GetWorkspacesParamsSortCreatedAt GetWorkspacesParamsSort = "created_at"
-	GetWorkspacesParamsSortId        GetWorkspacesParamsSort = "id"
-	GetWorkspacesParamsSortName      GetWorkspacesParamsSort = "name"
-)
+// LimitParam defines model for LimitParam.
+type LimitParam = int
 
-// Valid indicates whether the value is a known member of the GetWorkspacesParamsSort enum.
-func (e GetWorkspacesParamsSort) Valid() bool {
-	switch e {
-	case GetWorkspacesParamsSortCreatedAt:
-		return true
-	case GetWorkspacesParamsSortId:
-		return true
-	case GetWorkspacesParamsSortName:
-		return true
-	default:
-		return false
-	}
+// PageParam defines model for PageParam.
+type PageParam = int
+
+// ResourceId defines model for ResourceId.
+type ResourceId = string
+
+// BadRequest defines model for BadRequest.
+type BadRequest = Error
+
+// CreatePageResponse defines model for CreatePageResponse.
+type CreatePageResponse = Page
+
+// CreateWorkspaceResponse defines model for CreateWorkspaceResponse.
+type CreateWorkspaceResponse = Workspace
+
+// GetPageDetailResponse defines model for GetPageDetailResponse.
+type GetPageDetailResponse = Page
+
+// GetSessionDetailResponse User session
+type GetSessionDetailResponse = Session
+
+// GetWorkspaceDetailResponse defines model for GetWorkspaceDetailResponse.
+type GetWorkspaceDetailResponse = Workspace
+
+// InternalServerError defines model for InternalServerError.
+type InternalServerError = Error
+
+// ListPagesResponse defines model for ListPagesResponse.
+type ListPagesResponse struct {
+	Data       *[]Page     `json:"data,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
-// Defines values for GetWorkspacesParamsOrder.
-const (
-	GetWorkspacesParamsOrderAsc  GetWorkspacesParamsOrder = "asc"
-	GetWorkspacesParamsOrderDesc GetWorkspacesParamsOrder = "desc"
-)
-
-// Valid indicates whether the value is a known member of the GetWorkspacesParamsOrder enum.
-func (e GetWorkspacesParamsOrder) Valid() bool {
-	switch e {
-	case GetWorkspacesParamsOrderAsc:
-		return true
-	case GetWorkspacesParamsOrderDesc:
-		return true
-	default:
-		return false
-	}
+// ListSessionsResponse defines model for ListSessionsResponse.
+type ListSessionsResponse struct {
+	Data       *[]Session  `json:"data,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
-// Defines values for GetWorkspacesWorkspaceIdCoursesParamsSort.
-const (
-	GetWorkspacesWorkspaceIdCoursesParamsSortDay       GetWorkspacesWorkspaceIdCoursesParamsSort = "day"
-	GetWorkspacesWorkspaceIdCoursesParamsSortId        GetWorkspacesWorkspaceIdCoursesParamsSort = "id"
-	GetWorkspacesWorkspaceIdCoursesParamsSortName      GetWorkspacesWorkspaceIdCoursesParamsSort = "name"
-	GetWorkspacesWorkspaceIdCoursesParamsSortStartTime GetWorkspacesWorkspaceIdCoursesParamsSort = "start_time"
-)
-
-// Valid indicates whether the value is a known member of the GetWorkspacesWorkspaceIdCoursesParamsSort enum.
-func (e GetWorkspacesWorkspaceIdCoursesParamsSort) Valid() bool {
-	switch e {
-	case GetWorkspacesWorkspaceIdCoursesParamsSortDay:
-		return true
-	case GetWorkspacesWorkspaceIdCoursesParamsSortId:
-		return true
-	case GetWorkspacesWorkspaceIdCoursesParamsSortName:
-		return true
-	case GetWorkspacesWorkspaceIdCoursesParamsSortStartTime:
-		return true
-	default:
-		return false
-	}
+// ListWorkspacesResponse defines model for ListWorkspacesResponse.
+type ListWorkspacesResponse struct {
+	Data       *[]Workspace `json:"data,omitempty"`
+	Pagination *Pagination  `json:"pagination,omitempty"`
 }
 
-// Defines values for GetWorkspacesWorkspaceIdCoursesParamsOrder.
-const (
-	GetWorkspacesWorkspaceIdCoursesParamsOrderAsc  GetWorkspacesWorkspaceIdCoursesParamsOrder = "asc"
-	GetWorkspacesWorkspaceIdCoursesParamsOrderDesc GetWorkspacesWorkspaceIdCoursesParamsOrder = "desc"
-)
+// NotFound defines model for NotFound.
+type NotFound = Error
 
-// Valid indicates whether the value is a known member of the GetWorkspacesWorkspaceIdCoursesParamsOrder enum.
-func (e GetWorkspacesWorkspaceIdCoursesParamsOrder) Valid() bool {
-	switch e {
-	case GetWorkspacesWorkspaceIdCoursesParamsOrderAsc:
-		return true
-	case GetWorkspacesWorkspaceIdCoursesParamsOrderDesc:
-		return true
-	default:
-		return false
-	}
+// UpdatePageResponse defines model for UpdatePageResponse.
+type UpdatePageResponse = Page
+
+// UpdateWorkspaceResponse defines model for UpdateWorkspaceResponse.
+type UpdateWorkspaceResponse = Workspace
+
+// cookieAuthContextKey is the context key for cookieAuth security scheme
+type cookieAuthContextKey string
+
+// HandleGoogleOAuthCallbackParams defines parameters for HandleGoogleOAuthCallback.
+type HandleGoogleOAuthCallbackParams struct {
+	Code  string `query:"code" json:"code" validate:"required"`
+	State string `query:"state" json:"state" validate:"required"`
 }
 
-// AssignmentCreateRequest defines model for AssignmentCreateRequest.
-type AssignmentCreateRequest struct {
-	Deadline    time.Time         `json:"deadline" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	Description *string           `json:"description,omitempty" validate:"omitempty"`
-	Status      *AssignmentStatus `json:"status,omitempty" validate:"omitempty,oneof=pending in_progress submitted graded overdue"`
-	Title       string            `json:"title" validate:"required,min=1,max=500"`
+// ListPagesParams defines parameters for ListPages.
+type ListPagesParams struct {
+	Page  *PageParam  `query:"page,omitempty" json:"page,omitempty"`
+	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
+
+	// WorkspaceId Filter by workspace ID
+	WorkspaceId *string `query:"workspace_id,omitempty" json:"workspace_id,omitempty" validate:"omitempty"`
+
+	// ParentId Filter by parent page ID (null for root)
+	ParentId *string   `query:"parent_id,omitempty" json:"parent_id,omitempty" validate:"omitempty"`
+	Type     *PageType `query:"type,omitempty" json:"type,omitempty" validate:"omitempty"`
 }
 
-// AssignmentListResponse defines model for AssignmentListResponse.
-type AssignmentListResponse struct {
-	Data []AssignmentResponse `json:"data" validate:"required"`
-	Meta PaginationMeta       `json:"meta"`
+// ListSessionsParams defines parameters for ListSessions.
+type ListSessionsParams struct {
+	Page  *PageParam  `query:"page,omitempty" json:"page,omitempty"`
+	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// AssignmentResponse defines model for AssignmentResponse.
-type AssignmentResponse struct {
-	Author      *UserResponse    `json:"author,omitempty"`
-	CourseId    int              `json:"course_id" validate:"required"`
-	CreatedAt   time.Time        `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	CreatedBy   int              `json:"created_by" validate:"required"`
-	Deadline    time.Time        `json:"deadline" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	Description *string          `json:"description,omitempty" validate:"omitempty"`
-	Id          int              `json:"id" validate:"required"`
-	Status      AssignmentStatus `json:"status" validate:"omitempty,oneof=pending in_progress submitted graded overdue"`
-	Title       string           `json:"title" validate:"required"`
-	UpdatedAt   time.Time        `json:"updated_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+// ListWorkspacesParams defines parameters for ListWorkspaces.
+type ListWorkspacesParams struct {
+	Page  *PageParam  `query:"page,omitempty" json:"page,omitempty"`
+	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
+
+	// OwnerId Filter by owner ID
+	OwnerId *string `query:"owner_id,omitempty" json:"owner_id,omitempty" validate:"omitempty"`
 }
 
-// AssignmentStatus defines model for AssignmentStatus.
-type AssignmentStatus string
+// CreatePageJSONRequestBody defines body for CreatePage for application/json ContentType.
+type CreatePageJSONRequestBody = PageCreate
 
-// AssignmentUpdateRequest defines model for AssignmentUpdateRequest.
-type AssignmentUpdateRequest struct {
-	Deadline    *time.Time        `json:"deadline,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Description *string           `json:"description,omitempty" validate:"omitempty"`
-	Status      *AssignmentStatus `json:"status,omitempty" validate:"omitempty,oneof=pending in_progress submitted graded overdue"`
-	Title       *string           `json:"title,omitempty" validate:"omitempty,min=1,max=500"`
-}
+// UpdatePageJSONRequestBody defines body for UpdatePage for application/json ContentType.
+type UpdatePageJSONRequestBody = PageUpdate
 
-// CourseCreateRequest defines model for CourseCreateRequest.
-type CourseCreateRequest struct {
-	Day DayOfWeek `json:"day" validate:"omitempty,oneof=monday tuesday wednesday thursday friday saturday sunday"`
+// CreateWorkspaceJSONRequestBody defines body for CreateWorkspace for application/json ContentType.
+type CreateWorkspaceJSONRequestBody = WorkspaceCreate
 
-	// EndTime Must be after start_time
-	EndTime      string  `json:"end_time" validate:"required,datetime=15:04:05"`
-	LecturerName *string `json:"lecturer_name,omitempty" validate:"omitempty"`
-	Name         string  `json:"name" validate:"required,min=1,max=255"`
-	StartTime    string  `json:"start_time" validate:"required,datetime=15:04:05"`
-}
-
-// CourseListResponse defines model for CourseListResponse.
-type CourseListResponse struct {
-	Data []CourseResponse `json:"data" validate:"required"`
-	Meta PaginationMeta   `json:"meta"`
-}
-
-// CourseNoteCreateRequest defines model for CourseNoteCreateRequest.
-type CourseNoteCreateRequest struct {
-	Content *string `json:"content,omitempty" validate:"omitempty"`
-	Title   string  `json:"title" validate:"required,min=1,max=500"`
-}
-
-// CourseNoteListResponse defines model for CourseNoteListResponse.
-type CourseNoteListResponse struct {
-	Data []CourseNoteResponse `json:"data" validate:"required"`
-	Meta PaginationMeta       `json:"meta"`
-}
-
-// CourseNoteResponse defines model for CourseNoteResponse.
-type CourseNoteResponse struct {
-	Author  *UserResponse `json:"author,omitempty"`
-	Content *string       `json:"content,omitempty" validate:"omitempty"`
-
-	// ContentBlobUrl Presigned URL to download the binary content blob. Null when no blob is stored.
-	ContentBlobUrl *string   `json:"content_blob_url,omitempty" validate:"omitempty,uri"`
-	CourseId       int       `json:"course_id" validate:"required"`
-	CreatedAt      time.Time `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	CreatedBy      int       `json:"created_by" validate:"required"`
-	Id             int       `json:"id" validate:"required"`
-	Title          string    `json:"title" validate:"required"`
-	UpdatedAt      time.Time `json:"updated_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-}
-
-// CourseNoteUpdateRequest defines model for CourseNoteUpdateRequest.
-type CourseNoteUpdateRequest struct {
-	Content *string `json:"content,omitempty" validate:"omitempty"`
-	Title   *string `json:"title,omitempty" validate:"omitempty,min=1,max=500"`
-}
-
-// CourseResponse defines model for CourseResponse.
-type CourseResponse struct {
-	Day          DayOfWeek          `json:"day" validate:"omitempty,oneof=monday tuesday wednesday thursday friday saturday sunday"`
-	EndTime      string             `json:"end_time" validate:"required,datetime=15:04:05"`
-	Id           int                `json:"id" validate:"required"`
-	LecturerName *string            `json:"lecturer_name,omitempty" validate:"omitempty"`
-	Name         string             `json:"name" validate:"required"`
-	StartTime    string             `json:"start_time" validate:"required,datetime=15:04:05"`
-	Workspace    *WorkspaceResponse `json:"workspace,omitempty"`
-	WorkspaceId  int                `json:"workspace_id" validate:"required"`
-}
-
-// CourseUpdateRequest defines model for CourseUpdateRequest.
-type CourseUpdateRequest struct {
-	Day *DayOfWeek `json:"day,omitempty" validate:"omitempty,oneof=monday tuesday wednesday thursday friday saturday sunday"`
-
-	// EndTime Must be after start_time
-	EndTime      *string `json:"end_time,omitempty" validate:"omitempty,datetime=15:04:05"`
-	LecturerName *string `json:"lecturer_name,omitempty" validate:"omitempty"`
-	Name         *string `json:"name,omitempty" validate:"omitempty,min=1,max=255"`
-	StartTime    *string `json:"start_time,omitempty" validate:"omitempty,datetime=15:04:05"`
-}
-
-// DayOfWeek defines model for DayOfWeek.
-type DayOfWeek string
-
-// ErrorResponse defines model for ErrorResponse.
-type ErrorResponse struct {
-	Code    int                    `json:"code" validate:"required"`
-	Details map[string]interface{} `json:"details" validate:"required"`
-	Error   string                 `json:"error" validate:"required"`
-	Id      string                 `json:"id" validate:"required"`
-	Reason  string                 `json:"reason" validate:"required"`
-	Status  string                 `json:"status" validate:"required"`
-}
-
-// LoginRequest defines model for LoginRequest.
-type LoginRequest struct {
-	Email    openapi_types.Email `json:"email" validate:"required,email"`
-	Password string              `json:"password" validate:"required,password"`
-}
-
-// PaginationMeta defines model for PaginationMeta.
-type PaginationMeta struct {
-	Limit      int `json:"limit" validate:"required"`
-	Page       int `json:"page" validate:"required"`
-	Total      int `json:"total" validate:"required"`
-	TotalPages int `json:"total_pages" validate:"required"`
-}
-
-// UserListResponse defines model for UserListResponse.
-type UserListResponse struct {
-	Data []UserResponse `json:"data" validate:"required"`
-	Meta PaginationMeta `json:"meta"`
-}
-
-// UserRegisterRequest defines model for UserRegisterRequest.
-type UserRegisterRequest struct {
-	Email    openapi_types.Email `json:"email" validate:"required,email"`
-	Password string              `json:"password" validate:"required,min=8,password"`
-	Username string              `json:"username" validate:"required,min=3,max=50"`
-}
-
-// UserResponse defines model for UserResponse.
-type UserResponse struct {
-	CreatedAt time.Time           `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	Email     openapi_types.Email `json:"email" validate:"required,email"`
-	Id        int                 `json:"id" validate:"required"`
-	Username  string              `json:"username" validate:"required"`
-}
-
-// UserUpdateRequest defines model for UserUpdateRequest.
-type UserUpdateRequest struct {
-	Email    *openapi_types.Email `json:"email,omitempty" validate:"omitempty,email"`
-	Password *string              `json:"password,omitempty" validate:"omitempty,min=8,password"`
-	Username *string              `json:"username,omitempty" validate:"omitempty,min=3,max=50"`
-}
-
-// WorkspaceCreateRequest defines model for WorkspaceCreateRequest.
-type WorkspaceCreateRequest struct {
-	Name    string `json:"name" validate:"required,min=1,max=255"`
-	OwnerId int    `json:"owner_id" validate:"required"`
-}
-
-// WorkspaceListResponse defines model for WorkspaceListResponse.
-type WorkspaceListResponse struct {
-	Data []WorkspaceResponse `json:"data" validate:"required"`
-	Meta PaginationMeta      `json:"meta"`
-}
-
-// WorkspaceResponse defines model for WorkspaceResponse.
-type WorkspaceResponse struct {
-	CreatedAt time.Time     `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	Id        int           `json:"id" validate:"required"`
-	Name      string        `json:"name" validate:"required"`
-	Owner     *UserResponse `json:"owner,omitempty"`
-
-	// OwnerId ID of the owning user
-	OwnerId int `json:"owner_id" validate:"required"`
-}
-
-// WorkspaceUpdateRequest defines model for WorkspaceUpdateRequest.
-type WorkspaceUpdateRequest struct {
-	Name *string `json:"name,omitempty" validate:"omitempty,min=1,max=255"`
-}
-
-// GetAssignmentsParams defines parameters for GetAssignments.
-type GetAssignmentsParams struct {
-	// Page Page number (1-based)
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// Limit Number of items per page
-	Limit          *int                       `form:"limit,omitempty" json:"limit,omitempty"`
-	Sort           *GetAssignmentsParamsSort  `form:"sort,omitempty" json:"sort,omitempty"`
-	Order          *GetAssignmentsParamsOrder `form:"order,omitempty" json:"order,omitempty"`
-	Status         *AssignmentStatus          `form:"status,omitempty" json:"status,omitempty" validate:"omitempty,oneof=pending in_progress submitted graded overdue"`
-	CreatedBy      *int                       `form:"created_by,omitempty" json:"created_by,omitempty"`
-	DeadlineBefore *time.Time                 `form:"deadline_before,omitempty" json:"deadline_before,omitempty"`
-	DeadlineAfter  *time.Time                 `form:"deadline_after,omitempty" json:"deadline_after,omitempty"`
-}
-
-// GetAssignmentsParamsSort defines parameters for GetAssignments.
-type GetAssignmentsParamsSort string
-
-// GetAssignmentsParamsOrder defines parameters for GetAssignments.
-type GetAssignmentsParamsOrder string
-
-// GetCoursesParams defines parameters for GetCourses.
-type GetCoursesParams struct {
-	// Page Page number (1-based)
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// Limit Number of items per page
-	Limit       *int                   `form:"limit,omitempty" json:"limit,omitempty"`
-	WorkspaceId *int                   `form:"workspace_id,omitempty" json:"workspace_id,omitempty"`
-	Day         *DayOfWeek             `form:"day,omitempty" json:"day,omitempty" validate:"omitempty,oneof=monday tuesday wednesday thursday friday saturday sunday"`
-	Sort        *GetCoursesParamsSort  `form:"sort,omitempty" json:"sort,omitempty"`
-	Order       *GetCoursesParamsOrder `form:"order,omitempty" json:"order,omitempty"`
-}
-
-// GetCoursesParamsSort defines parameters for GetCourses.
-type GetCoursesParamsSort string
-
-// GetCoursesParamsOrder defines parameters for GetCourses.
-type GetCoursesParamsOrder string
-
-// GetNotesParams defines parameters for GetNotes.
-type GetNotesParams struct {
-	// Page Page number (1-based)
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// Limit Number of items per page
-	Limit *int                 `form:"limit,omitempty" json:"limit,omitempty"`
-	Sort  *GetNotesParamsSort  `form:"sort,omitempty" json:"sort,omitempty"`
-	Order *GetNotesParamsOrder `form:"order,omitempty" json:"order,omitempty"`
-
-	// Title Filter by title (partial match)
-	Title *string `form:"title,omitempty" json:"title,omitempty"`
-
-	// CreatedBy Filter by creator user ID
-	CreatedBy     *int       `form:"created_by,omitempty" json:"created_by,omitempty"`
-	CreatedAfter  *time.Time `form:"created_after,omitempty" json:"created_after,omitempty"`
-	CreatedBefore *time.Time `form:"created_before,omitempty" json:"created_before,omitempty"`
-	UpdatedAfter  *time.Time `form:"updated_after,omitempty" json:"updated_after,omitempty"`
-}
-
-// GetNotesParamsSort defines parameters for GetNotes.
-type GetNotesParamsSort string
-
-// GetNotesParamsOrder defines parameters for GetNotes.
-type GetNotesParamsOrder string
-
-// GetUsersParams defines parameters for GetUsers.
-type GetUsersParams struct {
-	// Page Page number (1-based)
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// Limit Number of items per page
-	Limit *int                 `form:"limit,omitempty" json:"limit,omitempty"`
-	Sort  *GetUsersParamsSort  `form:"sort,omitempty" json:"sort,omitempty"`
-	Order *GetUsersParamsOrder `form:"order,omitempty" json:"order,omitempty"`
-
-	// Username Filter by username (partial match)
-	Username *string `form:"username,omitempty" json:"username,omitempty"`
-
-	// Email Filter by email (partial match)
-	Email *string `form:"email,omitempty" json:"email,omitempty"`
-}
-
-// GetUsersParamsSort defines parameters for GetUsers.
-type GetUsersParamsSort string
-
-// GetUsersParamsOrder defines parameters for GetUsers.
-type GetUsersParamsOrder string
-
-// GetWorkspacesParams defines parameters for GetWorkspaces.
-type GetWorkspacesParams struct {
-	// Page Page number (1-based)
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// Limit Number of items per page
-	Limit *int                      `form:"limit,omitempty" json:"limit,omitempty"`
-	Sort  *GetWorkspacesParamsSort  `form:"sort,omitempty" json:"sort,omitempty"`
-	Order *GetWorkspacesParamsOrder `form:"order,omitempty" json:"order,omitempty"`
-
-	// Name Filter by workspace name (partial match)
-	Name *string `form:"name,omitempty" json:"name,omitempty"`
-
-	// OwnerId Filter by owner user ID
-	OwnerId *int `form:"owner_id,omitempty" json:"owner_id,omitempty"`
-}
-
-// GetWorkspacesParamsSort defines parameters for GetWorkspaces.
-type GetWorkspacesParamsSort string
-
-// GetWorkspacesParamsOrder defines parameters for GetWorkspaces.
-type GetWorkspacesParamsOrder string
-
-// GetWorkspacesWorkspaceIdCoursesParams defines parameters for GetWorkspacesWorkspaceIdCourses.
-type GetWorkspacesWorkspaceIdCoursesParams struct {
-	// Page Page number (1-based)
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// Limit Number of items per page
-	Limit *int                                        `form:"limit,omitempty" json:"limit,omitempty"`
-	Sort  *GetWorkspacesWorkspaceIdCoursesParamsSort  `form:"sort,omitempty" json:"sort,omitempty"`
-	Order *GetWorkspacesWorkspaceIdCoursesParamsOrder `form:"order,omitempty" json:"order,omitempty"`
-
-	// Day Filter by day of week
-	Day *DayOfWeek `form:"day,omitempty" json:"day,omitempty" validate:"omitempty,oneof=monday tuesday wednesday thursday friday saturday sunday"`
-
-	// Name Filter by course name (partial match)
-	Name *string `form:"name,omitempty" json:"name,omitempty"`
-
-	// LecturerName Filter by lecturer name (partial match)
-	LecturerName *string `form:"lecturer_name,omitempty" json:"lecturer_name,omitempty"`
-}
-
-// GetWorkspacesWorkspaceIdCoursesParamsSort defines parameters for GetWorkspacesWorkspaceIdCourses.
-type GetWorkspacesWorkspaceIdCoursesParamsSort string
-
-// GetWorkspacesWorkspaceIdCoursesParamsOrder defines parameters for GetWorkspacesWorkspaceIdCourses.
-type GetWorkspacesWorkspaceIdCoursesParamsOrder string
-
-// PostAssignmentsJSONRequestBody defines body for PostAssignments for application/json ContentType.
-type PostAssignmentsJSONRequestBody = AssignmentCreateRequest
-
-// PatchAssignmentsAssignmentIdJSONRequestBody defines body for PatchAssignmentsAssignmentId for application/json ContentType.
-type PatchAssignmentsAssignmentIdJSONRequestBody = AssignmentUpdateRequest
-
-// PostAuthLoginJSONRequestBody defines body for PostAuthLogin for application/json ContentType.
-type PostAuthLoginJSONRequestBody = LoginRequest
-
-// PostAuthRegisterJSONRequestBody defines body for PostAuthRegister for application/json ContentType.
-type PostAuthRegisterJSONRequestBody = UserRegisterRequest
-
-// PostCoursesJSONRequestBody defines body for PostCourses for application/json ContentType.
-type PostCoursesJSONRequestBody = CourseCreateRequest
-
-// PatchCoursesCourseIdJSONRequestBody defines body for PatchCoursesCourseId for application/json ContentType.
-type PatchCoursesCourseIdJSONRequestBody = CourseUpdateRequest
-
-// PostNotesJSONRequestBody defines body for PostNotes for application/json ContentType.
-type PostNotesJSONRequestBody = CourseNoteCreateRequest
-
-// PatchNotesNoteIdJSONRequestBody defines body for PatchNotesNoteId for application/json ContentType.
-type PatchNotesNoteIdJSONRequestBody = CourseNoteUpdateRequest
-
-// PatchUsersUserIdJSONRequestBody defines body for PatchUsersUserId for application/json ContentType.
-type PatchUsersUserIdJSONRequestBody = UserUpdateRequest
-
-// PostWorkspacesJSONRequestBody defines body for PostWorkspaces for application/json ContentType.
-type PostWorkspacesJSONRequestBody = WorkspaceCreateRequest
-
-// PatchWorkspacesWorkspaceIdJSONRequestBody defines body for PatchWorkspacesWorkspaceId for application/json ContentType.
-type PatchWorkspacesWorkspaceIdJSONRequestBody = WorkspaceUpdateRequest
+// UpdateWorkspaceJSONRequestBody defines body for UpdateWorkspace for application/json ContentType.
+type UpdateWorkspaceJSONRequestBody = WorkspaceUpdate

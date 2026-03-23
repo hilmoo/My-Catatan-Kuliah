@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"backend/internal/app"
+	"backend/internal/store/config"
+
 	"github.com/pressly/goose/v3"
 	"github.com/urfave/cli/v3"
 )
 
-func migrateCommand(cfg app.Config) *cli.Command {
+func migrateCommand(cfg config.Config) *cli.Command {
 	return &cli.Command{
 		Name:  "migrate",
 		Usage: "Database migration commands",
@@ -55,7 +56,7 @@ func migrateCommand(cfg app.Config) *cli.Command {
 	}
 }
 
-func runMigration(cfg app.Config, command string, args cli.Args) error {
+func runMigration(cfg config.Config, command string, args cli.Args) error {
 	db, err := sql.Open("pgx", cfg.DatabaseUrl)
 	if err != nil {
 		return fmt.Errorf("failed to open DB: %w", err)

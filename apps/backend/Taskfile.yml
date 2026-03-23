@@ -15,8 +15,17 @@ tasks:
   gen-api:
     desc: Generate API code using oapi-codegen
     vars:
-      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/602be1555261817e203a6b71e8910844cda49207/transform_openapi.py
+      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/b78831761b659f483a4f12241ff5eba54dc2fa72/transform_openapi.py
+      OPENAPI_JSON: ../openapi.out.json
     cmds:
-      - uv run {{.SCRIPT}} ../openapi.json ../openapi.out.json
-      - go tool oapi-codegen -config=oapi-codegen.models.yml ../openapi.out.json
-      - go tool oapi-codegen -config=oapi-codegen.server.yml ../openapi.out.json
+      - yq -o=json ../openapi.yaml > {{.OPENAPI_JSON}}
+      - uv run {{.SCRIPT}} {{.OPENAPI_JSON}} {{.OPENAPI_JSON}}
+      - go tool oapi-codegen -config=oapi-codegen.models.yml {{.OPENAPI_JSON}}
+      - go tool oapi-codegen -config=oapi-codegen.server.yml {{.OPENAPI_JSON}}
+      - sed -i 's/form:/query:/g' internal/gen/models/models.go
+  
+  gen-sql:
+    desc: Generate SQL code using sqlc
+    cmds:
+      - rm -rf internal/gen/sqlc
+      - sqlc generate -f sqlc.yaml

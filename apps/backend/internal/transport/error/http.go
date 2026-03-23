@@ -1,4 +1,4 @@
-package error
+package errort
 
 import (
 	mlog "backend/internal/transport/middleware/log"

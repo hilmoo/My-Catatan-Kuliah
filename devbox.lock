@@ -278,6 +278,54 @@
         }
       }
     },
+    "pgformatter@5.9": {
+      "last_modified": "2026-03-02T11:03:52Z",
+      "resolved": "github:NixOS/nixpkgs/dc7513872406b53d2ff417a003895d6daffdff2f#pgformatter",
+      "source": "devbox-search",
+      "version": "5.9",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/7dr7sshvbnw8my7iacpqfsrc3p50wmms-perl5.42.0-pgformatter-5.9",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/7dr7sshvbnw8my7iacpqfsrc3p50wmms-perl5.42.0-pgformatter-5.9"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/f69lrx642mac22ymda8kg2gjq4zl1rfc-perl5.42.0-pgformatter-5.9",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/f69lrx642mac22ymda8kg2gjq4zl1rfc-perl5.42.0-pgformatter-5.9"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/w4zq3g6jq5da6fgdn83g0ba23d0121hg-perl5.42.0-pgformatter-5.9",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/w4zq3g6jq5da6fgdn83g0ba23d0121hg-perl5.42.0-pgformatter-5.9"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/07x2illdqhhhagy87qvjfsd075q1wfpg-perl5.42.0-pgformatter-5.9",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/07x2illdqhhhagy87qvjfsd075q1wfpg-perl5.42.0-pgformatter-5.9"
+        }
+      }
+    },
     "pnpm@10.29.2": {
       "last_modified": "2026-03-05T01:30:23Z",
       "resolved": "github:NixOS/nixpkgs/66d9241e3dc2296726dc522e62dbfe89c7b449f3#pnpm",
@@ -419,6 +467,54 @@
             }
           ],
           "store_path": "/nix/store/45bqnn1avsw82rxbigdy4app32aiqd8a-uv-0.10.6"
+        }
+      }
+    },
+    "yq-go@4.52": {
+      "last_modified": "2026-02-23T15:40:43Z",
+      "resolved": "github:NixOS/nixpkgs/80d901ec0377e19ac3f7bb8c035201e2e098cc97#yq-go",
+      "source": "devbox-search",
+      "version": "4.52.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pylgx3h8185sds4pclpzrsj6d4kx9ixq-yq-go-4.52.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/pylgx3h8185sds4pclpzrsj6d4kx9ixq-yq-go-4.52.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/l4i5y4brr6f45y5pia48rx1n17q0a1kr-yq-go-4.52.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/l4i5y4brr6f45y5pia48rx1n17q0a1kr-yq-go-4.52.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/yw52il24d58bz6516da8y0c8iwv8ckcv-yq-go-4.52.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/yw52il24d58bz6516da8y0c8iwv8ckcv-yq-go-4.52.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rjic2hjhbmlch7vj3dnpfc5gppg9l654-yq-go-4.52.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rjic2hjhbmlch7vj3dnpfc5gppg9l654-yq-go-4.52.4"
         }
       }
     }

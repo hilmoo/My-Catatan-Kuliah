@@ -4,20 +4,25 @@
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"moby": "false"
+		},
+		"ghcr.io/itsmechlark/features/postgresql:1": {
+			"version": "18"
 		}
 	},
 	"customizations": {
 		"vscode": {
 			"settings": {
 				"json.schemaDownload.trustedDomains": {
-					"https://raw.githubusercontent.com/jetify-com/devbox/": true
+					"https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json": true
 				}
 			},
 			"extensions": [
 				"ms-python.python",
 				"golang.go",
 				"jetpack-io.devbox",
-				"mkhl.direnv"
+				"mkhl.direnv",
+				"42Crunch.vscode-openapi",
+				"redhat.vscode-yaml"
 			]
 		}
 	},

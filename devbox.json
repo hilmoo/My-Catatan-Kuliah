@@ -8,7 +8,9 @@
     "pnpm@10.29.2",
     "goose@3.26.0",
     "sqlc@1.30.0",
-    "golangci-lint@2.11.3"
+    "golangci-lint@2.11.3",
+    "pgformatter@5.9",
+    "yq-go@4.52"
   ],
   "shell": {
     "init_hook": [

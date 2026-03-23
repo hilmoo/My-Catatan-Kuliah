@@ -2,169 +2,112 @@
 // versions:
 //   sqlc v1.30.0
 
-package sql
+package db
 
 import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pgvector/pgvector-go"
 )
 
-type AssignmentStatus string
+type PageType string
 
 const (
-	AssignmentStatusPending    AssignmentStatus = "pending"
-	AssignmentStatusInProgress AssignmentStatus = "in_progress"
-	AssignmentStatusSubmitted  AssignmentStatus = "submitted"
-	AssignmentStatusGraded     AssignmentStatus = "graded"
-	AssignmentStatusOverdue    AssignmentStatus = "overdue"
+	PageTypeFolder     PageType = "folder"
+	PageTypeNote       PageType = "note"
+	PageTypeCourse     PageType = "course"
+	PageTypeAssignment PageType = "assignment"
 )
 
-func (e *AssignmentStatus) Scan(src interface{}) error {
+func (e *PageType) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = AssignmentStatus(s)
+		*e = PageType(s)
 	case string:
-		*e = AssignmentStatus(s)
+		*e = PageType(s)
 	default:
-		return fmt.Errorf("unsupported scan type for AssignmentStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for PageType: %T", src)
 	}
 	return nil
 }
 
-type NullAssignmentStatus struct {
-	AssignmentStatus AssignmentStatus
-	Valid            bool // Valid is true if AssignmentStatus is not NULL
+type NullPageType struct {
+	PageType PageType
+	Valid    bool // Valid is true if PageType is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullAssignmentStatus) Scan(value interface{}) error {
+func (ns *NullPageType) Scan(value interface{}) error {
 	if value == nil {
-		ns.AssignmentStatus, ns.Valid = "", false
+		ns.PageType, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.AssignmentStatus.Scan(value)
+	return ns.PageType.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullAssignmentStatus) Value() (driver.Value, error) {
+func (ns NullPageType) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.AssignmentStatus), nil
-}
-
-type DayOfWeek string
-
-const (
-	DayOfWeekMonday    DayOfWeek = "monday"
-	DayOfWeekTuesday   DayOfWeek = "tuesday"
-	DayOfWeekWednesday DayOfWeek = "wednesday"
-	DayOfWeekThursday  DayOfWeek = "thursday"
-	DayOfWeekFriday    DayOfWeek = "friday"
-	DayOfWeekSaturday  DayOfWeek = "saturday"
-	DayOfWeekSunday    DayOfWeek = "sunday"
-)
-
-func (e *DayOfWeek) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = DayOfWeek(s)
-	case string:
-		*e = DayOfWeek(s)
-	default:
-		return fmt.Errorf("unsupported scan type for DayOfWeek: %T", src)
-	}
-	return nil
-}
-
-type NullDayOfWeek struct {
-	DayOfWeek DayOfWeek
-	Valid     bool // Valid is true if DayOfWeek is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullDayOfWeek) Scan(value interface{}) error {
-	if value == nil {
-		ns.DayOfWeek, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.DayOfWeek.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullDayOfWeek) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.DayOfWeek), nil
-}
-
-type Assignment struct {
-	ID          int32
-	Title       string
-	Description pgtype.Text
-	Deadline    pgtype.Timestamp
-	Status      AssignmentStatus
-	CourseID    int32
-	CreatedBy   int32
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	PublicID    pgtype.UUID
-}
-
-type Course struct {
-	ID           int32
-	Name         string
-	LecturerName pgtype.Text
-	Day          DayOfWeek
-	StartTime    pgtype.Time
-	EndTime      pgtype.Time
-	WorkspaceID  int32
-	PublicID     pgtype.UUID
-}
-
-type CourseNote struct {
-	ID          int32
-	Title       string
-	Content     pgtype.Text
-	ContentBlob []byte
-	CourseID    int32
-	CreatedBy   int32
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	PublicID    pgtype.UUID
+	return string(ns.PageType), nil
 }
 
 type DocumentChunk struct {
 	ID          int64
-	NoteID      int32
-	CourseID    int32
+	PageID      int32
 	WorkspaceID int32
 	ChunkIndex  int32
 	Content     string
-	Embedding   pgvector.Vector
+	Embedding   *pgvector.Vector
 	FtsVector   interface{}
-	CreatedAt   pgtype.Timestamp
+	CreatedAt   pgtype.Timestamptz
+}
+
+type Page struct {
+	ID          int32
+	Iid         uuid.UUID
+	WorkspaceID int32
+	ParentID    *int32
+	Title       string
+	Icon        *string
+	Type        PageType
+	ContentHtml *string
+	ContentBlob []byte
+	Properties  []byte
+	CreatedBy   int32
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+}
+
+type Session struct {
+	ID        uuid.UUID
+	UserID    int32
+	HashToken string
+	ExpiresAt pgtype.Timestamptz
+	IpAddress *string
+	UserAgent *string
+	CreatedAt pgtype.Timestamptz
 }
 
 type User struct {
-	ID        int32
-	Username  string
-	Email     string
-	Password  string
-	CreatedAt pgtype.Timestamp
-	PublicID  pgtype.UUID
+	ID         int32
+	Iid        uuid.UUID
+	Email      string
+	Name       string
+	AvatarUrl  *string
+	ProviderID string
+	CreatedAt  pgtype.Timestamptz
 }
 
 type Workspace struct {
 	ID        int32
+	Iid       uuid.UUID
 	Name      string
 	OwnerID   int32
-	CreatedAt pgtype.Timestamp
-	PublicID  pgtype.UUID
+	CreatedAt pgtype.Timestamptz
 }

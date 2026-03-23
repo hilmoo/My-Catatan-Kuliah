@@ -5,10 +5,12 @@ import (
 	"log"
 
 	"backend/internal/app"
+	"backend/internal/store/config"
+
 	"github.com/urfave/cli/v3"
 )
 
-func serveCommand(cfg app.Config) *cli.Command {
+func serveCommand(cfg config.Config) *cli.Command {
 	return &cli.Command{
 		Name:  "serve",
 		Usage: "Run the application server",

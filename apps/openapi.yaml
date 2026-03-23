@@ -1,0 +1,888 @@
+openapi: 3.0.3
+info:
+  title: Workspace Management API
+  version: 1.0.0
+  description: 'API specification for managing users, workspaces, and pages.'
+servers:
+  - url: /api
+    description: Base URL for API endpoints
+paths:
+  /auth/oauth/google:
+    get:
+      operationId: redirectToGoogleOAuth
+      summary: Redirect to Google OAuth
+      description: Initiates OAuth flow by redirecting to Google authorization endpoint
+      responses:
+        '302':
+          description: Redirect to OAuth provider
+      security: []
+      tags:
+        - Auth
+  /auth/oauth/callback/google:
+    get:
+      operationId: handleGoogleOAuthCallback
+      summary: Handle Google OAuth callback
+      description: Handles OAuth provider callback with authorization code
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      security: []
+      tags:
+        - Auth
+  /pages:
+    get:
+      operationId: listPages
+      summary: List pages
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: workspace_id
+          in: query
+          description: Filter by workspace ID
+          schema:
+            type: string
+        - name: parent_id
+          in: query
+          description: Filter by parent page ID (null for root)
+          schema:
+            type: string
+            nullable: true
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/PageType'
+      responses:
+        '200':
+          $ref: '#/components/responses/ListPagesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Pages
+    post:
+      operationId: createPage
+      summary: Create a page
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageCreate'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatePageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Pages
+  '/pages/{id}':
+    parameters:
+      - $ref: '#/components/parameters/ResourceId'
+    get:
+      operationId: getPage
+      summary: Get page details
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPageDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Pages
+    patch:
+      operationId: updatePage
+      summary: Update page
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdatePageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Pages
+    delete:
+      operationId: deletePage
+      summary: Delete page
+      responses:
+        '204':
+          description: Page deleted
+      tags:
+        - Pages
+  /sessions:
+    get:
+      operationId: listSessions
+      summary: List sessions
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ListSessionsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Sessions
+    # post:
+    #   operationId: createSession
+    #   summary: Create a new session
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/SessionCreate'
+    #   responses:
+    #     '201':
+    #       $ref: '#/components/responses/CreateSessionResponse'
+    #     '400':
+    #       $ref: '#/components/responses/BadRequest'
+    #     '500':
+    #       $ref: '#/components/responses/InternalServerError'
+    #   tags:
+    #     - Sessions
+  '/sessions/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: Session token (used as identifier)
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getSession
+      summary: Get session details
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSessionDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Sessions
+    delete:
+      operationId: deleteSession
+      summary: Delete a session (Logout)
+      responses:
+        '204':
+          description: Session deleted
+      tags:
+        - Sessions
+  # /users:
+  #   get:
+  #     operationId: listUsers
+  #     summary: List all users
+  #     parameters:
+  #       - $ref: '#/components/parameters/PageParam'
+  #       - $ref: '#/components/parameters/LimitParam'
+  #       - name: email
+  #         in: query
+  #         description: Filter by email address
+  #         schema:
+  #           type: string
+  #       - name: sort_by
+  #         in: query
+  #         description: Sort field
+  #         schema:
+  #           type: string
+  #           enum:
+  #             - created_at
+  #             - name
+  #       - name: order
+  #         in: query
+  #         schema:
+  #           type: string
+  #           enum:
+  #             - asc
+  #             - desc
+  #     responses:
+  #       '200':
+  #         $ref: '#/components/responses/ListUsersResponse'
+  #       '400':
+  #         $ref: '#/components/responses/BadRequest'
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #     tags:
+  #       - Users
+  #   post:
+  #     operationId: createUser
+  #     summary: Create a new user
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/UserCreate'
+  #     responses:
+  #       '201':
+  #         $ref: '#/components/responses/CreateUserResponse'
+  #       '400':
+  #         $ref: '#/components/responses/BadRequest'
+  #       '409':
+  #         $ref: '#/components/responses/Conflict'
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #     tags:
+  #       - Users
+  # '/users/{id}':
+  #   parameters:
+  #     - $ref: '#/components/parameters/ResourceId'
+  #   get:
+  #     operationId: getUser
+  #     summary: Get a user by ID
+  #     responses:
+  #       '200':
+  #         $ref: '#/components/responses/GetUserDetailResponse'
+  #       '404':
+  #         $ref: '#/components/responses/NotFound'
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #     tags:
+  #       - Users
+  #   patch:
+  #     operationId: updateUser
+  #     summary: Update a user
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/UserUpdate'
+  #     responses:
+  #       '200':
+  #         $ref: '#/components/responses/UpdateUserResponse'
+  #       '400':
+  #         $ref: '#/components/responses/BadRequest'
+  #       '404':
+  #         $ref: '#/components/responses/NotFound'
+  #       '500':
+  #         $ref: '#/components/responses/InternalServerError'
+  #     tags:
+  #       - Users
+  #   delete:
+  #     operationId: deleteUser
+  #     summary: Delete a user
+  #     responses:
+  #       '204':
+  #         description: User deleted successfully
+  #       '404':
+  #         $ref: '#/components/responses/NotFound'
+  #     tags:
+  #       - Users
+  /workspaces:
+    get:
+      operationId: listWorkspaces
+      summary: List workspaces
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: owner_id
+          in: query
+          description: Filter by owner ID
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ListWorkspacesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Workspaces
+    post:
+      operationId: createWorkspace
+      summary: Create a workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceCreate'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateWorkspaceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Workspaces
+  '/workspaces/{id}':
+    parameters:
+      - $ref: '#/components/parameters/ResourceId'
+    get:
+      operationId: getWorkspace
+      summary: Get workspace details
+      responses:
+        '200':
+          $ref: '#/components/responses/GetWorkspaceDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Workspaces
+    patch:
+      operationId: updateWorkspace
+      summary: Update workspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdateWorkspaceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      tags:
+        - Workspaces
+    delete:
+      operationId: deleteWorkspace
+      summary: Delete workspace
+      responses:
+        '204':
+          description: Workspace deleted
+      tags:
+        - Workspaces
+components:
+  parameters:
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+        minimum: 1
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      description: Unique identifier of the resource.
+      schema:
+        type: string
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+    User:
+      description: User resource.
+      type: object
+      properties:
+        id:
+          description: Unique identifier.
+          type: string
+        email:
+          description: User email address (unique).
+          type: string
+          format: email
+        name:
+          description: User display name.
+          type: string
+        avatarUrl:
+          description: URL to user avatar.
+          type: string
+          format: uri
+          nullable: true
+        provider:
+          description: Authentication provider name.
+          type: string
+        providerId:
+          description: Identifier from the authentication provider.
+          type: string
+        createdAt:
+          description: Account creation timestamp.
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - name
+        - provider
+        - providerId
+        - createdAt
+    UserCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatarUrl:
+          type: string
+          format: uri
+          nullable: true
+        provider:
+          type: string
+        providerId:
+          type: string
+      required:
+        - email
+        - name
+        - provider
+        - providerId
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        avatarUrl:
+          type: string
+          format: uri
+          nullable: true
+    Session:
+      description: User session
+      type: object
+      properties:
+        userId:
+          description: User ID, empty for the current authenticated session.
+          type: string
+        id:
+          description: Session token (identifier).
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        ipAddress:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - expiresAt
+        - createdAt
+    SessionCreate:
+      type: object
+      properties:
+        token:
+          description: Session token.
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        ipAddress:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+      required:
+        - userId
+        - token
+        - expiresAt
+    Workspace:
+      type: object
+      properties:
+        id:
+          description: Unique identifier.
+          type: string
+        name:
+          description: Name of the workspace.
+          type: string
+        ownerId:
+          description: ID of the user who owns the workspace, empty for the current authenticated session.
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - ownerId
+        - createdAt
+    WorkspaceCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        ownerId:
+          description: ID of the owner.
+          type: string
+      required:
+        - name
+        - ownerId
+    WorkspaceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+    PageType:
+      description: Type of the page.
+      type: string
+      enum:
+        - folder
+        - note
+        - course
+        - assignment
+    Page:
+      type: object
+      properties:
+        id:
+          description: Unique identifier.
+          type: string
+        workspaceId:
+          description: ID of the workspace.
+          type: string
+        parentId:
+          description: ID of the parent page.
+          type: string
+          nullable: true
+        title:
+          type: string
+        icon:
+          type: string
+          nullable: true
+        type:
+          $ref: '#/components/schemas/PageType'
+        contentHtml:
+          type: string
+          nullable: true
+        contentBlob:
+          description: Binary content encoded in Base64.
+          type: string
+          format: byte
+          nullable: true
+        properties:
+          description: JSON object containing page properties.
+          type: object
+        createdBy:
+          description: ID of the user who created the page.
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - workspaceId
+        - title
+        - type
+        - createdBy
+        - createdAt
+        - updatedAt
+    PageCreate:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        parentId:
+          type: string
+          nullable: true
+        title:
+          type: string
+          default: Untitled
+        icon:
+          type: string
+          nullable: true
+        type:
+          $ref: '#/components/schemas/PageType'
+        contentHtml:
+          type: string
+          nullable: true
+        contentBlob:
+          type: string
+          format: byte
+          nullable: true
+        properties:
+          type: object
+        createdBy:
+          description: ID of the creator.
+          type: string
+      required:
+        - workspaceId
+        - type
+        - createdBy
+    PageUpdate:
+      type: object
+      properties:
+        parentId:
+          type: string
+          nullable: true
+        title:
+          type: string
+        icon:
+          type: string
+          nullable: true
+        type:
+          $ref: '#/components/schemas/PageType'
+        contentHtml:
+          type: string
+          nullable: true
+        contentBlob:
+          type: string
+          format: byte
+          nullable: true
+        properties:
+          type: object
+    Error:
+      type: object
+      properties:
+        id:
+          description: Error instance ID.
+          type: string
+        reason:
+          description: Human-readable reason.
+          type: string
+        status:
+          description: 'Status string (e.g., ''error'').'
+          type: string
+        error:
+          description: Error type.
+          type: string
+        code:
+          description: Application-specific error code.
+          type: integer
+        details:
+          description: Additional details about the error.
+          type: object
+      required:
+        - id
+        - reason
+        - status
+        - error
+        - code
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            id: err_123
+            reason: Invalid input data
+            status: error
+            error: Bad Request
+            code: 400
+            details:
+              field: email
+              message: Must be a valid email address
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            id: err_404
+            reason: Resource not found
+            status: error
+            error: Not Found
+            code: 404
+            details: {}
+    Conflict:
+      description: 'Conflict (e.g., duplicate entry)'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            id: err_409
+            reason: Resource already exists
+            status: error
+            error: Conflict
+            code: 409
+            details:
+              field: email
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            id: err_500
+            reason: An unexpected error occurred
+            status: error
+            error: Internal Server Error
+            code: 500
+            details: {}
+    ListPagesResponse:
+      description: A list of pages
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Page'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    CreatePageResponse:
+      description: Page created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Page'
+    GetPageDetailResponse:
+      description: Page details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Page'
+    UpdatePageResponse:
+      description: Page updated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Page'
+    ListSessionsResponse:
+      description: List of sessions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    CreateSessionResponse:
+      description: Session created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Session'
+    GetSessionDetailResponse:
+      description: Session details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Session'
+    ListUsersResponse:
+      description: A list of users
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    CreateUserResponse:
+      description: User created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    GetUserDetailResponse:
+      description: User details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    UpdateUserResponse:
+      description: User updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    ListWorkspacesResponse:
+      description: List of workspaces
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workspace'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    CreateWorkspaceResponse:
+      description: Workspace created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Workspace'
+    GetWorkspaceDetailResponse:
+      description: Workspace details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Workspace'
+    UpdateWorkspaceResponse:
+      description: Workspace updated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Workspace'
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+tags:
+  - name: Auth
+    description: Authentication operations
+  - name: Pages
+    description: Page content management
+  - name: Sessions
+    description: Session management operations
+  # - name: Users
+  #   description: User management operations
+  - name: Workspaces
+    description: Workspace operations
+security:
+  - cookieAuth: []

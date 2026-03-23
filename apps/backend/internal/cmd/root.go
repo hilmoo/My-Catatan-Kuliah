@@ -1,16 +1,16 @@
 package cmd
 
 import (
+	"backend/internal/store/config"
 	"context"
 	"log"
 	"os"
 
-	"backend/internal/app"
 	"github.com/urfave/cli/v3"
 )
 
 func RootCmd() {
-	cfg, err := app.LoadConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}

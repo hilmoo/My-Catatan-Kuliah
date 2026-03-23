@@ -1,6 +1,7 @@
 package app
 
 import (
+	"backend/internal/store/config"
 	"backend/internal/transport/validation"
 	"context"
 	"fmt"
@@ -13,7 +14,7 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-func Main(cfg Config) error {
+func Main(cfg config.Config) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -26,7 +27,12 @@ func Main(cfg Config) error {
 	logger := initLogger(cfg.LogLevel)
 	vld := validation.InitValidation()
 
-	app := initHandler(logger, vld, db, cfg)
+	app := initHandler(initHandlerParams{
+		logger: logger,
+		vld:    vld,
+		dbPool: db,
+		cfg:    cfg,
+	})
 	sc := echo.StartConfig{
 		Address:         fmt.Sprintf("%s:%d", cfg.ListenAddr, cfg.ListenPort),
 		HideBanner:      true,

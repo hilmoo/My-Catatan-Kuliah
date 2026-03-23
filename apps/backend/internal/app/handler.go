@@ -3,15 +3,14 @@ package app
 import (
 	"log/slog"
 
-	"backend/internal/feature/assignments"
 	"backend/internal/feature/auth"
-	"backend/internal/feature/course-note"
-	"backend/internal/feature/couses"
-	"backend/internal/feature/users"
-	"backend/internal/feature/workspaces"
-	api "backend/internal/gen/server"
-	sql "backend/internal/gen/sqlc"
-	mlog "backend/internal/transport/middleware/log"
+	"backend/internal/feature/session"
+	"backend/internal/feature/workspace"
+	"backend/internal/gen/sqlc"
+	"backend/internal/store/config"
+	helpert "backend/internal/transport/helper"
+	"backend/internal/transport/middleware/log"
+	"backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -19,34 +18,38 @@ import (
 	"github.com/labstack/echo/v5/middleware"
 )
 
-type Server struct {
-	*assignments.AssignmentHttpHandler
-	*auth.AuthHttpHandler
-	*course_notes.CourseNotesHttpHandler
-	*courses.CoursesHttpHandler
-	*users.UsersHttpHandler
-	*workspaces.WorkspacesHttpHandler
+type initHandlerParams struct {
+	logger *slog.Logger
+	vld    *validation.Vld
+	dbPool *pgxpool.Pool
+	cfg    config.Config
 }
 
-var _ api.ServerInterface = (*Server)(nil)
-
-func initHandler(logger *slog.Logger, vld *validation.Vld, dbPool *pgxpool.Pool, cfg Config) *echo.Echo {
+func initHandler(args initHandlerParams) *echo.Echo {
 	e := echo.New()
-	queries := sql.New(dbPool)
+	queries := db.New(args.dbPool)
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.RequestID(), middleware.CORS("*"), mlog.New(logger).EchoMiddleware(), middleware.Recover())
+	e.Use(middleware.Recover())
+	e.Use(middleware.RequestID())
+	e.Use(middleware.CORS("*"))
+	e.Use(mlog.New(args.logger).EchoMiddleware())
 
-	handlers := &Server{
-		AssignmentHttpHandler:  assignments.NewAssignmentHttpHandler(vld, queries),
-		AuthHttpHandler:        auth.NewAuthHttpHandler(vld, queries),
-		CourseNotesHttpHandler: course_notes.NewCourseNotesHttpHandler(vld, queries),
-		CoursesHttpHandler:     courses.NewCoursesHttpHandler(vld, queries),
-		UsersHttpHandler:       users.NewUsersHttpHandler(vld, queries),
-		WorkspacesHttpHandler:  workspaces.NewWorkspacesHttpHandler(vld, queries),
+	e.Use(msession.New(queries, args.cfg.Secret).LoadSession)
+
+	httpHandlerParams := helpert.HttpHandlerParams{
+		Validate: args.vld,
+		Queries:  queries,
+		Config:   args.cfg,
 	}
 
-	api.RegisterHandlers(e, handlers)
+	api := e.Group("/api")
+	auth.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
+	session.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
+	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
+
+	protected := e.Group("/api")
+	protected.Use(msession.RequireAuth)
 
 	return e
 }

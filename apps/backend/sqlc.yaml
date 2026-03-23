@@ -5,10 +5,12 @@ sql:
     schema: "../migration"
     gen:
       go:
-        package: "sql"
+        package: "db"
         out: "internal/gen/sqlc"
         sql_package: "pgx/v5"
-overrides: {}
-plugins: []
-rules: []
-options: {}
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
