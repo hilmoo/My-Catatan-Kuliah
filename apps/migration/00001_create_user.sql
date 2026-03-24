@@ -7,7 +7,7 @@ CREATE TABLE users(
     "name" text NOT NULL,
     "avatar_url" text,
     "provider_id" text NOT NULL UNIQUE,
-    "created_at" timestamptz DEFAULT now()
+    "created_at" timestamptz NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "sessions"(

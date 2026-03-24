@@ -106,7 +106,7 @@ type User struct {
 	Name       string
 	AvatarUrl  *string
 	ProviderID string
-	CreatedAt  **time.Time
+	CreatedAt  time.Time
 }
 
 type Workspace struct {
