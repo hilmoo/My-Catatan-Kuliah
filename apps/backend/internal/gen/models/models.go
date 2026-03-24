@@ -77,9 +77,11 @@ type Assignment struct {
 
 // AssignmentCreate defines model for AssignmentCreate.
 type AssignmentCreate struct {
-	Content     string                `json:"content" validate:"required"`
-	Icon        *string               `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *string               `json:"parent_id,omitempty" validate:"omitempty"`
+	Content string  `json:"content" validate:"required"`
+	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
+	ParentId    string                `json:"parent_id" validate:"omitempty"`
 	Properties  *AssignmentProperties `json:"properties,omitempty"`
 	Title       string                `json:"title" validate:"required"`
 	WorkspaceId string                `json:"workspace_id" validate:"required"`
@@ -133,8 +135,10 @@ type Course struct {
 
 // CourseCreate defines model for CourseCreate.
 type CourseCreate struct {
-	Content     string            `json:"content" validate:"required"`
-	Icon        *string           `json:"icon,omitempty" validate:"omitempty"`
+	Content string  `json:"content" validate:"required"`
+	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
 	ParentId    *string           `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *CourseProperties `json:"properties,omitempty"`
 	Title       string            `json:"title" validate:"required"`
@@ -215,8 +219,10 @@ type FolderType string
 
 // FolderCreate defines model for FolderCreate.
 type FolderCreate struct {
-	Content     string            `json:"content" validate:"required"`
-	Icon        *string           `json:"icon,omitempty" validate:"omitempty"`
+	Content string  `json:"content" validate:"required"`
+	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
 	ParentId    *string           `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *FolderProperties `json:"properties,omitempty"`
 	Title       string            `json:"title" validate:"required"`
@@ -268,8 +274,10 @@ type Note struct {
 
 // NoteCreate defines model for NoteCreate.
 type NoteCreate struct {
-	Content     string          `json:"content" validate:"required"`
-	Icon        *string         `json:"icon,omitempty" validate:"omitempty"`
+	Content string  `json:"content" validate:"required"`
+	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
 	ParentId    *string         `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *NoteProperties `json:"properties,omitempty"`
 	Title       string          `json:"title" validate:"required"`
@@ -320,8 +328,10 @@ type PageBase struct {
 
 // PageBaseCreate defines model for PageBaseCreate.
 type PageBaseCreate struct {
-	Content     string  `json:"content" validate:"required"`
-	Icon        *string `json:"icon,omitempty" validate:"omitempty"`
+	Content string  `json:"content" validate:"required"`
+	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
 	ParentId    *string `json:"parent_id,omitempty" validate:"omitempty"`
 	Title       string  `json:"title" validate:"required"`
 	WorkspaceId string  `json:"workspace_id" validate:"required"`

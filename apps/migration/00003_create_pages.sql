@@ -2,9 +2,9 @@
 -- +goose StatementBegin
 CREATE TYPE page_type AS ENUM(
     'folder',
-    'note',
     'course',
-    'assignment'
+    'assignment',
+    'note'
 );
 
 CREATE TABLE "pages"(

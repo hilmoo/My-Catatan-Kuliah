@@ -44,7 +44,7 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 	for _, s := range sessions {
 		sessionModels = append(sessionModels, models.Session{
 			Id:        s.ID.String(),
-			UserId:    "",
+			UserId:    user.Iid.String(),
 			ExpiresAt: s.ExpiresAt.Time,
 			IpAddress: s.IpAddress,
 			UserAgent: s.UserAgent,
@@ -53,18 +53,17 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 	}
 
 	var nextCursor *string
-	if len(sessions) > 0 {
-		last := sessions[len(sessions)-1]
+	if n := len(sessions); n > 0 {
+		last := sessions[n-1]
 
 		id, err := uuidx.ToBase58(last.ID)
 		if err != nil {
-			nextCursor = nil
+			return nil, herodot.ErrInternalServerError.WithReason("failed to encode cursor").WithDebug(err.Error())
 		}
-
 		nextCursor = &id
 	}
 
-	pagination := &models.Pagination{
+	pageInfo := &models.Pagination{
 		NextCursor: nextCursor,
 		Limit:      &limit,
 		HasMore:    &hasMore,
@@ -72,7 +71,7 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 
 	return &models.SessionListResponse{
 		Data:       &sessionModels,
-		Pagination: pagination,
+		Pagination: pageInfo,
 	}, nil
 }
 

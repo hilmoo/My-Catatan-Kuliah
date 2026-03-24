@@ -8,7 +8,9 @@ import (
 	"backend/utils/uuidx"
 	"context"
 	"encoding/json"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/ory/herodot"
 )
 
@@ -53,18 +55,17 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 	}
 
 	var nextCursor *string
-	if len(assignments) > 0 {
-		last := assignments[len(assignments)-1]
+	if n := len(assignments); n > 0 {
+		last := assignments[n-1]
 
 		id, err := uuidx.ToBase58(last.Iid)
 		if err != nil {
-			nextCursor = nil
+			return nil, herodot.ErrInternalServerError.WithReason("failed to encode cursor").WithDebug(err.Error())
 		}
-
 		nextCursor = &id
 	}
 
-	pagination := &models.Pagination{
+	pageInfo := &models.Pagination{
 		NextCursor: nextCursor,
 		Limit:      &limit,
 		HasMore:    &hasMore,
@@ -72,7 +73,7 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 
 	return &models.AssignmentListResponse{
 		Data:       &assignmentModels,
-		Pagination: pagination,
+		Pagination: pageInfo,
 	}, nil
 }
 
@@ -97,6 +98,9 @@ func getAssignmentDetailsService(ctx context.Context, args getAssignmentDetailsS
 		CreatedBy: user.ID,
 	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, herodot.ErrNotFound.WithReason("assignment not found").WithDebug(err.Error())
+		}
 		return nil, herodot.ErrInternalServerError.WithReason("failed to get assignment details").WithDebug(err.Error())
 	}
 
@@ -114,14 +118,35 @@ func createAssignmentService(ctx context.Context, args createAssignmentServicePa
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
-	workspaceId, errH := uuidx.HttpFromBase58(args.payload.WorkspaceId, "workspace ID")
+	workspaceIid, errH := uuidx.HttpFromBase58(args.payload.WorkspaceId, "workspace ID")
 	if errH != nil {
 		return nil, errH
 	}
+	workspaceId, err := args.queries.GetWorkspaceIdByIidAndUser(ctx, db.GetWorkspaceIdByIidAndUserParams{
+		Iid:     workspaceIid,
+		OwnerID: user.ID,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, herodot.ErrNotFound.WithReason("workspace not found").WithDebug(err.Error())
+		}
+		return nil, herodot.ErrInternalServerError.WithReason("failed to get workspace").WithDebug(err.Error())
+	}
 
-	parentId, errH := uuidx.HttpPFromBase58(args.payload.ParentId, "parent ID")
+	var parentId *int32
+	parentIid, errH := uuidx.HttpFromBase58(args.payload.ParentId, "parent ID")
 	if errH != nil {
 		return nil, errH
+	}
+	parentId, err = args.queries.GetAssignmentParentIdByIidAndUser(ctx, db.GetAssignmentParentIdByIidAndUserParams{
+		Iid:       parentIid,
+		CreatedBy: user.ID,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, herodot.ErrNotFound.WithReason("parent assignment not found. assignment must belong to a course").WithDebug(err.Error())
+		}
+		return nil, herodot.ErrInternalServerError.WithReason("failed to get parent assignment").WithDebug(err.Error())
 	}
 
 	var properties []byte
@@ -133,14 +158,17 @@ func createAssignmentService(ctx context.Context, args createAssignmentServicePa
 	}
 
 	assignment, err := args.queries.CreateAssignmentPage(ctx, db.CreateAssignmentPageParams{
-		WorkspaceIid: workspaceId,
-		ParentIid:    parentId,
-		Title:        args.payload.Title,
-		Icon:         args.payload.Icon,
-		Properties:   json.RawMessage(properties),
-		CreatedByID:  user.ID,
+		WorkspaceID: workspaceId,
+		ParentID:    parentId,
+		Title:       args.payload.Title,
+		Icon:        args.payload.Icon,
+		Properties:  json.RawMessage(properties),
+		CreatedByID: user.ID,
 	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, herodot.ErrNotFound.WithReason("assignment not found").WithDebug(err.Error())
+		}
 		return nil, herodot.ErrInternalServerError.WithReason("failed to create assignment").WithDebug(err.Error())
 	}
 
@@ -164,9 +192,23 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
-	parentId, errH := uuidx.HttpPFromBase58(args.payload.ParentId, "parent ID")
-	if errH != nil {
-		return nil, errH
+	var parentId *int32
+	if args.payload.ParentId != nil {
+		parentIid, errH := uuidx.HttpFromBase58(*args.payload.ParentId, "parent ID")
+		if errH != nil {
+			return nil, errH
+		}
+
+		parentId, err = args.queries.GetAssignmentParentIdByIidAndUser(ctx, db.GetAssignmentParentIdByIidAndUserParams{
+			Iid:       parentIid,
+			CreatedBy: user.ID,
+		})
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, herodot.ErrNotFound.WithReason("parent assignment not found").WithDebug(err.Error())
+			}
+			return nil, herodot.ErrInternalServerError.WithReason("failed to get parent assignment").WithDebug(err.Error())
+		}
 	}
 
 	var properties []byte
@@ -179,7 +221,7 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 
 	assignment, err := args.queries.UpdateAssignmentPage(ctx, db.UpdateAssignmentPageParams{
 		Title:      args.payload.Title,
-		ParentIid:  parentId,
+		ParentID:   parentId,
 		Icon:       args.payload.Icon,
 		Properties: json.RawMessage(properties),
 		Iid:        targetId,

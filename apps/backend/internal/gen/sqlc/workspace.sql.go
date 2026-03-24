@@ -77,6 +77,25 @@ func (q *Queries) GetWorkspaceByIidAndUser(ctx context.Context, arg GetWorkspace
 	return i, err
 }
 
+const getWorkspaceIdByIidAndUser = `-- name: GetWorkspaceIdByIidAndUser :one
+SELECT id
+FROM workspaces
+WHERE iid = $1
+    AND owner_id = $2
+`
+
+type GetWorkspaceIdByIidAndUserParams struct {
+	Iid     uuid.UUID
+	OwnerID int32
+}
+
+func (q *Queries) GetWorkspaceIdByIidAndUser(ctx context.Context, arg GetWorkspaceIdByIidAndUserParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getWorkspaceIdByIidAndUser, arg.Iid, arg.OwnerID)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const listWorkspacesByUserId = `-- name: ListWorkspacesByUserId :many
 SELECT id, iid, name, owner_id, created_at
 FROM workspaces

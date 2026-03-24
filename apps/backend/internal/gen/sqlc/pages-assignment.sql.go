@@ -24,8 +24,8 @@ WITH inserted AS (
         "created_by"
     )
     VALUES (
-        (SELECT id FROM workspaces WHERE workspaces.iid = $1),
-        (SELECT id FROM pages WHERE pages.iid = $2),
+        $1,
+        $2,
         $3,
         $4,
         'assignment'::page_type,
@@ -46,12 +46,12 @@ FROM inserted p
 `
 
 type CreateAssignmentPageParams struct {
-	WorkspaceIid uuid.UUID
-	ParentIid    pgtype.UUID
-	Title        string
-	Icon         *string
-	Properties   []byte
-	CreatedByID  int32
+	WorkspaceID int32
+	ParentID    *int32
+	Title       string
+	Icon        *string
+	Properties  []byte
+	CreatedByID int32
 }
 
 type CreateAssignmentPageRow struct {
@@ -73,8 +73,8 @@ type CreateAssignmentPageRow struct {
 
 func (q *Queries) CreateAssignmentPage(ctx context.Context, arg CreateAssignmentPageParams) (CreateAssignmentPageRow, error) {
 	row := q.db.QueryRow(ctx, createAssignmentPage,
-		arg.WorkspaceIid,
-		arg.ParentIid,
+		arg.WorkspaceID,
+		arg.ParentID,
 		arg.Title,
 		arg.Icon,
 		arg.Properties,
@@ -175,6 +175,26 @@ func (q *Queries) GetAssignmentPageByIid(ctx context.Context, arg GetAssignmentP
 	return i, err
 }
 
+const getAssignmentParentIdByIidAndUser = `-- name: GetAssignmentParentIdByIidAndUser :one
+SELECT parent_id
+FROM pages
+WHERE iid = $1
+    AND "type" = 'course'
+    AND "created_by" = $2
+`
+
+type GetAssignmentParentIdByIidAndUserParams struct {
+	Iid       uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) GetAssignmentParentIdByIidAndUser(ctx context.Context, arg GetAssignmentParentIdByIidAndUserParams) (*int32, error) {
+	row := q.db.QueryRow(ctx, getAssignmentParentIdByIidAndUser, arg.Iid, arg.CreatedBy)
+	var parent_id *int32
+	err := row.Scan(&parent_id)
+	return parent_id, err
+}
+
 const listAssignmentPagesByWorkspaceId = `-- name: ListAssignmentPagesByWorkspaceId :many
 SELECT p.id, p.iid, p.workspace_id, p.parent_id, p.title, p.icon, p.type, p.properties, p.created_by, p.created_at, p.updated_at,
     u.iid AS user_iid,
@@ -261,7 +281,7 @@ const updateAssignmentPage = `-- name: UpdateAssignmentPage :one
 WITH updated AS (
     UPDATE pages
     SET title = COALESCE($1::text, title),
-        parent_id = COALESCE((SELECT id FROM pages WHERE pages.iid = $2), parent_id),
+        parent_id = COALESCE($2::integer, parent_id),
         icon = COALESCE($3::text, icon),
         properties = COALESCE($4::jsonb, properties),
         updated_at = NOW()
@@ -284,7 +304,7 @@ LEFT JOIN pages pp ON p.parent_id = pp.id
 
 type UpdateAssignmentPageParams struct {
 	Title      *string
-	ParentIid  pgtype.UUID
+	ParentID   *int32
 	Icon       *string
 	Properties []byte
 	Iid        uuid.UUID
@@ -312,7 +332,7 @@ type UpdateAssignmentPageRow struct {
 func (q *Queries) UpdateAssignmentPage(ctx context.Context, arg UpdateAssignmentPageParams) (UpdateAssignmentPageRow, error) {
 	row := q.db.QueryRow(ctx, updateAssignmentPage,
 		arg.Title,
-		arg.ParentIid,
+		arg.ParentID,
 		arg.Icon,
 		arg.Properties,
 		arg.Iid,

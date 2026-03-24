@@ -54,18 +54,18 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 	}
 
 	var nextCursor *string
-	if len(workspaces) > 0 {
-		last := workspaces[len(workspaces)-1]
+	if n := len(workspaces); n > 0 {
+		last := workspaces[n-1]
 
 		id, err := uuidx.ToBase58(last.Iid)
 		if err != nil {
-			nextCursor = nil
+			return nil, herodot.ErrInternalServerError.WithReason("failed to encode next cursor").WithDebug(err.Error())
 		}
 
 		nextCursor = &id
 	}
 
-	pagination := &models.Pagination{
+	pageInfo := &models.Pagination{
 		NextCursor: nextCursor,
 		Limit:      &limit,
 		HasMore:    &hasMore,
@@ -73,7 +73,7 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 
 	return &models.WorkspaceListResponse{
 		Data:       &workspaceModels,
-		Pagination: pagination,
+		Pagination: pageInfo,
 	}, nil
 }
 

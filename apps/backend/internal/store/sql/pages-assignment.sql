@@ -1,3 +1,10 @@
+-- name: GetAssignmentParentIdByIidAndUser :one
+SELECT parent_id
+FROM pages
+WHERE iid = $1
+    AND "type" = 'course'
+    AND "created_by" = $2;
+
 -- name: ListAssignmentPagesByWorkspaceId :many
 SELECT p.*,
     u.iid AS user_iid,
@@ -40,8 +47,8 @@ WITH inserted AS (
         "created_by"
     )
     VALUES (
-        (SELECT id FROM workspaces WHERE workspaces.iid = sqlc.arg('workspace_iid')),
-        (SELECT id FROM pages WHERE pages.iid = sqlc.narg('parent_iid')),
+        sqlc.arg('workspace_id'),
+        sqlc.arg('parent_id'),
         sqlc.arg('title'),
         sqlc.narg('icon'),
         'assignment'::page_type,
@@ -64,7 +71,7 @@ FROM inserted p
 WITH updated AS (
     UPDATE pages
     SET title = COALESCE(sqlc.narg('title')::text, title),
-        parent_id = COALESCE((SELECT id FROM pages WHERE pages.iid = sqlc.narg('parent_iid')), parent_id),
+        parent_id = COALESCE(sqlc.narg('parent_id')::integer, parent_id),
         icon = COALESCE(sqlc.narg('icon')::text, icon),
         properties = COALESCE(sqlc.narg('properties')::jsonb, properties),
         updated_at = NOW()

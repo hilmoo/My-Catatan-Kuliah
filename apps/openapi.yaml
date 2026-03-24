@@ -588,6 +588,8 @@ components:
         properties:
           properties:
             $ref: '#/components/schemas/AssignmentProperties'
+        required:
+          - parent_id
     AssignmentProperties:
       type: object
       properties:
@@ -799,6 +801,7 @@ components:
           type: string
         parent_id:
           type: string
+          description: Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
         title:
           type: string
         content:

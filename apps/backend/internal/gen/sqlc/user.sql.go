@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const getuserById = `-- name: GetuserById :one
@@ -28,6 +30,19 @@ func (q *Queries) GetuserById(ctx context.Context, id int32) (User, error) {
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getuserIdByIid = `-- name: GetuserIdByIid :one
+SELECT id
+FROM users
+WHERE iid = $1
+`
+
+func (q *Queries) GetuserIdByIid(ctx context.Context, iid uuid.UUID) (int32, error) {
+	row := q.db.QueryRow(ctx, getuserIdByIid, iid)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const updateOrCreateUser = `-- name: UpdateOrCreateUser :one

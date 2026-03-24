@@ -1,3 +1,9 @@
+-- name: GetWorkspaceIdByIidAndUser :one
+SELECT id
+FROM workspaces
+WHERE iid = $1
+    AND owner_id = $2;
+
 -- name: ListWorkspacesByUserId :many
 SELECT *
 FROM workspaces

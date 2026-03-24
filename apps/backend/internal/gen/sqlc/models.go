@@ -17,9 +17,9 @@ type PageType string
 
 const (
 	PageTypeFolder     PageType = "folder"
-	PageTypeNote       PageType = "note"
 	PageTypeCourse     PageType = "course"
 	PageTypeAssignment PageType = "assignment"
+	PageTypeNote       PageType = "note"
 )
 
 func (e *PageType) Scan(src interface{}) error {

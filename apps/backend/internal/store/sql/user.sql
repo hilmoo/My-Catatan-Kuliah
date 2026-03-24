@@ -1,3 +1,8 @@
+-- name: GetuserIidById :one
+SELECT iid
+FROM users
+WHERE "id" = $1;
+
 -- name: GetuserById :one
 SELECT *
 FROM users
