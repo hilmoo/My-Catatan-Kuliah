@@ -10,6 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/labstack/echo/v5 v5.0.4
+	github.com/oapi-codegen/runtime v1.3.0
 	github.com/ory/herodot v0.10.8
 	github.com/pgvector/pgvector-go v0.3.0
 	github.com/pressly/goose/v3 v3.27.0
@@ -19,6 +20,7 @@ require (
 
 require (
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
 	github.com/go-openapi/jsonpointer v0.22.4 // indirect
@@ -41,7 +43,6 @@ require (
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/speakeasy-api/jsonpath v0.6.0 // indirect
 	github.com/speakeasy-api/openapi-overlay v0.10.2 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
 	github.com/woodsbury/decimal128 v1.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

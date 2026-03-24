@@ -1,4 +1,4 @@
-package assignments
+package page
 
 import (
 	"backend/internal/gen/models"
@@ -23,7 +23,7 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 }
 
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
-	group := e.Group("/assignments")
+	group := e.Group("/pages")
 
 	group.GET("", h.listAssignments)
 	group.GET("/:id", h.getAssignmentDetails)
@@ -33,12 +33,12 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 }
 
 func (h *httpHandler) listAssignments(c *echo.Context) error {
-	params, err := validation.BindValidatePayload[models.ListAssignmentsParams](c, h.validate)
+	params, err := validation.BindValidatePayload[models.ListPagesParams](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := listAssignmentsService(c.Request().Context(), listAssignmentsServiceParams{
+	resp, err := listPagesService(c.Request().Context(), listPagesServiceParams{
 		queries: h.queries,
 		params:  params,
 	})
@@ -52,7 +52,7 @@ func (h *httpHandler) listAssignments(c *echo.Context) error {
 func (h *httpHandler) getAssignmentDetails(c *echo.Context) error {
 	id := c.Param("id")
 
-	resp, err := getAssignmentDetailsService(c.Request().Context(), getAssignmentDetailsServiceParams{
+	resp, err := getPageDetailsService(c.Request().Context(), getPageDetailsServiceParams{
 		queries: h.queries,
 		id:      id,
 	})
@@ -64,12 +64,12 @@ func (h *httpHandler) getAssignmentDetails(c *echo.Context) error {
 }
 
 func (h *httpHandler) createAssignment(c *echo.Context) error {
-	payload, err := validation.BindValidatePayload[models.CreateAssignmentJSONRequestBody](c, h.validate)
+	payload, err := validation.BindValidatePayload[models.CreatePageJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := createAssignmentService(c.Request().Context(), createAssignmentServiceParams{
+	resp, err := createPageservice(c.Request().Context(), createPageserviceParams{
 		queries: h.queries,
 		payload: payload,
 	})
@@ -82,12 +82,12 @@ func (h *httpHandler) createAssignment(c *echo.Context) error {
 
 func (h *httpHandler) updateAssignment(c *echo.Context) error {
 	id := c.Param("id")
-	payload, err := validation.BindValidatePayload[models.UpdateAssignmentJSONRequestBody](c, h.validate)
+	payload, err := validation.BindValidatePayload[models.UpdatePageJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := updateAssignmentService(c.Request().Context(), updateAssignmentServiceParams{
+	resp, err := updatePageservice(c.Request().Context(), updatePageserviceParams{
 		queries: h.queries,
 		id:      id,
 		payload: payload,
@@ -102,7 +102,7 @@ func (h *httpHandler) updateAssignment(c *echo.Context) error {
 func (h *httpHandler) deleteAssignment(c *echo.Context) error {
 	id := c.Param("id")
 
-	err := deleteAssignmentService(c.Request().Context(), deleteAssignmentServiceParams{
+	err := deletePageservice(c.Request().Context(), deletePageserviceParams{
 		queries: h.queries,
 		id:      id,
 	})

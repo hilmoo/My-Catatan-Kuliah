@@ -4,6 +4,8 @@ import (
 	"log/slog"
 
 	"backend/internal/feature/auth"
+	"backend/internal/feature/health"
+	"backend/internal/feature/page"
 	"backend/internal/feature/session"
 	"backend/internal/feature/workspace"
 	"backend/internal/gen/sqlc"
@@ -45,11 +47,13 @@ func initHandler(args initHandlerParams) *echo.Echo {
 
 	api := e.Group("/api")
 	auth.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
-	session.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
-	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
+	health.NewHttpHandler().RegisterRoutes(api)
 
 	protected := e.Group("/api")
 	protected.Use(msession.RequireAuth)
+	session.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	page.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 
 	return e
 }

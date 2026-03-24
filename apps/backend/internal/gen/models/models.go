@@ -4,22 +4,73 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/oapi-codegen/runtime"
 )
 
 const (
 	CookieAuthScopes cookieAuthContextKey = "cookieAuth.Scopes"
 )
 
-// Defines values for AssignmentPropertiesStatus.
+// Defines values for PageBaseCreateType.
 const (
-	Done       AssignmentPropertiesStatus = "done"
-	InProgress AssignmentPropertiesStatus = "in_progress"
-	Todo       AssignmentPropertiesStatus = "todo"
+	PageBaseCreateTypeAssignment PageBaseCreateType = "assignment"
+	PageBaseCreateTypeCourse     PageBaseCreateType = "course"
+	PageBaseCreateTypeFolder     PageBaseCreateType = "folder"
+	PageBaseCreateTypeNote       PageBaseCreateType = "note"
 )
 
-// Valid indicates whether the value is a known member of the AssignmentPropertiesStatus enum.
-func (e AssignmentPropertiesStatus) Valid() bool {
+// Valid indicates whether the value is a known member of the PageBaseCreateType enum.
+func (e PageBaseCreateType) Valid() bool {
+	switch e {
+	case PageBaseCreateTypeAssignment:
+		return true
+	case PageBaseCreateTypeCourse:
+		return true
+	case PageBaseCreateTypeFolder:
+		return true
+	case PageBaseCreateTypeNote:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PageCreateType.
+const (
+	PageCreateTypeAssignment PageCreateType = "assignment"
+	PageCreateTypeCourse     PageCreateType = "course"
+	PageCreateTypeFolder     PageCreateType = "folder"
+	PageCreateTypeNote       PageCreateType = "note"
+)
+
+// Valid indicates whether the value is a known member of the PageCreateType enum.
+func (e PageCreateType) Valid() bool {
+	switch e {
+	case PageCreateTypeAssignment:
+		return true
+	case PageCreateTypeCourse:
+		return true
+	case PageCreateTypeFolder:
+		return true
+	case PageCreateTypeNote:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PagePropertiesAssignmentStatus.
+const (
+	Done       PagePropertiesAssignmentStatus = "done"
+	InProgress PagePropertiesAssignmentStatus = "in_progress"
+	Todo       PagePropertiesAssignmentStatus = "todo"
+)
+
+// Valid indicates whether the value is a known member of the PagePropertiesAssignmentStatus enum.
+func (e PagePropertiesAssignmentStatus) Valid() bool {
 	switch e {
 	case Done:
 		return true
@@ -32,136 +83,28 @@ func (e AssignmentPropertiesStatus) Valid() bool {
 	}
 }
 
-// Defines values for FolderType.
+// Defines values for ListPagesParamsType.
 const (
-	FolderTypeFolder FolderType = "folder"
+	Assignment ListPagesParamsType = "assignment"
+	Course     ListPagesParamsType = "course"
+	Folder     ListPagesParamsType = "folder"
+	Note       ListPagesParamsType = "note"
 )
 
-// Valid indicates whether the value is a known member of the FolderType enum.
-func (e FolderType) Valid() bool {
+// Valid indicates whether the value is a known member of the ListPagesParamsType enum.
+func (e ListPagesParamsType) Valid() bool {
 	switch e {
-	case FolderTypeFolder:
+	case Assignment:
+		return true
+	case Course:
+		return true
+	case Folder:
+		return true
+	case Note:
 		return true
 	default:
 		return false
 	}
-}
-
-// Assignment defines model for Assignment.
-type Assignment struct {
-	// CreatedAt Timestamp when the page was created.
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
-	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
-
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// Id Unique identifier of the page.
-	Id *string `json:"id,omitempty" validate:"omitempty"`
-
-	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId   *string               `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *AssignmentProperties `json:"properties,omitempty"`
-
-	// Title Title of the page.
-	Title *string `json:"title,omitempty" validate:"omitempty"`
-
-	// UpdatedAt Timestamp when the page was last updated.
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// WorkspaceId ID of the workspace this page belongs to.
-	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
-}
-
-// AssignmentCreate defines model for AssignmentCreate.
-type AssignmentCreate struct {
-	Content string  `json:"content" validate:"required"`
-	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    string                `json:"parent_id" validate:"omitempty"`
-	Properties  *AssignmentProperties `json:"properties,omitempty"`
-	Title       string                `json:"title" validate:"required"`
-	WorkspaceId string                `json:"workspace_id" validate:"required"`
-}
-
-// AssignmentProperties defines model for AssignmentProperties.
-type AssignmentProperties struct {
-	DueDate *time.Time                  `json:"due_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Status  *AssignmentPropertiesStatus `json:"status,omitempty" validate:"omitempty,oneof=todo in_progress done"`
-}
-
-// AssignmentPropertiesStatus defines model for AssignmentProperties.Status.
-type AssignmentPropertiesStatus string
-
-// AssignmentUpdate defines model for AssignmentUpdate.
-type AssignmentUpdate struct {
-	Content    *string               `json:"content,omitempty" validate:"omitempty"`
-	Icon       *string               `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string               `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *AssignmentProperties `json:"properties,omitempty"`
-	Title      *string               `json:"title,omitempty" validate:"omitempty"`
-}
-
-// Course defines model for Course.
-type Course struct {
-	// CreatedAt Timestamp when the page was created.
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
-	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
-
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// Id Unique identifier of the page.
-	Id *string `json:"id,omitempty" validate:"omitempty"`
-
-	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *CourseProperties `json:"properties,omitempty"`
-
-	// Title Title of the page.
-	Title *string `json:"title,omitempty" validate:"omitempty"`
-
-	// UpdatedAt Timestamp when the page was last updated.
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// WorkspaceId ID of the workspace this page belongs to.
-	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
-}
-
-// CourseCreate defines model for CourseCreate.
-type CourseCreate struct {
-	Content string  `json:"content" validate:"required"`
-	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    *string           `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties  *CourseProperties `json:"properties,omitempty"`
-	Title       string            `json:"title" validate:"required"`
-	WorkspaceId string            `json:"workspace_id" validate:"required"`
-}
-
-// CourseProperties defines model for CourseProperties.
-type CourseProperties struct {
-	Credits    *int       `json:"credits,omitempty" validate:"omitempty"`
-	EndDate    *time.Time `json:"end_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Instructor *string    `json:"instructor,omitempty" validate:"omitempty"`
-	Semester   *string    `json:"semester,omitempty" validate:"omitempty"`
-	StartDate  *time.Time `json:"start_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Subject    *string    `json:"subject,omitempty" validate:"omitempty"`
-}
-
-// CourseUpdate defines model for CourseUpdate.
-type CourseUpdate struct {
-	Content    *string           `json:"content,omitempty" validate:"omitempty"`
-	Icon       *string           `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *CourseProperties `json:"properties,omitempty"`
-	Title      *string           `json:"title,omitempty" validate:"omitempty"`
 }
 
 // Error defines model for Error.
@@ -183,120 +126,6 @@ type Error struct {
 
 	// Status Status string (e.g., 'error').
 	Status string `json:"status" validate:"required"`
-}
-
-// Folder defines model for Folder.
-type Folder struct {
-	// CreatedAt Timestamp when the page was created.
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
-	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
-
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// Id Unique identifier of the page.
-	Id *string `json:"id,omitempty" validate:"omitempty"`
-
-	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *FolderProperties `json:"properties,omitempty"`
-
-	// Title Title of the page.
-	Title *string     `json:"title,omitempty" validate:"omitempty"`
-	Type  *FolderType `json:"type,omitempty" validate:"omitempty,oneof=folder"`
-
-	// UpdatedAt Timestamp when the page was last updated.
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// WorkspaceId ID of the workspace this page belongs to.
-	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
-}
-
-// FolderType defines model for Folder.Type.
-type FolderType string
-
-// FolderCreate defines model for FolderCreate.
-type FolderCreate struct {
-	Content string  `json:"content" validate:"required"`
-	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    *string           `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties  *FolderProperties `json:"properties,omitempty"`
-	Title       string            `json:"title" validate:"required"`
-	WorkspaceId string            `json:"workspace_id" validate:"required"`
-}
-
-// FolderProperties defines model for FolderProperties.
-type FolderProperties struct {
-	Color  *string `json:"color,omitempty" validate:"omitempty"`
-	SortBy *string `json:"sort_by,omitempty" validate:"omitempty"`
-}
-
-// FolderUpdate defines model for FolderUpdate.
-type FolderUpdate struct {
-	Content    *string           `json:"content,omitempty" validate:"omitempty"`
-	Icon       *string           `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *FolderProperties `json:"properties,omitempty"`
-	Title      *string           `json:"title,omitempty" validate:"omitempty"`
-}
-
-// Note defines model for Note.
-type Note struct {
-	// CreatedAt Timestamp when the page was created.
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
-	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
-
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// Id Unique identifier of the page.
-	Id *string `json:"id,omitempty" validate:"omitempty"`
-
-	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId   *string         `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *NoteProperties `json:"properties,omitempty"`
-
-	// Title Title of the page.
-	Title *string `json:"title,omitempty" validate:"omitempty"`
-
-	// UpdatedAt Timestamp when the page was last updated.
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// WorkspaceId ID of the workspace this page belongs to.
-	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
-}
-
-// NoteCreate defines model for NoteCreate.
-type NoteCreate struct {
-	Content string  `json:"content" validate:"required"`
-	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    *string         `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties  *NoteProperties `json:"properties,omitempty"`
-	Title       string          `json:"title" validate:"required"`
-	WorkspaceId string          `json:"workspace_id" validate:"required"`
-}
-
-// NoteProperties defines model for NoteProperties.
-type NoteProperties struct {
-	CoverImage *string   `json:"cover_image,omitempty" validate:"omitempty,uri"`
-	Tags       *[]string `json:"tags,omitempty" validate:"omitempty"`
-}
-
-// NoteUpdate defines model for NoteUpdate.
-type NoteUpdate struct {
-	Content    *string         `json:"content,omitempty" validate:"omitempty"`
-	Icon       *string         `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string         `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *NoteProperties `json:"properties,omitempty"`
-	Title      *string         `json:"title,omitempty" validate:"omitempty"`
 }
 
 // PageBase defines model for PageBase.
@@ -332,10 +161,14 @@ type PageBaseCreate struct {
 	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
 
 	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    *string `json:"parent_id,omitempty" validate:"omitempty"`
-	Title       string  `json:"title" validate:"required"`
-	WorkspaceId string  `json:"workspace_id" validate:"required"`
+	ParentId    *string            `json:"parent_id,omitempty" validate:"omitempty"`
+	Title       string             `json:"title" validate:"required"`
+	Type        PageBaseCreateType `json:"type" validate:"required,oneof=course assignment folder note"`
+	WorkspaceId string             `json:"workspace_id" validate:"required"`
 }
+
+// PageBaseCreateType defines model for PageBaseCreate.Type.
+type PageBaseCreateType string
 
 // PageBaseUpdate defines model for PageBaseUpdate.
 type PageBaseUpdate struct {
@@ -343,6 +176,105 @@ type PageBaseUpdate struct {
 	Icon     *string `json:"icon,omitempty" validate:"omitempty"`
 	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
 	Title    *string `json:"title,omitempty" validate:"omitempty"`
+}
+
+// PageCreate defines model for PageCreate.
+type PageCreate struct {
+	Content string  `json:"content" validate:"required"`
+	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
+	ParentId    *string               `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties  PageCreate_Properties `json:"properties"`
+	Title       string                `json:"title" validate:"required"`
+	Type        PageCreateType        `json:"type" validate:"required,oneof=course assignment folder note"`
+	WorkspaceId string                `json:"workspace_id" validate:"required"`
+}
+
+// PageCreate_Properties defines model for PageCreate.Properties.
+type PageCreate_Properties struct {
+	union json.RawMessage
+}
+
+// PageCreateType defines model for PageCreate.Type.
+type PageCreateType string
+
+// PageDetail defines model for PageDetail.
+type PageDetail struct {
+	// CreatedAt Timestamp when the page was created.
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
+
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// Id Unique identifier of the page.
+	Id *string `json:"id,omitempty" validate:"omitempty"`
+
+	// ParentId ID of the parent page, null if it's a top-level page.
+	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *PageDetail_Properties `json:"properties,omitempty"`
+
+	// Title Title of the page.
+	Title *string `json:"title,omitempty" validate:"omitempty"`
+
+	// UpdatedAt Timestamp when the page was last updated.
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace this page belongs to.
+	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+}
+
+// PageDetail_Properties defines model for PageDetail.Properties.
+type PageDetail_Properties struct {
+	union json.RawMessage
+}
+
+// PagePropertiesAssignment defines model for PagePropertiesAssignment.
+type PagePropertiesAssignment struct {
+	DueDate *time.Time                      `json:"due_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Status  *PagePropertiesAssignmentStatus `json:"status,omitempty" validate:"omitempty,oneof=todo in_progress done"`
+}
+
+// PagePropertiesAssignmentStatus defines model for PagePropertiesAssignment.Status.
+type PagePropertiesAssignmentStatus string
+
+// PagePropertiesCourse defines model for PagePropertiesCourse.
+type PagePropertiesCourse struct {
+	Credits    *int       `json:"credits,omitempty" validate:"omitempty"`
+	EndDate    *time.Time `json:"end_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Instructor *string    `json:"instructor,omitempty" validate:"omitempty"`
+	Semester   *string    `json:"semester,omitempty" validate:"omitempty"`
+	StartDate  *time.Time `json:"start_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Subject    *string    `json:"subject,omitempty" validate:"omitempty"`
+}
+
+// PagePropertiesFolder defines model for PagePropertiesFolder.
+type PagePropertiesFolder struct {
+	Color  *string `json:"color,omitempty" validate:"omitempty"`
+	SortBy *string `json:"sort_by,omitempty" validate:"omitempty"`
+}
+
+// PagePropertiesNote defines model for PagePropertiesNote.
+type PagePropertiesNote struct {
+	CoverImage *string   `json:"cover_image,omitempty" validate:"omitempty,uri"`
+	Tags       *[]string `json:"tags,omitempty" validate:"omitempty"`
+}
+
+// PageUpdate defines model for PageUpdate.
+type PageUpdate struct {
+	Content    *string                `json:"content,omitempty" validate:"omitempty"`
+	Icon       *string                `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *PageUpdate_Properties `json:"properties,omitempty"`
+	Title      *string                `json:"title,omitempty" validate:"omitempty"`
+}
+
+// PageUpdate_Properties defines model for PageUpdate.Properties.
+type PageUpdate_Properties struct {
+	union json.RawMessage
 }
 
 // Pagination defines model for Pagination.
@@ -400,43 +332,16 @@ type ResourceId = string
 // WorkspaceIdParam defines model for WorkspaceIdParam.
 type WorkspaceIdParam = string
 
-// AssignmentDetailResponse defines model for AssignmentDetailResponse.
-type AssignmentDetailResponse = Assignment
-
-// AssignmentListResponse defines model for AssignmentListResponse.
-type AssignmentListResponse struct {
-	Data       *[]Assignment `json:"data,omitempty"`
-	Pagination *Pagination   `json:"pagination,omitempty"`
-}
-
-// CourseDetailResponse defines model for CourseDetailResponse.
-type CourseDetailResponse = Course
-
-// CourseListResponse defines model for CourseListResponse.
-type CourseListResponse struct {
-	Data       *[]Course   `json:"data,omitempty"`
-	Pagination *Pagination `json:"pagination,omitempty"`
-}
-
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse = Error
 
-// FolderDetailResponse defines model for FolderDetailResponse.
-type FolderDetailResponse = Folder
+// PageDetailResponse defines model for PageDetailResponse.
+type PageDetailResponse = PageDetail
 
-// FolderListResponse defines model for FolderListResponse.
-type FolderListResponse struct {
-	Data       *[]Folder   `json:"data,omitempty"`
-	Pagination *Pagination `json:"pagination,omitempty"`
-}
-
-// NoteDetailResponse defines model for NoteDetailResponse.
-type NoteDetailResponse = Note
-
-// NoteListResponse defines model for NoteListResponse.
-type NoteListResponse struct {
-	Data       *[]Note     `json:"data,omitempty"`
-	Pagination *Pagination `json:"pagination,omitempty"`
+// PageListResponse defines model for PageListResponse.
+type PageListResponse struct {
+	Data       *[]PageDetail `json:"data,omitempty"`
+	Pagination *Pagination   `json:"pagination,omitempty"`
 }
 
 // SessionDetailResponse User session
@@ -466,21 +371,6 @@ type WorkspaceUpdateResponse = Workspace
 // cookieAuthContextKey is the context key for cookieAuth security scheme
 type cookieAuthContextKey string
 
-// ListAssignmentsParams defines parameters for ListAssignments.
-type ListAssignmentsParams struct {
-	// Cursor Cursor for pagination (last seen item ID)
-	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
-
-	// Limit Number of items to return per page
-	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
-
-	// WorkspaceId Filter by workspace ID
-	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
-
-	// ParentId Filter by parent page ID
-	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
-}
-
 // HandleGoogleOAuthCallbackParams defines parameters for HandleGoogleOAuthCallback.
 type HandleGoogleOAuthCallbackParams struct {
 	// Code Authorization code returned by Google
@@ -490,8 +380,8 @@ type HandleGoogleOAuthCallbackParams struct {
 	State string `query:"state" json:"state" validate:"required"`
 }
 
-// ListCoursesParams defines parameters for ListCourses.
-type ListCoursesParams struct {
+// ListPagesParams defines parameters for ListPages.
+type ListPagesParams struct {
 	// Cursor Cursor for pagination (last seen item ID)
 	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
@@ -503,37 +393,13 @@ type ListCoursesParams struct {
 
 	// ParentId Filter by parent page ID
 	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
+
+	// Type Filter by page type
+	Type *ListPagesParamsType `query:"type,omitempty" json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
 }
 
-// ListFoldersParams defines parameters for ListFolders.
-type ListFoldersParams struct {
-	// Cursor Cursor for pagination (last seen item ID)
-	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
-
-	// Limit Number of items to return per page
-	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
-
-	// WorkspaceId Filter by workspace ID
-	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
-
-	// ParentId Filter by parent page ID
-	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
-}
-
-// ListNotesParams defines parameters for ListNotes.
-type ListNotesParams struct {
-	// Cursor Cursor for pagination (last seen item ID)
-	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
-
-	// Limit Number of items to return per page
-	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
-
-	// WorkspaceId Filter by workspace ID
-	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
-
-	// ParentId Filter by parent page ID
-	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
-}
+// ListPagesParamsType defines parameters for ListPages.
+type ListPagesParamsType string
 
 // ListSessionsParams defines parameters for ListSessions.
 type ListSessionsParams struct {
@@ -556,32 +422,356 @@ type ListWorkspacesParams struct {
 	OwnerId *string `query:"owner_id,omitempty" json:"owner_id,omitempty" validate:"omitempty"`
 }
 
-// CreateAssignmentJSONRequestBody defines body for CreateAssignment for application/json ContentType.
-type CreateAssignmentJSONRequestBody = AssignmentCreate
+// CreatePageJSONRequestBody defines body for CreatePage for application/json ContentType.
+type CreatePageJSONRequestBody = PageCreate
 
-// UpdateAssignmentJSONRequestBody defines body for UpdateAssignment for application/json ContentType.
-type UpdateAssignmentJSONRequestBody = AssignmentUpdate
-
-// CreateCourseJSONRequestBody defines body for CreateCourse for application/json ContentType.
-type CreateCourseJSONRequestBody = CourseCreate
-
-// UpdateCourseJSONRequestBody defines body for UpdateCourse for application/json ContentType.
-type UpdateCourseJSONRequestBody = CourseUpdate
-
-// CreateFolderJSONRequestBody defines body for CreateFolder for application/json ContentType.
-type CreateFolderJSONRequestBody = FolderCreate
-
-// UpdateFolderJSONRequestBody defines body for UpdateFolder for application/json ContentType.
-type UpdateFolderJSONRequestBody = FolderUpdate
-
-// CreateNoteJSONRequestBody defines body for CreateNote for application/json ContentType.
-type CreateNoteJSONRequestBody = NoteCreate
-
-// UpdateNoteJSONRequestBody defines body for UpdateNote for application/json ContentType.
-type UpdateNoteJSONRequestBody = NoteUpdate
+// UpdatePageJSONRequestBody defines body for UpdatePage for application/json ContentType.
+type UpdatePageJSONRequestBody = PageUpdate
 
 // CreateWorkspaceJSONRequestBody defines body for CreateWorkspace for application/json ContentType.
 type CreateWorkspaceJSONRequestBody = WorkspaceCreate
 
 // UpdateWorkspaceJSONRequestBody defines body for UpdateWorkspace for application/json ContentType.
 type UpdateWorkspaceJSONRequestBody = WorkspaceCreate
+
+// AsPagePropertiesCourse returns the union data inside the PageCreate_Properties as a PagePropertiesCourse
+func (t PageCreate_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
+	var body PagePropertiesCourse
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesCourse overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesCourse
+func (t *PageCreate_Properties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesCourse performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesCourse
+func (t *PageCreate_Properties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesAssignment returns the union data inside the PageCreate_Properties as a PagePropertiesAssignment
+func (t PageCreate_Properties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
+	var body PagePropertiesAssignment
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesAssignment overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesAssignment
+func (t *PageCreate_Properties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesAssignment performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesAssignment
+func (t *PageCreate_Properties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesFolder returns the union data inside the PageCreate_Properties as a PagePropertiesFolder
+func (t PageCreate_Properties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
+	var body PagePropertiesFolder
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesFolder overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesFolder
+func (t *PageCreate_Properties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesFolder performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesFolder
+func (t *PageCreate_Properties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesNote returns the union data inside the PageCreate_Properties as a PagePropertiesNote
+func (t PageCreate_Properties) AsPagePropertiesNote() (PagePropertiesNote, error) {
+	var body PagePropertiesNote
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesNote overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesNote
+func (t *PageCreate_Properties) FromPagePropertiesNote(v PagePropertiesNote) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesNote performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesNote
+func (t *PageCreate_Properties) MergePagePropertiesNote(v PagePropertiesNote) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t PageCreate_Properties) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *PageCreate_Properties) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsPagePropertiesCourse returns the union data inside the PageDetail_Properties as a PagePropertiesCourse
+func (t PageDetail_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
+	var body PagePropertiesCourse
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesCourse overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesCourse
+func (t *PageDetail_Properties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesCourse performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesCourse
+func (t *PageDetail_Properties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesAssignment returns the union data inside the PageDetail_Properties as a PagePropertiesAssignment
+func (t PageDetail_Properties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
+	var body PagePropertiesAssignment
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesAssignment overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesAssignment
+func (t *PageDetail_Properties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesAssignment performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesAssignment
+func (t *PageDetail_Properties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesFolder returns the union data inside the PageDetail_Properties as a PagePropertiesFolder
+func (t PageDetail_Properties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
+	var body PagePropertiesFolder
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesFolder overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesFolder
+func (t *PageDetail_Properties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesFolder performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesFolder
+func (t *PageDetail_Properties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesNote returns the union data inside the PageDetail_Properties as a PagePropertiesNote
+func (t PageDetail_Properties) AsPagePropertiesNote() (PagePropertiesNote, error) {
+	var body PagePropertiesNote
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesNote overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesNote
+func (t *PageDetail_Properties) FromPagePropertiesNote(v PagePropertiesNote) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesNote performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesNote
+func (t *PageDetail_Properties) MergePagePropertiesNote(v PagePropertiesNote) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t PageDetail_Properties) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *PageDetail_Properties) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsPagePropertiesCourse returns the union data inside the PageUpdate_Properties as a PagePropertiesCourse
+func (t PageUpdate_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
+	var body PagePropertiesCourse
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesCourse overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesCourse
+func (t *PageUpdate_Properties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesCourse performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesCourse
+func (t *PageUpdate_Properties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesAssignment returns the union data inside the PageUpdate_Properties as a PagePropertiesAssignment
+func (t PageUpdate_Properties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
+	var body PagePropertiesAssignment
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesAssignment overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesAssignment
+func (t *PageUpdate_Properties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesAssignment performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesAssignment
+func (t *PageUpdate_Properties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesFolder returns the union data inside the PageUpdate_Properties as a PagePropertiesFolder
+func (t PageUpdate_Properties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
+	var body PagePropertiesFolder
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesFolder overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesFolder
+func (t *PageUpdate_Properties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesFolder performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesFolder
+func (t *PageUpdate_Properties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPagePropertiesNote returns the union data inside the PageUpdate_Properties as a PagePropertiesNote
+func (t PageUpdate_Properties) AsPagePropertiesNote() (PagePropertiesNote, error) {
+	var body PagePropertiesNote
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPagePropertiesNote overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesNote
+func (t *PageUpdate_Properties) FromPagePropertiesNote(v PagePropertiesNote) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergePagePropertiesNote performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesNote
+func (t *PageUpdate_Properties) MergePagePropertiesNote(v PagePropertiesNote) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t PageUpdate_Properties) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *PageUpdate_Properties) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}

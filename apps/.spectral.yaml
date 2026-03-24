@@ -13,19 +13,6 @@ rules:
       function: truthy
     severity: warn
 
-  api-health-format:
-    message: "Health path (`/heath`) SHOULD support Health Check Response Format"
-    description: "Use existing standards (and draft standards) wherever possible, like the draft standard for health checks: https://datatracker.ietf.org/doc/html/draft-inadarei-api-health-check. To learn more about health check endpoints see https://apisyouwonthate.com/blog/health-checks-with-kubernetes."
-    formats: 
-      - oas3
-    given: "$.paths[/health]..responses[*].content.*~"
-    then:
-      function: enumeration
-      functionOptions:
-        values: 
-          - "application/vnd.health+json"
-    severity: warn
-
   paths-kebab-case:
     message: "{{property}} should be kebab-case (lower case and separated with hyphens)."
     description: "Naming conventions don't particular matter, and picking something consistent is the most important thing. So let's pick kebab-case for paths, because... well it's nice and why not."

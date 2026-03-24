@@ -7,89 +7,6 @@ servers:
 - url: /api
   description: Base URL for API endpoints
 paths:
-  /assignments:
-    get:
-      operationId: listAssignments
-      summary: List assignments
-      description: List of assignments
-      parameters:
-      - $ref: '#/components/parameters/CursorParam'
-      - $ref: '#/components/parameters/LimitParam'
-      - $ref: '#/components/parameters/WorkspaceIdParam'
-      - $ref: '#/components/parameters/ParentIdParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/AssignmentListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Assignments
-    post:
-      operationId: createAssignment
-      summary: Create an assignment
-      description: Create a new assignment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AssignmentCreate'
-      responses:
-        '201':
-          $ref: '#/components/responses/AssignmentDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Assignments
-  /assignments/{id}:
-    parameters:
-    - $ref: '#/components/parameters/ResourceId'
-    get:
-      operationId: getAssignment
-      summary: Get assignment details
-      description: Get details of a specific assignment
-      responses:
-        '200':
-          $ref: '#/components/responses/AssignmentDetailResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Assignments
-    patch:
-      operationId: updateAssignment
-      summary: Update assignment
-      description: Update an existing assignment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AssignmentUpdate'
-      responses:
-        '200':
-          $ref: '#/components/responses/AssignmentDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Assignments
-    delete:
-      operationId: deleteAssignment
-      summary: Delete assignment
-      description: Delete an assignment
-      responses:
-        '204':
-          description: Assignment deleted
-      tags:
-      - Assignments
   /auth/oauth/google:
     get:
       operationId: redirectToGoogleOAuth
@@ -133,9 +50,20 @@ paths:
       security: []
       tags:
       - Auth
-  /courses:
+  /health:
     get:
-      operationId: listCourses
+      operationId: healthCheck
+      summary: Health check endpoint
+      description: Returns a simple status message to indicate the API is running.
+      responses:
+        '204':
+          description: API is healthy
+      security: []
+      tags:
+      - Health
+  /pages:
+    get:
+      operationId: listPages
       summary: List courses
       description: List all courses
       parameters:
@@ -143,62 +71,73 @@ paths:
       - $ref: '#/components/parameters/LimitParam'
       - $ref: '#/components/parameters/WorkspaceIdParam'
       - $ref: '#/components/parameters/ParentIdParam'
+      - name: type
+        in: query
+        description: Filter by page type
+        schema:
+          type: string
+          default: folder
+          enum:
+          - course
+          - assignment
+          - folder
+          - note
       responses:
         '200':
-          $ref: '#/components/responses/CourseListResponse'
+          $ref: '#/components/responses/PageListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse'
         '500':
           $ref: '#/components/responses/ErrorResponse'
       tags:
-      - Courses
+      - Pages
     post:
-      operationId: createCourse
-      summary: Create a course
-      description: Create a new course
+      operationId: createPage
+      summary: Create a page
+      description: Create a new page (course, assignment, folder, or note)
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CourseCreate'
+              $ref: '#/components/schemas/PageCreate'
       responses:
         '201':
-          $ref: '#/components/responses/CourseDetailResponse'
+          $ref: '#/components/responses/PageDetailResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse'
         '500':
           $ref: '#/components/responses/ErrorResponse'
       tags:
-      - Courses
-  /courses/{id}:
+      - Pages
+  /pages/{id}:
     parameters:
     - $ref: '#/components/parameters/ResourceId'
     get:
-      operationId: getCourse
-      summary: Get course details
-      description: Get details of a specific course
+      operationId: getPage
+      summary: Get page details
+      description: Get details of a specific page
       responses:
         '200':
-          $ref: '#/components/responses/CourseDetailResponse'
+          $ref: '#/components/responses/PageDetailResponse'
         '404':
           $ref: '#/components/responses/ErrorResponse'
         '500':
           $ref: '#/components/responses/ErrorResponse'
       tags:
-      - Courses
+      - Pages
     patch:
-      operationId: updateCourse
-      summary: Update course
-      description: Update an existing course
+      operationId: updatePage
+      summary: Update page
+      description: Update an existing page (course, assignment, folder, or note)
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CourseUpdate'
+              $ref: '#/components/schemas/PageUpdate'
       responses:
         '200':
-          $ref: '#/components/responses/CourseDetailResponse'
+          $ref: '#/components/responses/PageDetailResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse'
         '404':
@@ -206,204 +145,16 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       tags:
-      - Courses
+      - Pages
     delete:
-      operationId: deleteCourse
-      summary: Delete course
-      description: Delete a course
+      operationId: deletePage
+      summary: Delete page
+      description: Delete a page (course, assignment, folder, or note)
       responses:
         '204':
-          description: Course deleted
+          description: Page deleted
       tags:
-      - Courses
-  /folders:
-    get:
-      operationId: listFolders
-      summary: List folders
-      description: List all folders
-      parameters:
-      - $ref: '#/components/parameters/CursorParam'
-      - $ref: '#/components/parameters/LimitParam'
-      - $ref: '#/components/parameters/WorkspaceIdParam'
-      - $ref: '#/components/parameters/ParentIdParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/FolderListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Folders
-    post:
-      operationId: createFolder
-      summary: Create a folder
-      description: Create a new folder
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FolderCreate'
-      responses:
-        '201':
-          $ref: '#/components/responses/FolderDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Folders
-  /folders/{id}:
-    parameters:
-    - $ref: '#/components/parameters/ResourceId'
-    get:
-      operationId: getFolder
-      summary: Get folder details
-      description: Get details of a specific folder
-      responses:
-        '200':
-          $ref: '#/components/responses/FolderDetailResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Folders
-    patch:
-      operationId: updateFolder
-      summary: Update folder
-      description: Update an existing folder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FolderUpdate'
-      responses:
-        '200':
-          $ref: '#/components/responses/FolderDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Folders
-    delete:
-      operationId: deleteFolder
-      summary: Delete folder
-      description: Delete a folder
-      responses:
-        '204':
-          description: Folder deleted
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Folders
-  /health:
-    get:
-      operationId: healthCheck
-      summary: Health check endpoint
-      description: Returns a simple status message to indicate the API is running.
-      responses:
-        '200':
-          description: API is healthy
-          content:
-            application/vnd.health+json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-      tags:
-      - Health
-  /notes:
-    get:
-      operationId: listNotes
-      summary: List notes
-      description: List all notes
-      parameters:
-      - $ref: '#/components/parameters/CursorParam'
-      - $ref: '#/components/parameters/LimitParam'
-      - $ref: '#/components/parameters/WorkspaceIdParam'
-      - $ref: '#/components/parameters/ParentIdParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/NoteListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Notes
-    post:
-      operationId: createNote
-      summary: Create a note
-      description: Create a new note
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NoteCreate'
-      responses:
-        '201':
-          $ref: '#/components/responses/NoteDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Notes
-  /notes/{id}:
-    parameters:
-    - $ref: '#/components/parameters/ResourceId'
-    get:
-      operationId: getNote
-      summary: Get note details
-      description: Get details of a specific note
-      responses:
-        '200':
-          $ref: '#/components/responses/NoteDetailResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Notes
-    patch:
-      operationId: updateNote
-      summary: Update note
-      description: Update an existing note
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NoteUpdate'
-      responses:
-        '200':
-          $ref: '#/components/responses/NoteDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-      tags:
-      - Notes
-    delete:
-      operationId: deleteNote
-      summary: Delete note
-      description: Delete a note
-      responses:
-        '204':
-          description: Note deleted
-      tags:
-      - Notes
+      - Pages
   /sessions:
     get:
       operationId: listSessions
@@ -539,6 +290,12 @@ paths:
       - Workspaces
 components:
   parameters:
+    CursorParam:
+      description: Cursor for pagination (last seen item ID)
+      name: cursor
+      in: query
+      schema:
+        type: string
     LimitParam:
       description: Number of items to return per page
       name: limit
@@ -548,12 +305,6 @@ components:
         default: 20
         maximum: 100
         minimum: 1
-    CursorParam:
-      description: Cursor for pagination (last seen item ID)
-      name: cursor
-      in: query
-      schema:
-        type: string
     ParentIdParam:
       name: parent_id
       in: query
@@ -574,84 +325,6 @@ components:
       schema:
         type: string
   schemas:
-    Assignment:
-      allOf:
-      - $ref: '#/components/schemas/PageBase'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/AssignmentProperties'
-    AssignmentCreate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseCreate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/AssignmentProperties'
-        required:
-          - parent_id
-    AssignmentProperties:
-      type: object
-      properties:
-        due_date:
-          type: string
-          format: date-time
-        status:
-          type: string
-          default: todo
-          enum:
-          - todo
-          - in_progress
-          - done
-    AssignmentUpdate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseUpdate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/AssignmentProperties'
-    Course:
-      allOf:
-      - $ref: '#/components/schemas/PageBase'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/CourseProperties'
-    CourseCreate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseCreate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/CourseProperties'
-    CourseProperties:
-      type: object
-      properties:
-        subject:
-          type: string
-          example: Mathematics
-        instructor:
-          type: string
-          example: Dr. Alan Turing
-        semester:
-          type: string
-          example: Spring 2026
-        credits:
-          type: integer
-          example: 3
-        start_date:
-          type: string
-          format: date-time
-        end_date:
-          type: string
-          format: date-time
-    CourseUpdate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseUpdate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/CourseProperties'
     Error:
       type: object
       properties:
@@ -686,75 +359,6 @@ components:
       - status
       - error
       - code
-    Folder:
-      allOf:
-      - $ref: '#/components/schemas/PageBase'
-      - type: object
-        properties:
-          type:
-            type: string
-            enum:
-            - folder
-          properties:
-            $ref: '#/components/schemas/FolderProperties'
-    FolderCreate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseCreate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/FolderProperties'
-    FolderProperties:
-      type: object
-      properties:
-        color:
-          type: string
-          example: '#3B82F6'
-        sort_by:
-          type: string
-          example: title_asc
-    FolderUpdate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseUpdate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/FolderProperties'
-    Note:
-      allOf:
-      - $ref: '#/components/schemas/PageBase'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/NoteProperties'
-    NoteCreate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseCreate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/NoteProperties'
-    NoteProperties:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-          example:
-          - meeting-notes
-          - q1-planning
-        cover_image:
-          type: string
-          format: uri
-          example: https://example.com/images/abstract-header.png
-    NoteUpdate:
-      allOf:
-      - $ref: '#/components/schemas/PageBaseUpdate'
-      - type: object
-        properties:
-          properties:
-            $ref: '#/components/schemas/NoteProperties'
     PageBase:
       type: object
       properties:
@@ -800,18 +404,29 @@ components:
         workspace_id:
           type: string
         parent_id:
+          description: Folders can be nested under another folder. Courses can only
+            be nested under folders. Assignments can only be nested under courses.
+            Notes can be nested under folders, courses, or other notes. Only Assignments
+            cannot be top-level pages.
           type: string
-          description: Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
         title:
           type: string
         content:
           type: string
         icon:
           type: string
+        type:
+          type: string
+          enum:
+          - course
+          - assignment
+          - folder
+          - note
       required:
       - workspace_id
       - title
       - content
+      - type
     PageBaseUpdate:
       type: object
       properties:
@@ -823,6 +438,98 @@ components:
           type: string
         icon:
           type: string
+    PageCreate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseCreate'
+      - type: object
+        properties:
+          properties:
+            oneOf:
+            - $ref: '#/components/schemas/PagePropertiesCourse'
+            - $ref: '#/components/schemas/PagePropertiesAssignment'
+            - $ref: '#/components/schemas/PagePropertiesFolder'
+            - $ref: '#/components/schemas/PagePropertiesNote'
+        required:
+        - properties
+    PageDetail:
+      allOf:
+      - $ref: '#/components/schemas/PageBase'
+      - type: object
+        properties:
+          properties:
+            oneOf:
+            - $ref: '#/components/schemas/PagePropertiesCourse'
+            - $ref: '#/components/schemas/PagePropertiesAssignment'
+            - $ref: '#/components/schemas/PagePropertiesFolder'
+            - $ref: '#/components/schemas/PagePropertiesNote'
+    PagePropertiesAssignment:
+      type: object
+      properties:
+        due_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          default: todo
+          enum:
+          - todo
+          - in_progress
+          - done
+    PagePropertiesCourse:
+      type: object
+      properties:
+        subject:
+          type: string
+          example: Mathematics
+        instructor:
+          type: string
+          example: Dr. Alan Turing
+        semester:
+          type: string
+          example: Spring 2026
+        credits:
+          type: integer
+          example: 3
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+    PagePropertiesFolder:
+      type: object
+      properties:
+        color:
+          type: string
+          example: '#3B82F6'
+        sort_by:
+          type: string
+          example: title_asc
+    PagePropertiesNote:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          example:
+          - meeting-notes
+          - q1-planning
+        cover_image:
+          type: string
+          format: uri
+          example: https://example.com/images/abstract-header.png
+    PageUpdate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseUpdate'
+      - type: object
+        properties:
+          properties:
+            oneOf:
+            - $ref: '#/components/schemas/PagePropertiesCourse'
+            - $ref: '#/components/schemas/PagePropertiesAssignment'
+            - $ref: '#/components/schemas/PagePropertiesFolder'
+            - $ref: '#/components/schemas/PagePropertiesNote'
     Pagination:
       type: object
       properties:
@@ -886,77 +593,20 @@ components:
       required:
       - name
   responses:
-    AssignmentDetailResponse:
-      description: Assignment details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Assignment'
-    AssignmentListResponse:
-      description: List of assignments
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Assignment'
-              pagination:
-                $ref: '#/components/schemas/Pagination'
-    CourseDetailResponse:
-      description: Course details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Course'
-    CourseListResponse:
-      description: List of courses
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Course'
-              pagination:
-                $ref: '#/components/schemas/Pagination'
     ErrorResponse:
       description: Generic error response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    FolderDetailResponse:
-      description: Folder details
+    PageDetailResponse:
+      description: Page details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Folder'
-    FolderListResponse:
-      description: List of folders
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Folder'
-              pagination:
-                $ref: '#/components/schemas/Pagination'
-    NoteDetailResponse:
-      description: Note details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Note'
-    NoteListResponse:
-      description: List of notes
+            $ref: '#/components/schemas/PageDetail'
+    PageListResponse:
+      description: List of pages
       content:
         application/json:
           schema:
@@ -965,7 +615,7 @@ components:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Note'
+                  $ref: '#/components/schemas/PageDetail'
               pagination:
                 $ref: '#/components/schemas/Pagination'
     SessionDetailResponse:
@@ -1024,18 +674,12 @@ components:
       in: cookie
       name: session
 tags:
-- name: Assignments
-  description: Assignment management operations
 - name: Auth
   description: Authentication operations
-- name: Courses
-  description: Course management operations
-- name: Folders
-  description: Folder management operations
 - name: Health
   description: API health check endpoint
-- name: Notes
-  description: Note management operations
+- name: Pages
+  description: Page management operations
 - name: Sessions
   description: Session management operations
 - name: Workspaces
