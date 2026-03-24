@@ -49,7 +49,7 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 			Id:        id,
 			Name:      w.Name,
 			OwnerId:   "",
-			CreatedAt: w.CreatedAt.Time,
+			CreatedAt: w.CreatedAt,
 		})
 	}
 
@@ -105,7 +105,7 @@ func createWorkspaceService(ctx context.Context, args createWorkspaceServicePara
 		Id:        id,
 		Name:      workspace.Name,
 		OwnerId:   "",
-		CreatedAt: workspace.CreatedAt.Time,
+		CreatedAt: workspace.CreatedAt,
 	}, nil
 }
 
@@ -169,7 +169,7 @@ func getWorkspaceDetailsService(ctx context.Context, args getWorkspaceDetailsSer
 		Id:        id,
 		Name:      workspace.Name,
 		OwnerId:   "",
-		CreatedAt: workspace.CreatedAt.Time,
+		CreatedAt: workspace.CreatedAt,
 	}, nil
 
 }
@@ -209,6 +209,6 @@ func updateWorkspaceService(ctx context.Context, args updateWorkspaceServicePara
 		Id:        id,
 		Name:      workspace.Name,
 		OwnerId:   "",
-		CreatedAt: workspace.CreatedAt.Time,
+		CreatedAt: workspace.CreatedAt,
 	}, nil
 }

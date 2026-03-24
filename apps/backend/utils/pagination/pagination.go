@@ -3,10 +3,10 @@ package pagination
 import (
 	"backend/utils/uuidx"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
 
-func GetPagination(cursorStr *string, limit *int, defaultLimit int) (int, pgtype.UUID) {
+func GetPagination(cursorStr *string, limit *int, defaultLimit int) (int, *uuid.UUID) {
 	actualLimit := defaultLimit
 	if limit != nil && *limit > 0 {
 		actualLimit = *limit
@@ -14,7 +14,7 @@ func GetPagination(cursorStr *string, limit *int, defaultLimit int) (int, pgtype
 
 	cursor, err := uuidx.FromBase58ToP(*cursorStr)
 	if err != nil {
-		cursor = pgtype.UUID{Valid: false}
+		cursor = nil
 	}
 
 	return actualLimit, cursor

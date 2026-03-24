@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/ory/herodot"
 )
 
@@ -16,7 +15,7 @@ type AssignmentData struct {
 	Iid          uuid.UUID
 	WorkspaceIid uuid.UUID
 	UserIid      uuid.UUID
-	ParentIid    pgtype.UUID
+	ParentIid    *uuid.UUID
 	Properties   []byte
 	Icon         *string
 	Title        string
@@ -68,8 +67,8 @@ func mapAssignmentListToModel(a db.ListAssignmentPagesByWorkspaceIdRow) (*models
 		Properties:   a.Properties,
 		Icon:         a.Icon,
 		Title:        a.Title,
-		CreatedAt:    a.CreatedAt.Time,
-		UpdatedAt:    a.UpdatedAt.Time,
+		CreatedAt:    a.CreatedAt,
+		UpdatedAt:    a.UpdatedAt,
 	})
 }
 
@@ -82,8 +81,8 @@ func mapAssignmentGetToModel(a db.GetAssignmentPageByIidRow) (*models.Assignment
 		Properties:   a.Properties,
 		Icon:         a.Icon,
 		Title:        a.Title,
-		CreatedAt:    a.CreatedAt.Time,
-		UpdatedAt:    a.UpdatedAt.Time,
+		CreatedAt:    a.CreatedAt,
+		UpdatedAt:    a.UpdatedAt,
 	})
 }
 
@@ -96,8 +95,8 @@ func mapAssignmentCreateToModel(a db.CreateAssignmentPageRow) (*models.Assignmen
 		Properties:   a.Properties,
 		Icon:         a.Icon,
 		Title:        a.Title,
-		CreatedAt:    a.CreatedAt.Time,
-		UpdatedAt:    a.UpdatedAt.Time,
+		CreatedAt:    a.CreatedAt,
+		UpdatedAt:    a.UpdatedAt,
 	})
 }
 
@@ -110,7 +109,7 @@ func mapAssignmentUpdateToModel(a db.UpdateAssignmentPageRow) (*models.Assignmen
 		Properties:   a.Properties,
 		Icon:         a.Icon,
 		Title:        a.Title,
-		CreatedAt:    a.CreatedAt.Time,
-		UpdatedAt:    a.UpdatedAt.Time,
+		CreatedAt:    a.CreatedAt,
+		UpdatedAt:    a.UpdatedAt,
 	})
 }

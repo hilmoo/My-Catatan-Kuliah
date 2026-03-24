@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/ory/herodot"
 	"golang.org/x/oauth2"
 )
@@ -77,7 +76,7 @@ func googleCallbackService(
 	err = args.queries.CreateNewSession(ctx, db.CreateNewSessionParams{
 		UserID:    int32(user.ID),
 		HashToken: msession.HashSessionToken(args.secret, token),
-		ExpiresAt: pgtype.Timestamptz{Time: time.Now().Add(24 * time.Hour * 7), Valid: true},
+		ExpiresAt: time.Now().UTC().Add(24 * time.Hour * 7),
 		IpAddress: &args.ipAddress,
 		UserAgent: &args.userAgent,
 	})

@@ -7,9 +7,9 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createAssignmentPage = `-- name: CreateAssignmentPage :one
@@ -64,10 +64,10 @@ type CreateAssignmentPageRow struct {
 	Type         PageType
 	Properties   []byte
 	CreatedBy    int32
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 	UserIid      uuid.UUID
-	ParentIid    pgtype.UUID
+	ParentIid    *uuid.UUID
 	WorkspaceIid uuid.UUID
 }
 
@@ -146,10 +146,10 @@ type GetAssignmentPageByIidRow struct {
 	Type         PageType
 	Properties   []byte
 	CreatedBy    int32
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 	UserIid      uuid.UUID
-	ParentIid    pgtype.UUID
+	ParentIid    *uuid.UUID
 	WorkspaceIid uuid.UUID
 }
 
@@ -217,7 +217,7 @@ type ListAssignmentPagesByWorkspaceIdParams struct {
 	WorkspaceID int32
 	CreatedBy   int32
 	Limit       int32
-	Cursor      pgtype.UUID
+	Cursor      *uuid.UUID
 }
 
 type ListAssignmentPagesByWorkspaceIdRow struct {
@@ -230,10 +230,10 @@ type ListAssignmentPagesByWorkspaceIdRow struct {
 	Type         PageType
 	Properties   []byte
 	CreatedBy    int32
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 	UserIid      uuid.UUID
-	ParentIid    pgtype.UUID
+	ParentIid    *uuid.UUID
 	WorkspaceIid uuid.UUID
 }
 
@@ -321,11 +321,11 @@ type UpdateAssignmentPageRow struct {
 	Type         PageType
 	Properties   []byte
 	CreatedBy    int32
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
-	UpdatedAt_2  pgtype.Timestamptz
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	UpdatedAt_2  time.Time
 	UserIid      uuid.UUID
-	ParentIid    pgtype.UUID
+	ParentIid    *uuid.UUID
 	WorkspaceIid uuid.UUID
 }
 

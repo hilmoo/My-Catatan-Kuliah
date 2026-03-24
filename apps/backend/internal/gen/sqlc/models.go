@@ -7,9 +7,9 @@ package db
 import (
 	"database/sql/driver"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pgvector/pgvector-go"
 )
 
@@ -65,7 +65,7 @@ type DocumentChunk struct {
 	Content     string
 	Embedding   *pgvector.Vector
 	FtsVector   interface{}
-	CreatedAt   pgtype.Timestamptz
+	CreatedAt   time.Time
 }
 
 type Page struct {
@@ -78,8 +78,8 @@ type Page struct {
 	Type        PageType
 	Properties  []byte
 	CreatedBy   int32
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type PagesContent struct {
@@ -93,10 +93,10 @@ type Session struct {
 	ID        uuid.UUID
 	UserID    int32
 	HashToken string
-	ExpiresAt pgtype.Timestamptz
+	ExpiresAt time.Time
 	IpAddress *string
 	UserAgent *string
-	CreatedAt pgtype.Timestamptz
+	CreatedAt time.Time
 }
 
 type User struct {
@@ -106,7 +106,7 @@ type User struct {
 	Name       string
 	AvatarUrl  *string
 	ProviderID string
-	CreatedAt  pgtype.Timestamptz
+	CreatedAt  **time.Time
 }
 
 type Workspace struct {
@@ -114,5 +114,5 @@ type Workspace struct {
 	Iid       uuid.UUID
 	Name      string
 	OwnerID   int32
-	CreatedAt pgtype.Timestamptz
+	CreatedAt time.Time
 }

@@ -9,7 +9,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createWorkspace = `-- name: CreateWorkspace :one
@@ -109,7 +108,7 @@ LIMIT $2
 type ListWorkspacesByUserIdParams struct {
 	OwnerID int32
 	Limit   int32
-	Cursor  pgtype.UUID
+	Cursor  *uuid.UUID
 }
 
 func (q *Queries) ListWorkspacesByUserId(ctx context.Context, arg ListWorkspacesByUserIdParams) ([]Workspace, error) {

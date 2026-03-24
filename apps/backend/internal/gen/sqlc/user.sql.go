@@ -32,17 +32,17 @@ func (q *Queries) GetuserById(ctx context.Context, id int32) (User, error) {
 	return i, err
 }
 
-const getuserIdByIid = `-- name: GetuserIdByIid :one
-SELECT id
+const getuserIidById = `-- name: GetuserIidById :one
+SELECT iid
 FROM users
-WHERE iid = $1
+WHERE "id" = $1
 `
 
-func (q *Queries) GetuserIdByIid(ctx context.Context, iid uuid.UUID) (int32, error) {
-	row := q.db.QueryRow(ctx, getuserIdByIid, iid)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+func (q *Queries) GetuserIidById(ctx context.Context, id int32) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getuserIidById, id)
+	var iid uuid.UUID
+	err := row.Scan(&iid)
+	return iid, err
 }
 
 const updateOrCreateUser = `-- name: UpdateOrCreateUser :one

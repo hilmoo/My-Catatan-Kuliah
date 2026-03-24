@@ -7,9 +7,9 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createNewSession = `-- name: CreateNewSession :exec
@@ -21,7 +21,7 @@ RETURNING id, user_id, hash_token, expires_at, ip_address, user_agent, created_a
 type CreateNewSessionParams struct {
 	UserID    int32
 	HashToken string
-	ExpiresAt pgtype.Timestamptz
+	ExpiresAt time.Time
 	IpAddress *string
 	UserAgent *string
 }
@@ -127,7 +127,7 @@ LIMIT $2
 type ListSessionsByUserIdParams struct {
 	UserID int32
 	Limit  int32
-	Cursor pgtype.UUID
+	Cursor *uuid.UUID
 }
 
 func (q *Queries) ListSessionsByUserId(ctx context.Context, arg ListSessionsByUserIdParams) ([]Session, error) {

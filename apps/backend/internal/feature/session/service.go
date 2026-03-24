@@ -45,10 +45,10 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 		sessionModels = append(sessionModels, models.Session{
 			Id:        s.ID.String(),
 			UserId:    user.Iid.String(),
-			ExpiresAt: s.ExpiresAt.Time,
+			ExpiresAt: s.ExpiresAt,
 			IpAddress: s.IpAddress,
 			UserAgent: s.UserAgent,
-			CreatedAt: s.CreatedAt.Time,
+			CreatedAt: s.CreatedAt,
 		})
 	}
 
@@ -96,10 +96,10 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 
 	return &models.SessionDetailResponse{
 		Id:        session.ID.String(),
-		ExpiresAt: session.ExpiresAt.Time,
+		ExpiresAt: session.ExpiresAt,
 		IpAddress: session.IpAddress,
 		UserAgent: session.UserAgent,
-		CreatedAt: session.CreatedAt.Time,
+		CreatedAt: session.CreatedAt,
 	}, nil
 }
 
