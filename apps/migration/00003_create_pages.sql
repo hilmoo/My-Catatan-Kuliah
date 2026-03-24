@@ -15,8 +15,6 @@ CREATE TABLE "pages"(
     "title" text NOT NULL DEFAULT 'Untitled',
     "icon" text,
     "type" page_type NOT NULL DEFAULT 'note',
-    "content_html" text,
-    "content_blob" bytea,
     "properties" jsonb DEFAULT '{}',
     "created_by" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW(),

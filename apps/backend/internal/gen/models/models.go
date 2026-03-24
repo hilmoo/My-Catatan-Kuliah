@@ -79,10 +79,10 @@ type Assignment struct {
 type AssignmentCreate struct {
 	Content     string                `json:"content" validate:"required"`
 	Icon        *string               `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *int                  `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId    *string               `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *AssignmentProperties `json:"properties,omitempty"`
 	Title       string                `json:"title" validate:"required"`
-	WorkspaceId int                   `json:"workspace_id" validate:"required"`
+	WorkspaceId string                `json:"workspace_id" validate:"required"`
 }
 
 // AssignmentProperties defines model for AssignmentProperties.
@@ -98,7 +98,7 @@ type AssignmentPropertiesStatus string
 type AssignmentUpdate struct {
 	Content    *string               `json:"content,omitempty" validate:"omitempty"`
 	Icon       *string               `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *int                  `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId   *string               `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties *AssignmentProperties `json:"properties,omitempty"`
 	Title      *string               `json:"title,omitempty" validate:"omitempty"`
 }
@@ -135,10 +135,10 @@ type Course struct {
 type CourseCreate struct {
 	Content     string            `json:"content" validate:"required"`
 	Icon        *string           `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId    *string           `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *CourseProperties `json:"properties,omitempty"`
 	Title       string            `json:"title" validate:"required"`
-	WorkspaceId int               `json:"workspace_id" validate:"required"`
+	WorkspaceId string            `json:"workspace_id" validate:"required"`
 }
 
 // CourseProperties defines model for CourseProperties.
@@ -155,7 +155,7 @@ type CourseProperties struct {
 type CourseUpdate struct {
 	Content    *string           `json:"content,omitempty" validate:"omitempty"`
 	Icon       *string           `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties *CourseProperties `json:"properties,omitempty"`
 	Title      *string           `json:"title,omitempty" validate:"omitempty"`
 }
@@ -217,10 +217,10 @@ type FolderType string
 type FolderCreate struct {
 	Content     string            `json:"content" validate:"required"`
 	Icon        *string           `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId    *string           `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *FolderProperties `json:"properties,omitempty"`
 	Title       string            `json:"title" validate:"required"`
-	WorkspaceId int               `json:"workspace_id" validate:"required"`
+	WorkspaceId string            `json:"workspace_id" validate:"required"`
 }
 
 // FolderProperties defines model for FolderProperties.
@@ -233,7 +233,7 @@ type FolderProperties struct {
 type FolderUpdate struct {
 	Content    *string           `json:"content,omitempty" validate:"omitempty"`
 	Icon       *string           `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties *FolderProperties `json:"properties,omitempty"`
 	Title      *string           `json:"title,omitempty" validate:"omitempty"`
 }
@@ -270,10 +270,10 @@ type Note struct {
 type NoteCreate struct {
 	Content     string          `json:"content" validate:"required"`
 	Icon        *string         `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *int            `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId    *string         `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties  *NoteProperties `json:"properties,omitempty"`
 	Title       string          `json:"title" validate:"required"`
-	WorkspaceId int             `json:"workspace_id" validate:"required"`
+	WorkspaceId string          `json:"workspace_id" validate:"required"`
 }
 
 // NoteProperties defines model for NoteProperties.
@@ -286,7 +286,7 @@ type NoteProperties struct {
 type NoteUpdate struct {
 	Content    *string         `json:"content,omitempty" validate:"omitempty"`
 	Icon       *string         `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *int            `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId   *string         `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties *NoteProperties `json:"properties,omitempty"`
 	Title      *string         `json:"title,omitempty" validate:"omitempty"`
 }
@@ -322,24 +322,24 @@ type PageBase struct {
 type PageBaseCreate struct {
 	Content     string  `json:"content" validate:"required"`
 	Icon        *string `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *int    `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId    *string `json:"parent_id,omitempty" validate:"omitempty"`
 	Title       string  `json:"title" validate:"required"`
-	WorkspaceId int     `json:"workspace_id" validate:"required"`
+	WorkspaceId string  `json:"workspace_id" validate:"required"`
 }
 
 // PageBaseUpdate defines model for PageBaseUpdate.
 type PageBaseUpdate struct {
 	Content  *string `json:"content,omitempty" validate:"omitempty"`
 	Icon     *string `json:"icon,omitempty" validate:"omitempty"`
-	ParentId *int    `json:"parent_id,omitempty" validate:"omitempty"`
+	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
 	Title    *string `json:"title,omitempty" validate:"omitempty"`
 }
 
 // Pagination defines model for Pagination.
 type Pagination struct {
-	HasMore *bool `json:"has_more,omitempty" validate:"omitempty"`
-	Limit   *int  `json:"limit,omitempty" validate:"omitempty"`
-	Page    *int  `json:"page,omitempty" validate:"omitempty"`
+	HasMore    *bool   `json:"has_more,omitempty" validate:"omitempty"`
+	Limit      *int    `json:"limit,omitempty" validate:"omitempty"`
+	NextCursor *string `json:"next_cursor,omitempty" validate:"omitempty"`
 }
 
 // Session User session
@@ -375,11 +375,11 @@ type WorkspaceCreate struct {
 	Name string `json:"name" validate:"required"`
 }
 
+// CursorParam defines model for CursorParam.
+type CursorParam = string
+
 // LimitParam defines model for LimitParam.
 type LimitParam = int
-
-// PageParam defines model for PageParam.
-type PageParam = int
 
 // ParentIdParam defines model for ParentIdParam.
 type ParentIdParam = string
@@ -458,8 +458,8 @@ type cookieAuthContextKey string
 
 // ListAssignmentsParams defines parameters for ListAssignments.
 type ListAssignmentsParams struct {
-	// Page Page number for pagination
-	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+	// Cursor Cursor for pagination (last seen item ID)
+	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
 	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
@@ -482,8 +482,8 @@ type HandleGoogleOAuthCallbackParams struct {
 
 // ListCoursesParams defines parameters for ListCourses.
 type ListCoursesParams struct {
-	// Page Page number for pagination
-	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+	// Cursor Cursor for pagination (last seen item ID)
+	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
 	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
@@ -497,8 +497,8 @@ type ListCoursesParams struct {
 
 // ListFoldersParams defines parameters for ListFolders.
 type ListFoldersParams struct {
-	// Page Page number for pagination
-	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+	// Cursor Cursor for pagination (last seen item ID)
+	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
 	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
@@ -512,8 +512,8 @@ type ListFoldersParams struct {
 
 // ListNotesParams defines parameters for ListNotes.
 type ListNotesParams struct {
-	// Page Page number for pagination
-	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+	// Cursor Cursor for pagination (last seen item ID)
+	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
 	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
@@ -527,8 +527,8 @@ type ListNotesParams struct {
 
 // ListSessionsParams defines parameters for ListSessions.
 type ListSessionsParams struct {
-	// Page Page number for pagination
-	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+	// Cursor Cursor for pagination (last seen item ID)
+	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
 	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
@@ -536,8 +536,8 @@ type ListSessionsParams struct {
 
 // ListWorkspacesParams defines parameters for ListWorkspaces.
 type ListWorkspacesParams struct {
-	// Page Page number for pagination
-	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+	// Cursor Cursor for pagination (last seen item ID)
+	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
 
 	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`

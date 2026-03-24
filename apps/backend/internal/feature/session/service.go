@@ -5,6 +5,7 @@ import (
 	db "backend/internal/gen/sqlc"
 	msession "backend/internal/transport/middleware/session"
 	"backend/utils/pagination"
+	"backend/utils/uuidx"
 	"context"
 
 	"github.com/google/uuid"
@@ -17,7 +18,7 @@ type listSessionsServiceParams struct {
 }
 
 func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*models.SessionListResponse, *herodot.DefaultError) {
-	limit, offset, currentPage := pagination.GetPagination(args.params.Page, args.params.Limit, 20)
+	limit, cursor := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
 	fetchLimit := limit + 1
 
 	user, err := msession.GetUserFromContext(ctx)
@@ -28,7 +29,7 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 	sessions, err := args.queries.ListSessionsByUserId(ctx, db.ListSessionsByUserIdParams{
 		UserID: user.ID,
 		Limit:  int32(fetchLimit),
-		Offset: int32(offset),
+		Cursor: cursor,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to list sessions").WithDebug(err.Error())
@@ -51,10 +52,22 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 		})
 	}
 
+	var nextCursor *string
+	if len(sessions) > 0 {
+		last := sessions[len(sessions)-1]
+
+		id, err := uuidx.ToBase58(last.ID)
+		if err != nil {
+			nextCursor = nil
+		}
+
+		nextCursor = &id
+	}
+
 	pagination := &models.Pagination{
-		Page:    &currentPage,
-		Limit:   &limit,
-		HasMore: &hasMore,
+		NextCursor: nextCursor,
+		Limit:      &limit,
+		HasMore:    &hasMore,
 	}
 
 	return &models.SessionListResponse{

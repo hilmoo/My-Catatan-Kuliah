@@ -17,17 +17,21 @@ WHERE "hash_token" = $1;
 SELECT *
 FROM sessions
 WHERE "user_id" = $1
-  AND "expires_at" > NOW()
-ORDER BY "created_at" DESC, "id" DESC
-LIMIT $2 OFFSET $3;
-
+    AND "expires_at" > NOW()
+    AND (sqlc.narg(CURSOR)::uuid IS NULL
+        OR id < sqlc.narg(CURSOR)::uuid)
+ORDER BY "id" DESC
+LIMIT $2;
 
 -- name: GetSessionById :one
 SELECT *
 FROM sessions
 WHERE "id" = $1
-    AND "expires_at" > NOW() AND "user_id" = $2;
+    AND "expires_at" > NOW()
+    AND "user_id" = $2;
 
 -- name: DeleteSessionById :exec
 DELETE FROM sessions
-WHERE "id" = $1 AND "user_id" = $2;
+WHERE "id" = $1
+    AND "user_id" = $2;
+

@@ -39,7 +39,8 @@ func (q *Queries) CreateNewSession(ctx context.Context, arg CreateNewSessionPara
 
 const deleteSessionById = `-- name: DeleteSessionById :exec
 DELETE FROM sessions
-WHERE "id" = $1 AND "user_id" = $2
+WHERE "id" = $1
+    AND "user_id" = $2
 `
 
 type DeleteSessionByIdParams struct {
@@ -66,7 +67,8 @@ const getSessionById = `-- name: GetSessionById :one
 SELECT id, user_id, hash_token, expires_at, ip_address, user_agent, created_at
 FROM sessions
 WHERE "id" = $1
-    AND "expires_at" > NOW() AND "user_id" = $2
+    AND "expires_at" > NOW()
+    AND "user_id" = $2
 `
 
 type GetSessionByIdParams struct {
@@ -115,19 +117,21 @@ const listSessionsByUserId = `-- name: ListSessionsByUserId :many
 SELECT id, user_id, hash_token, expires_at, ip_address, user_agent, created_at
 FROM sessions
 WHERE "user_id" = $1
-  AND "expires_at" > NOW()
-ORDER BY "created_at" DESC, "id" DESC
-LIMIT $2 OFFSET $3
+    AND "expires_at" > NOW()
+    AND ($3::uuid IS NULL
+        OR id < $3::uuid)
+ORDER BY "id" DESC
+LIMIT $2
 `
 
 type ListSessionsByUserIdParams struct {
 	UserID int32
 	Limit  int32
-	Offset int32
+	Cursor pgtype.UUID
 }
 
 func (q *Queries) ListSessionsByUserId(ctx context.Context, arg ListSessionsByUserIdParams) ([]Session, error) {
-	rows, err := q.db.Query(ctx, listSessionsByUserId, arg.UserID, arg.Limit, arg.Offset)
+	rows, err := q.db.Query(ctx, listSessionsByUserId, arg.UserID, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}

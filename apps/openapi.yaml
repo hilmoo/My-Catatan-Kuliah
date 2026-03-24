@@ -13,7 +13,7 @@ paths:
       summary: List assignments
       description: List of assignments
       parameters:
-      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
       - $ref: '#/components/parameters/WorkspaceIdParam'
       - $ref: '#/components/parameters/ParentIdParam'
@@ -139,7 +139,7 @@ paths:
       summary: List courses
       description: List all courses
       parameters:
-      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
       - $ref: '#/components/parameters/WorkspaceIdParam'
       - $ref: '#/components/parameters/ParentIdParam'
@@ -222,7 +222,7 @@ paths:
       summary: List folders
       description: List all folders
       parameters:
-      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
       - $ref: '#/components/parameters/WorkspaceIdParam'
       - $ref: '#/components/parameters/ParentIdParam'
@@ -327,7 +327,7 @@ paths:
       summary: List notes
       description: List all notes
       parameters:
-      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
       - $ref: '#/components/parameters/WorkspaceIdParam'
       - $ref: '#/components/parameters/ParentIdParam'
@@ -410,7 +410,7 @@ paths:
       summary: List sessions
       description: List all sessions for the current user
       parameters:
-      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
       responses:
         '200':
@@ -457,7 +457,7 @@ paths:
       summary: List workspaces
       description: List all workspaces for the current user
       parameters:
-      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
       - name: owner_id
         in: query
@@ -548,14 +548,12 @@ components:
         default: 20
         maximum: 100
         minimum: 1
-    PageParam:
-      description: Page number for pagination
-      name: page
+    CursorParam:
+      description: Cursor for pagination (last seen item ID)
+      name: cursor
       in: query
       schema:
-        type: integer
-        default: 1
-        minimum: 1
+        type: string
     ParentIdParam:
       name: parent_id
       in: query
@@ -798,10 +796,9 @@ components:
       type: object
       properties:
         workspace_id:
-          type: integer
+          type: string
         parent_id:
-          type: integer
-          nullable: true
+          type: string
         title:
           type: string
         content:
@@ -816,8 +813,7 @@ components:
       type: object
       properties:
         parent_id:
-          type: integer
-          nullable: true
+          type: string
         title:
           type: string
         content:
@@ -827,8 +823,8 @@ components:
     Pagination:
       type: object
       properties:
-        page:
-          type: integer
+        next_cursor:
+          type: string
         limit:
           type: integer
         has_more:

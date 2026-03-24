@@ -76,12 +76,17 @@ type Page struct {
 	Title       string
 	Icon        *string
 	Type        PageType
-	ContentHtml *string
-	ContentBlob []byte
 	Properties  []byte
 	CreatedBy   int32
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
+}
+
+type PagesContent struct {
+	ID          int32
+	PageID      int32
+	ContentHtml *string
+	ContentBlob []byte
 }
 
 type Session struct {

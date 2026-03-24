@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createWorkspace = `-- name: CreateWorkspace :one
@@ -37,7 +38,8 @@ func (q *Queries) CreateWorkspace(ctx context.Context, arg CreateWorkspaceParams
 
 const deleteWorkspaceByIidAndUser = `-- name: DeleteWorkspaceByIidAndUser :exec
 DELETE FROM workspaces
-WHERE "iid" = $1 AND "owner_id" = $2
+WHERE "iid" = $1
+    AND "owner_id" = $2
 `
 
 type DeleteWorkspaceByIidAndUserParams struct {
@@ -53,7 +55,8 @@ func (q *Queries) DeleteWorkspaceByIidAndUser(ctx context.Context, arg DeleteWor
 const getWorkspaceByIidAndUser = `-- name: GetWorkspaceByIidAndUser :one
 SELECT id, iid, name, owner_id, created_at
 FROM workspaces
-WHERE "iid" = $1 AND "owner_id" = $2
+WHERE "iid" = $1
+    AND "owner_id" = $2
 `
 
 type GetWorkspaceByIidAndUserParams struct {
@@ -78,18 +81,20 @@ const listWorkspacesByUserId = `-- name: ListWorkspacesByUserId :many
 SELECT id, iid, name, owner_id, created_at
 FROM workspaces
 WHERE "owner_id" = $1
-ORDER BY "created_at" DESC, "id" DESC
-LIMIT $2 OFFSET $3
+    AND ($3::uuid IS NULL
+        OR iid < $3::uuid)
+ORDER BY "iid" DESC
+LIMIT $2
 `
 
 type ListWorkspacesByUserIdParams struct {
 	OwnerID int32
 	Limit   int32
-	Offset  int32
+	Cursor  pgtype.UUID
 }
 
 func (q *Queries) ListWorkspacesByUserId(ctx context.Context, arg ListWorkspacesByUserIdParams) ([]Workspace, error) {
-	rows, err := q.db.Query(ctx, listWorkspacesByUserId, arg.OwnerID, arg.Limit, arg.Offset)
+	rows, err := q.db.Query(ctx, listWorkspacesByUserId, arg.OwnerID, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
@@ -115,9 +120,11 @@ func (q *Queries) ListWorkspacesByUserId(ctx context.Context, arg ListWorkspaces
 }
 
 const updateWorkspaceByIidAndUser = `-- name: UpdateWorkspaceByIidAndUser :one
-UPDATE workspaces
+UPDATE
+    workspaces
 SET "name" = COALESCE($3, "name")
-WHERE "iid" = $1 AND "owner_id" = $2
+WHERE "iid" = $1
+    AND "owner_id" = $2
 RETURNING id, iid, name, owner_id, created_at
 `
 

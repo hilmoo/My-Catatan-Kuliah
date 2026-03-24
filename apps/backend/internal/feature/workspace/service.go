@@ -17,7 +17,7 @@ type listWorkspacesServiceParams struct {
 }
 
 func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams) (*models.WorkspaceListResponse, *herodot.DefaultError) {
-	limit, offset, currentPage := pagination.GetPagination(args.params.Page, args.params.Limit, 20)
+	limit, cursor := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
 	fetchLimit := limit + 1
 
 	user, err := msession.GetUserFromContext(ctx)
@@ -28,7 +28,7 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 	workspaces, err := args.queries.ListWorkspacesByUserId(ctx, db.ListWorkspacesByUserIdParams{
 		OwnerID: user.ID,
 		Limit:   int32(fetchLimit),
-		Offset:  int32(offset),
+		Cursor:  cursor,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to list workspaces").WithDebug(err.Error())
@@ -53,10 +53,22 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 		})
 	}
 
+	var nextCursor *string
+	if len(workspaces) > 0 {
+		last := workspaces[len(workspaces)-1]
+
+		id, err := uuidx.ToBase58(last.Iid)
+		if err != nil {
+			nextCursor = nil
+		}
+
+		nextCursor = &id
+	}
+
 	pagination := &models.Pagination{
-		Page:    &currentPage,
-		Limit:   &limit,
-		HasMore: &hasMore,
+		NextCursor: nextCursor,
+		Limit:      &limit,
+		HasMore:    &hasMore,
 	}
 
 	return &models.WorkspaceListResponse{
