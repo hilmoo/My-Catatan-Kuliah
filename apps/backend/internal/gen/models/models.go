@@ -11,28 +11,153 @@ const (
 	CookieAuthScopes cookieAuthContextKey = "cookieAuth.Scopes"
 )
 
-// Defines values for PageType.
+// Defines values for AssignmentPropertiesStatus.
 const (
-	Assignment PageType = "assignment"
-	Course     PageType = "course"
-	Folder     PageType = "folder"
-	Note       PageType = "note"
+	Done       AssignmentPropertiesStatus = "done"
+	InProgress AssignmentPropertiesStatus = "in_progress"
+	Todo       AssignmentPropertiesStatus = "todo"
 )
 
-// Valid indicates whether the value is a known member of the PageType enum.
-func (e PageType) Valid() bool {
+// Valid indicates whether the value is a known member of the AssignmentPropertiesStatus enum.
+func (e AssignmentPropertiesStatus) Valid() bool {
 	switch e {
-	case Assignment:
+	case Done:
 		return true
-	case Course:
+	case InProgress:
 		return true
-	case Folder:
-		return true
-	case Note:
+	case Todo:
 		return true
 	default:
 		return false
 	}
+}
+
+// Defines values for FolderType.
+const (
+	FolderTypeFolder FolderType = "folder"
+)
+
+// Valid indicates whether the value is a known member of the FolderType enum.
+func (e FolderType) Valid() bool {
+	switch e {
+	case FolderTypeFolder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Assignment defines model for Assignment.
+type Assignment struct {
+	// CreatedAt Timestamp when the page was created.
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
+
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// Id Unique identifier of the page.
+	Id *string `json:"id,omitempty" validate:"omitempty"`
+
+	// ParentId ID of the parent page, null if it's a top-level page.
+	ParentId   *string               `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *AssignmentProperties `json:"properties,omitempty"`
+
+	// Title Title of the page.
+	Title *string `json:"title,omitempty" validate:"omitempty"`
+
+	// UpdatedAt Timestamp when the page was last updated.
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace this page belongs to.
+	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+}
+
+// AssignmentCreate defines model for AssignmentCreate.
+type AssignmentCreate struct {
+	Content     string                `json:"content" validate:"required"`
+	Icon        *string               `json:"icon,omitempty" validate:"omitempty"`
+	ParentId    *int                  `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties  *AssignmentProperties `json:"properties,omitempty"`
+	Title       string                `json:"title" validate:"required"`
+	WorkspaceId int                   `json:"workspace_id" validate:"required"`
+}
+
+// AssignmentProperties defines model for AssignmentProperties.
+type AssignmentProperties struct {
+	DueDate *time.Time                  `json:"due_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Status  *AssignmentPropertiesStatus `json:"status,omitempty" validate:"omitempty,oneof=todo in_progress done"`
+}
+
+// AssignmentPropertiesStatus defines model for AssignmentProperties.Status.
+type AssignmentPropertiesStatus string
+
+// AssignmentUpdate defines model for AssignmentUpdate.
+type AssignmentUpdate struct {
+	Content    *string               `json:"content,omitempty" validate:"omitempty"`
+	Icon       *string               `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *int                  `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *AssignmentProperties `json:"properties,omitempty"`
+	Title      *string               `json:"title,omitempty" validate:"omitempty"`
+}
+
+// Course defines model for Course.
+type Course struct {
+	// CreatedAt Timestamp when the page was created.
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
+
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// Id Unique identifier of the page.
+	Id *string `json:"id,omitempty" validate:"omitempty"`
+
+	// ParentId ID of the parent page, null if it's a top-level page.
+	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *CourseProperties `json:"properties,omitempty"`
+
+	// Title Title of the page.
+	Title *string `json:"title,omitempty" validate:"omitempty"`
+
+	// UpdatedAt Timestamp when the page was last updated.
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace this page belongs to.
+	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+}
+
+// CourseCreate defines model for CourseCreate.
+type CourseCreate struct {
+	Content     string            `json:"content" validate:"required"`
+	Icon        *string           `json:"icon,omitempty" validate:"omitempty"`
+	ParentId    *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties  *CourseProperties `json:"properties,omitempty"`
+	Title       string            `json:"title" validate:"required"`
+	WorkspaceId int               `json:"workspace_id" validate:"required"`
+}
+
+// CourseProperties defines model for CourseProperties.
+type CourseProperties struct {
+	Credits    *int       `json:"credits,omitempty" validate:"omitempty"`
+	EndDate    *time.Time `json:"end_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Instructor *string    `json:"instructor,omitempty" validate:"omitempty"`
+	Semester   *string    `json:"semester,omitempty" validate:"omitempty"`
+	StartDate  *time.Time `json:"start_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Subject    *string    `json:"subject,omitempty" validate:"omitempty"`
+}
+
+// CourseUpdate defines model for CourseUpdate.
+type CourseUpdate struct {
+	Content    *string           `json:"content,omitempty" validate:"omitempty"`
+	Icon       *string           `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *CourseProperties `json:"properties,omitempty"`
+	Title      *string           `json:"title,omitempty" validate:"omitempty"`
 }
 
 // Error defines model for Error.
@@ -56,92 +181,184 @@ type Error struct {
 	Status string `json:"status" validate:"required"`
 }
 
-// Page defines model for Page.
-type Page struct {
-	// ContentBlob Binary content encoded in Base64.
-	ContentBlob *[]byte   `json:"contentBlob,omitempty" validate:"omitempty,byte"`
-	ContentHtml *string   `json:"contentHtml,omitempty" validate:"omitempty"`
-	CreatedAt   time.Time `json:"createdAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+// Folder defines model for Folder.
+type Folder struct {
+	// CreatedAt Timestamp when the page was created.
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
 
-	// CreatedBy ID of the user who created the page.
-	CreatedBy string  `json:"createdBy" validate:"required"`
-	Icon      *string `json:"icon,omitempty" validate:"omitempty"`
+	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
 
-	// Id Unique identifier.
-	Id string `json:"id" validate:"required"`
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
 
-	// ParentId ID of the parent page.
-	ParentId *string `json:"parentId,omitempty" validate:"omitempty"`
+	// Id Unique identifier of the page.
+	Id *string `json:"id,omitempty" validate:"omitempty"`
 
-	// Properties JSON object containing page properties.
-	Properties *map[string]interface{} `json:"properties,omitempty" validate:"omitempty"`
-	Title      string                  `json:"title" validate:"required"`
+	// ParentId ID of the parent page, null if it's a top-level page.
+	ParentId   *string           `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *FolderProperties `json:"properties,omitempty"`
 
-	// Type Type of the page.
-	Type      PageType  `json:"type" validate:"omitempty,oneof=folder note course assignment"`
-	UpdatedAt time.Time `json:"updatedAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	// Title Title of the page.
+	Title *string     `json:"title,omitempty" validate:"omitempty"`
+	Type  *FolderType `json:"type,omitempty" validate:"omitempty,oneof=folder"`
 
-	// WorkspaceId ID of the workspace.
-	WorkspaceId string `json:"workspaceId" validate:"required"`
+	// UpdatedAt Timestamp when the page was last updated.
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace this page belongs to.
+	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
 }
 
-// PageCreate defines model for PageCreate.
-type PageCreate struct {
-	ContentBlob *[]byte `json:"contentBlob,omitempty" validate:"omitempty,byte"`
-	ContentHtml *string `json:"contentHtml,omitempty" validate:"omitempty"`
+// FolderType defines model for Folder.Type.
+type FolderType string
 
-	// CreatedBy ID of the creator.
-	CreatedBy  string                  `json:"createdBy" validate:"required"`
-	Icon       *string                 `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string                 `json:"parentId,omitempty" validate:"omitempty"`
-	Properties *map[string]interface{} `json:"properties,omitempty" validate:"omitempty"`
-	Title      *string                 `json:"title,omitempty" validate:"omitempty"`
-
-	// Type Type of the page.
-	Type        PageType `json:"type" validate:"omitempty,oneof=folder note course assignment"`
-	WorkspaceId string   `json:"workspaceId" validate:"required"`
+// FolderCreate defines model for FolderCreate.
+type FolderCreate struct {
+	Content     string            `json:"content" validate:"required"`
+	Icon        *string           `json:"icon,omitempty" validate:"omitempty"`
+	ParentId    *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties  *FolderProperties `json:"properties,omitempty"`
+	Title       string            `json:"title" validate:"required"`
+	WorkspaceId int               `json:"workspace_id" validate:"required"`
 }
 
-// PageType Type of the page.
-type PageType string
+// FolderProperties defines model for FolderProperties.
+type FolderProperties struct {
+	Color  *string `json:"color,omitempty" validate:"omitempty"`
+	SortBy *string `json:"sort_by,omitempty" validate:"omitempty"`
+}
 
-// PageUpdate defines model for PageUpdate.
-type PageUpdate struct {
-	ContentBlob *[]byte                 `json:"contentBlob,omitempty" validate:"omitempty,byte"`
-	ContentHtml *string                 `json:"contentHtml,omitempty" validate:"omitempty"`
-	Icon        *string                 `json:"icon,omitempty" validate:"omitempty"`
-	ParentId    *string                 `json:"parentId,omitempty" validate:"omitempty"`
-	Properties  *map[string]interface{} `json:"properties,omitempty" validate:"omitempty"`
-	Title       *string                 `json:"title,omitempty" validate:"omitempty"`
+// FolderUpdate defines model for FolderUpdate.
+type FolderUpdate struct {
+	Content    *string           `json:"content,omitempty" validate:"omitempty"`
+	Icon       *string           `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *int              `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *FolderProperties `json:"properties,omitempty"`
+	Title      *string           `json:"title,omitempty" validate:"omitempty"`
+}
 
-	// Type Type of the page.
-	Type *PageType `json:"type,omitempty" validate:"omitempty,oneof=folder note course assignment"`
+// Note defines model for Note.
+type Note struct {
+	// CreatedAt Timestamp when the page was created.
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
+
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// Id Unique identifier of the page.
+	Id *string `json:"id,omitempty" validate:"omitempty"`
+
+	// ParentId ID of the parent page, null if it's a top-level page.
+	ParentId   *string         `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *NoteProperties `json:"properties,omitempty"`
+
+	// Title Title of the page.
+	Title *string `json:"title,omitempty" validate:"omitempty"`
+
+	// UpdatedAt Timestamp when the page was last updated.
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace this page belongs to.
+	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+}
+
+// NoteCreate defines model for NoteCreate.
+type NoteCreate struct {
+	Content     string          `json:"content" validate:"required"`
+	Icon        *string         `json:"icon,omitempty" validate:"omitempty"`
+	ParentId    *int            `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties  *NoteProperties `json:"properties,omitempty"`
+	Title       string          `json:"title" validate:"required"`
+	WorkspaceId int             `json:"workspace_id" validate:"required"`
+}
+
+// NoteProperties defines model for NoteProperties.
+type NoteProperties struct {
+	CoverImage *string   `json:"cover_image,omitempty" validate:"omitempty,uri"`
+	Tags       *[]string `json:"tags,omitempty" validate:"omitempty"`
+}
+
+// NoteUpdate defines model for NoteUpdate.
+type NoteUpdate struct {
+	Content    *string         `json:"content,omitempty" validate:"omitempty"`
+	Icon       *string         `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *int            `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *NoteProperties `json:"properties,omitempty"`
+	Title      *string         `json:"title,omitempty" validate:"omitempty"`
+}
+
+// PageBase defines model for PageBase.
+type PageBase struct {
+	// CreatedAt Timestamp when the page was created.
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
+
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+
+	// Id Unique identifier of the page.
+	Id *string `json:"id,omitempty" validate:"omitempty"`
+
+	// ParentId ID of the parent page, null if it's a top-level page.
+	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
+
+	// Title Title of the page.
+	Title *string `json:"title,omitempty" validate:"omitempty"`
+
+	// UpdatedAt Timestamp when the page was last updated.
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+
+	// WorkspaceId ID of the workspace this page belongs to.
+	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+}
+
+// PageBaseCreate defines model for PageBaseCreate.
+type PageBaseCreate struct {
+	Content     string  `json:"content" validate:"required"`
+	Icon        *string `json:"icon,omitempty" validate:"omitempty"`
+	ParentId    *int    `json:"parent_id,omitempty" validate:"omitempty"`
+	Title       string  `json:"title" validate:"required"`
+	WorkspaceId int     `json:"workspace_id" validate:"required"`
+}
+
+// PageBaseUpdate defines model for PageBaseUpdate.
+type PageBaseUpdate struct {
+	Content  *string `json:"content,omitempty" validate:"omitempty"`
+	Icon     *string `json:"icon,omitempty" validate:"omitempty"`
+	ParentId *int    `json:"parent_id,omitempty" validate:"omitempty"`
+	Title    *string `json:"title,omitempty" validate:"omitempty"`
 }
 
 // Pagination defines model for Pagination.
 type Pagination struct {
-	HasMore *bool `json:"hasMore,omitempty" validate:"omitempty"`
+	HasMore *bool `json:"has_more,omitempty" validate:"omitempty"`
 	Limit   *int  `json:"limit,omitempty" validate:"omitempty"`
 	Page    *int  `json:"page,omitempty" validate:"omitempty"`
 }
 
 // Session User session
 type Session struct {
-	CreatedAt time.Time `json:"createdAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	ExpiresAt time.Time `json:"expiresAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt time.Time `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	ExpiresAt time.Time `json:"expires_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 
 	// Id Session token (identifier).
 	Id        string  `json:"id" validate:"required"`
-	IpAddress *string `json:"ipAddress,omitempty" validate:"omitempty"`
-	UserAgent *string `json:"userAgent,omitempty" validate:"omitempty"`
+	IpAddress *string `json:"ip_address,omitempty" validate:"omitempty"`
+	UserAgent *string `json:"user_agent,omitempty" validate:"omitempty"`
 
 	// UserId User ID, empty for the current authenticated session.
-	UserId string `json:"userId" validate:"required"`
+	UserId string `json:"user_id" validate:"required"`
 }
 
 // Workspace defines model for Workspace.
 type Workspace struct {
-	CreatedAt time.Time `json:"createdAt" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt time.Time `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 
 	// Id Unique identifier.
 	Id string `json:"id" validate:"required"`
@@ -150,20 +367,12 @@ type Workspace struct {
 	Name string `json:"name" validate:"required"`
 
 	// OwnerId ID of the user who owns the workspace, empty for the current authenticated session.
-	OwnerId string `json:"ownerId" validate:"required"`
+	OwnerId string `json:"owner_id" validate:"required"`
 }
 
 // WorkspaceCreate defines model for WorkspaceCreate.
 type WorkspaceCreate struct {
 	Name string `json:"name" validate:"required"`
-
-	// OwnerId ID of the owner.
-	OwnerId string `json:"ownerId" validate:"required"`
-}
-
-// WorkspaceUpdate defines model for WorkspaceUpdate.
-type WorkspaceUpdate struct {
-	Name *string `json:"name,omitempty" validate:"omitempty"`
 }
 
 // LimitParam defines model for LimitParam.
@@ -172,102 +381,197 @@ type LimitParam = int
 // PageParam defines model for PageParam.
 type PageParam = int
 
+// ParentIdParam defines model for ParentIdParam.
+type ParentIdParam = string
+
 // ResourceId defines model for ResourceId.
 type ResourceId = string
 
-// BadRequest defines model for BadRequest.
-type BadRequest = Error
+// WorkspaceIdParam defines model for WorkspaceIdParam.
+type WorkspaceIdParam = string
 
-// CreatePageResponse defines model for CreatePageResponse.
-type CreatePageResponse = Page
+// AssignmentDetailResponse defines model for AssignmentDetailResponse.
+type AssignmentDetailResponse = Assignment
 
-// CreateWorkspaceResponse defines model for CreateWorkspaceResponse.
-type CreateWorkspaceResponse = Workspace
+// AssignmentListResponse defines model for AssignmentListResponse.
+type AssignmentListResponse struct {
+	Data       *[]Assignment `json:"data,omitempty"`
+	Pagination *Pagination   `json:"pagination,omitempty"`
+}
 
-// GetPageDetailResponse defines model for GetPageDetailResponse.
-type GetPageDetailResponse = Page
+// CourseDetailResponse defines model for CourseDetailResponse.
+type CourseDetailResponse = Course
 
-// GetSessionDetailResponse User session
-type GetSessionDetailResponse = Session
-
-// GetWorkspaceDetailResponse defines model for GetWorkspaceDetailResponse.
-type GetWorkspaceDetailResponse = Workspace
-
-// InternalServerError defines model for InternalServerError.
-type InternalServerError = Error
-
-// ListPagesResponse defines model for ListPagesResponse.
-type ListPagesResponse struct {
-	Data       *[]Page     `json:"data,omitempty"`
+// CourseListResponse defines model for CourseListResponse.
+type CourseListResponse struct {
+	Data       *[]Course   `json:"data,omitempty"`
 	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
-// ListSessionsResponse defines model for ListSessionsResponse.
-type ListSessionsResponse struct {
+// ErrorResponse defines model for ErrorResponse.
+type ErrorResponse = Error
+
+// FolderDetailResponse defines model for FolderDetailResponse.
+type FolderDetailResponse = Folder
+
+// FolderListResponse defines model for FolderListResponse.
+type FolderListResponse struct {
+	Data       *[]Folder   `json:"data,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
+}
+
+// NoteDetailResponse defines model for NoteDetailResponse.
+type NoteDetailResponse = Note
+
+// NoteListResponse defines model for NoteListResponse.
+type NoteListResponse struct {
+	Data       *[]Note     `json:"data,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"`
+}
+
+// SessionDetailResponse User session
+type SessionDetailResponse = Session
+
+// SessionListResponse defines model for SessionListResponse.
+type SessionListResponse struct {
 	Data       *[]Session  `json:"data,omitempty"`
 	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
-// ListWorkspacesResponse defines model for ListWorkspacesResponse.
-type ListWorkspacesResponse struct {
+// WorkspaceCreateResponse defines model for WorkspaceCreateResponse.
+type WorkspaceCreateResponse = Workspace
+
+// WorkspaceDetailResponse defines model for WorkspaceDetailResponse.
+type WorkspaceDetailResponse = Workspace
+
+// WorkspaceListResponse defines model for WorkspaceListResponse.
+type WorkspaceListResponse struct {
 	Data       *[]Workspace `json:"data,omitempty"`
 	Pagination *Pagination  `json:"pagination,omitempty"`
 }
 
-// NotFound defines model for NotFound.
-type NotFound = Error
-
-// UpdatePageResponse defines model for UpdatePageResponse.
-type UpdatePageResponse = Page
-
-// UpdateWorkspaceResponse defines model for UpdateWorkspaceResponse.
-type UpdateWorkspaceResponse = Workspace
+// WorkspaceUpdateResponse defines model for WorkspaceUpdateResponse.
+type WorkspaceUpdateResponse = Workspace
 
 // cookieAuthContextKey is the context key for cookieAuth security scheme
 type cookieAuthContextKey string
 
-// HandleGoogleOAuthCallbackParams defines parameters for HandleGoogleOAuthCallback.
-type HandleGoogleOAuthCallbackParams struct {
-	Code  string `query:"code" json:"code" validate:"required"`
-	State string `query:"state" json:"state" validate:"required"`
-}
+// ListAssignmentsParams defines parameters for ListAssignments.
+type ListAssignmentsParams struct {
+	// Page Page number for pagination
+	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
 
-// ListPagesParams defines parameters for ListPages.
-type ListPagesParams struct {
-	Page  *PageParam  `query:"page,omitempty" json:"page,omitempty"`
+	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
 
 	// WorkspaceId Filter by workspace ID
-	WorkspaceId *string `query:"workspace_id,omitempty" json:"workspace_id,omitempty" validate:"omitempty"`
+	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
 
-	// ParentId Filter by parent page ID (null for root)
-	ParentId *string   `query:"parent_id,omitempty" json:"parent_id,omitempty" validate:"omitempty"`
-	Type     *PageType `query:"type,omitempty" json:"type,omitempty" validate:"omitempty"`
+	// ParentId Filter by parent page ID
+	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
+}
+
+// HandleGoogleOAuthCallbackParams defines parameters for HandleGoogleOAuthCallback.
+type HandleGoogleOAuthCallbackParams struct {
+	// Code Authorization code returned by Google
+	Code string `query:"code" json:"code" validate:"required"`
+
+	// State State parameter for CSRF protection
+	State string `query:"state" json:"state" validate:"required"`
+}
+
+// ListCoursesParams defines parameters for ListCourses.
+type ListCoursesParams struct {
+	// Page Page number for pagination
+	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+
+	// Limit Number of items to return per page
+	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
+
+	// WorkspaceId Filter by workspace ID
+	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
+
+	// ParentId Filter by parent page ID
+	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
+}
+
+// ListFoldersParams defines parameters for ListFolders.
+type ListFoldersParams struct {
+	// Page Page number for pagination
+	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+
+	// Limit Number of items to return per page
+	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
+
+	// WorkspaceId Filter by workspace ID
+	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
+
+	// ParentId Filter by parent page ID
+	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
+}
+
+// ListNotesParams defines parameters for ListNotes.
+type ListNotesParams struct {
+	// Page Page number for pagination
+	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+
+	// Limit Number of items to return per page
+	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
+
+	// WorkspaceId Filter by workspace ID
+	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
+
+	// ParentId Filter by parent page ID
+	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
 }
 
 // ListSessionsParams defines parameters for ListSessions.
 type ListSessionsParams struct {
-	Page  *PageParam  `query:"page,omitempty" json:"page,omitempty"`
+	// Page Page number for pagination
+	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+
+	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // ListWorkspacesParams defines parameters for ListWorkspaces.
 type ListWorkspacesParams struct {
-	Page  *PageParam  `query:"page,omitempty" json:"page,omitempty"`
+	// Page Page number for pagination
+	Page *PageParam `query:"page,omitempty" json:"page,omitempty"`
+
+	// Limit Number of items to return per page
 	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
 
 	// OwnerId Filter by owner ID
 	OwnerId *string `query:"owner_id,omitempty" json:"owner_id,omitempty" validate:"omitempty"`
 }
 
-// CreatePageJSONRequestBody defines body for CreatePage for application/json ContentType.
-type CreatePageJSONRequestBody = PageCreate
+// CreateAssignmentJSONRequestBody defines body for CreateAssignment for application/json ContentType.
+type CreateAssignmentJSONRequestBody = AssignmentCreate
 
-// UpdatePageJSONRequestBody defines body for UpdatePage for application/json ContentType.
-type UpdatePageJSONRequestBody = PageUpdate
+// UpdateAssignmentJSONRequestBody defines body for UpdateAssignment for application/json ContentType.
+type UpdateAssignmentJSONRequestBody = AssignmentUpdate
+
+// CreateCourseJSONRequestBody defines body for CreateCourse for application/json ContentType.
+type CreateCourseJSONRequestBody = CourseCreate
+
+// UpdateCourseJSONRequestBody defines body for UpdateCourse for application/json ContentType.
+type UpdateCourseJSONRequestBody = CourseUpdate
+
+// CreateFolderJSONRequestBody defines body for CreateFolder for application/json ContentType.
+type CreateFolderJSONRequestBody = FolderCreate
+
+// UpdateFolderJSONRequestBody defines body for UpdateFolder for application/json ContentType.
+type UpdateFolderJSONRequestBody = FolderUpdate
+
+// CreateNoteJSONRequestBody defines body for CreateNote for application/json ContentType.
+type CreateNoteJSONRequestBody = NoteCreate
+
+// UpdateNoteJSONRequestBody defines body for UpdateNote for application/json ContentType.
+type UpdateNoteJSONRequestBody = NoteUpdate
 
 // CreateWorkspaceJSONRequestBody defines body for CreateWorkspace for application/json ContentType.
 type CreateWorkspaceJSONRequestBody = WorkspaceCreate
 
 // UpdateWorkspaceJSONRequestBody defines body for UpdateWorkspace for application/json ContentType.
-type UpdateWorkspaceJSONRequestBody = WorkspaceUpdate
+type UpdateWorkspaceJSONRequestBody = WorkspaceCreate

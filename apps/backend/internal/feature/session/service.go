@@ -16,7 +16,7 @@ type listSessionsServiceParams struct {
 	params  *models.ListSessionsParams
 }
 
-func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*models.ListSessionsResponse, *herodot.DefaultError) {
+func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*models.SessionListResponse, *herodot.DefaultError) {
 	limit, offset, currentPage := pagination.GetPagination(args.params.Page, args.params.Limit, 20)
 	fetchLimit := limit + 1
 
@@ -57,13 +57,13 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 		HasMore: &hasMore,
 	}
 
-	return &models.ListSessionsResponse{
+	return &models.SessionListResponse{
 		Data:       &sessionModels,
 		Pagination: pagination,
 	}, nil
 }
 
-func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries *db.Queries) (*models.GetSessionDetailResponse, *herodot.DefaultError) {
+func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries *db.Queries) (*models.SessionDetailResponse, *herodot.DefaultError) {
 	sessionId, err := uuid.Parse(sessionIdStr)
 	if err != nil {
 		return nil, herodot.ErrBadRequest.WithReason("invalid session ID").WithDebug(err.Error())
@@ -82,7 +82,7 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 		return nil, herodot.ErrInternalServerError.WithReason("failed to get session details").WithDebug(err.Error())
 	}
 
-	return &models.GetSessionDetailResponse{
+	return &models.SessionDetailResponse{
 		Id:        session.ID.String(),
 		ExpiresAt: session.ExpiresAt.Time,
 		IpAddress: session.IpAddress,

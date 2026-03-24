@@ -56,3 +56,4 @@ tasks:
     desc: OpenApi spec
     cmds:
       - npx -y openapi-format apps/openapi.yaml --configFile apps/oaf-config.yaml -o apps/openapi.yaml
+      - cd scripts && uv run ./sort-openapi.py ../apps/openapi.yaml ../apps/openapi.yaml

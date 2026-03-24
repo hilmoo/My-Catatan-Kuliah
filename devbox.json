@@ -18,5 +18,8 @@
       "export PATH=$PATH:$(go env GOPATH)/bin"
     ]
   },
+  "env": {
+    "VACUUM": "apps/openapi.yaml"
+  },
   "env_from": ".env"
 }

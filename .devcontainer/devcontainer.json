@@ -14,7 +14,8 @@
 			"settings": {
 				"json.schemaDownload.trustedDomains": {
 					"https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json": true
-				}
+				},
+				"spectral.rulesetFile": "./apps/.spectral.yaml"
 			},
 			"extensions": [
 				"ms-python.python",
@@ -22,7 +23,8 @@
 				"jetpack-io.devbox",
 				"mkhl.direnv",
 				"42Crunch.vscode-openapi",
-				"redhat.vscode-yaml"
+				"redhat.vscode-yaml",
+				"stoplight.spectral"
 			]
 		}
 	},

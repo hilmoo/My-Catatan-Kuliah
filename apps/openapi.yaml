@@ -2,11 +2,94 @@ openapi: 3.0.3
 info:
   title: Workspace Management API
   version: 1.0.0
-  description: 'API specification for managing users, workspaces, and pages.'
+  description: API specification for managing users, workspaces, and pages.
 servers:
-  - url: /api
-    description: Base URL for API endpoints
+- url: /api
+  description: Base URL for API endpoints
 paths:
+  /assignments:
+    get:
+      operationId: listAssignments
+      summary: List assignments
+      description: List of assignments
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/LimitParam'
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/ParentIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/AssignmentListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Assignments
+    post:
+      operationId: createAssignment
+      summary: Create an assignment
+      description: Create a new assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreate'
+      responses:
+        '201':
+          $ref: '#/components/responses/AssignmentDetailResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Assignments
+  /assignments/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    get:
+      operationId: getAssignment
+      summary: Get assignment details
+      description: Get details of a specific assignment
+      responses:
+        '200':
+          $ref: '#/components/responses/AssignmentDetailResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Assignments
+    patch:
+      operationId: updateAssignment
+      summary: Update assignment
+      description: Update an existing assignment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/AssignmentDetailResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Assignments
+    delete:
+      operationId: deleteAssignment
+      summary: Delete assignment
+      description: Delete an assignment
+      responses:
+        '204':
+          description: Assignment deleted
+      tags:
+      - Assignments
   /auth/oauth/google:
     get:
       operationId: redirectToGoogleOAuth
@@ -14,310 +97,386 @@ paths:
       description: Initiates OAuth flow by redirecting to Google authorization endpoint
       responses:
         '302':
-          description: Redirect to OAuth provider
+          description: Redirect to Google OAuth authorization URL
       security: []
       tags:
-        - Auth
+      - Auth
   /auth/oauth/callback/google:
     get:
       operationId: handleGoogleOAuthCallback
       summary: Handle Google OAuth callback
-      description: Handles OAuth provider callback with authorization code
+      description: Handles the callback from Google OAuth, exchanges code for session
+        token, and redirects to frontend with session token
       parameters:
-        - name: code
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: state
-          in: query
-          required: true
-          schema:
-            type: string
+      - name: code
+        in: query
+        description: Authorization code returned by Google
+        required: true
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: State parameter for CSRF protection
+        required: true
+        schema:
+          type: string
       responses:
+        '307':
+          description: Redirect to frontend with session token
+          headers:
+            Location:
+              description: URL to redirect the user to, including session token
+              schema:
+                type: string
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
       security: []
       tags:
-        - Auth
-  /pages:
+      - Auth
+  /courses:
     get:
-      operationId: listPages
-      summary: List pages
+      operationId: listCourses
+      summary: List courses
+      description: List all courses
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/LimitParam'
-        - name: workspace_id
-          in: query
-          description: Filter by workspace ID
-          schema:
-            type: string
-        - name: parent_id
-          in: query
-          description: Filter by parent page ID (null for root)
-          schema:
-            type: string
-            nullable: true
-        - name: type
-          in: query
-          schema:
-            $ref: '#/components/schemas/PageType'
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/LimitParam'
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/ParentIdParam'
       responses:
         '200':
-          $ref: '#/components/responses/ListPagesResponse'
+          $ref: '#/components/responses/CourseListResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Pages
+      - Courses
     post:
-      operationId: createPage
-      summary: Create a page
+      operationId: createCourse
+      summary: Create a course
+      description: Create a new course
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PageCreate'
+              $ref: '#/components/schemas/CourseCreate'
       responses:
         '201':
-          $ref: '#/components/responses/CreatePageResponse'
+          $ref: '#/components/responses/CourseDetailResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Pages
-  '/pages/{id}':
+      - Courses
+  /courses/{id}:
     parameters:
-      - $ref: '#/components/parameters/ResourceId'
+    - $ref: '#/components/parameters/ResourceId'
     get:
-      operationId: getPage
-      summary: Get page details
+      operationId: getCourse
+      summary: Get course details
+      description: Get details of a specific course
       responses:
         '200':
-          $ref: '#/components/responses/GetPageDetailResponse'
+          $ref: '#/components/responses/CourseDetailResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Pages
+      - Courses
     patch:
-      operationId: updatePage
-      summary: Update page
+      operationId: updateCourse
+      summary: Update course
+      description: Update an existing course
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PageUpdate'
+              $ref: '#/components/schemas/CourseUpdate'
       responses:
         '200':
-          $ref: '#/components/responses/UpdatePageResponse'
+          $ref: '#/components/responses/CourseDetailResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Pages
+      - Courses
     delete:
-      operationId: deletePage
-      summary: Delete page
+      operationId: deleteCourse
+      summary: Delete course
+      description: Delete a course
       responses:
         '204':
-          description: Page deleted
+          description: Course deleted
       tags:
-        - Pages
+      - Courses
+  /folders:
+    get:
+      operationId: listFolders
+      summary: List folders
+      description: List all folders
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/LimitParam'
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/ParentIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/FolderListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Folders
+    post:
+      operationId: createFolder
+      summary: Create a folder
+      description: Create a new folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderCreate'
+      responses:
+        '201':
+          $ref: '#/components/responses/FolderDetailResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Folders
+  /folders/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    get:
+      operationId: getFolder
+      summary: Get folder details
+      description: Get details of a specific folder
+      responses:
+        '200':
+          $ref: '#/components/responses/FolderDetailResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Folders
+    patch:
+      operationId: updateFolder
+      summary: Update folder
+      description: Update an existing folder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/FolderDetailResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Folders
+    delete:
+      operationId: deleteFolder
+      summary: Delete folder
+      description: Delete a folder
+      responses:
+        '204':
+          description: Folder deleted
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Folders
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check endpoint
+      description: Returns a simple status message to indicate the API is running.
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/vnd.health+json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+      tags:
+      - Health
+  /notes:
+    get:
+      operationId: listNotes
+      summary: List notes
+      description: List all notes
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/LimitParam'
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/ParentIdParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/NoteListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Notes
+    post:
+      operationId: createNote
+      summary: Create a note
+      description: Create a new note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteCreate'
+      responses:
+        '201':
+          $ref: '#/components/responses/NoteDetailResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Notes
+  /notes/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    get:
+      operationId: getNote
+      summary: Get note details
+      description: Get details of a specific note
+      responses:
+        '200':
+          $ref: '#/components/responses/NoteDetailResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Notes
+    patch:
+      operationId: updateNote
+      summary: Update note
+      description: Update an existing note
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteUpdate'
+      responses:
+        '200':
+          $ref: '#/components/responses/NoteDetailResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      tags:
+      - Notes
+    delete:
+      operationId: deleteNote
+      summary: Delete note
+      description: Delete a note
+      responses:
+        '204':
+          description: Note deleted
+      tags:
+      - Notes
   /sessions:
     get:
       operationId: listSessions
       summary: List sessions
+      description: List all sessions for the current user
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/LimitParam'
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/LimitParam'
       responses:
         '200':
-          $ref: '#/components/responses/ListSessionsResponse'
+          $ref: '#/components/responses/SessionListResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Sessions
-    # post:
-    #   operationId: createSession
-    #   summary: Create a new session
-    #   requestBody:
-    #     required: true
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: '#/components/schemas/SessionCreate'
-    #   responses:
-    #     '201':
-    #       $ref: '#/components/responses/CreateSessionResponse'
-    #     '400':
-    #       $ref: '#/components/responses/BadRequest'
-    #     '500':
-    #       $ref: '#/components/responses/InternalServerError'
-    #   tags:
-    #     - Sessions
-  '/sessions/{id}':
+      - Sessions
+  /sessions/{id}:
     parameters:
-      - name: id
-        in: path
-        description: Session token (used as identifier)
-        required: true
-        schema:
-          type: string
+    - name: id
+      in: path
+      description: Session token (used as identifier)
+      required: true
+      schema:
+        type: string
     get:
       operationId: getSession
       summary: Get session details
+      description: Get details of a specific session
       responses:
         '200':
-          $ref: '#/components/responses/GetSessionDetailResponse'
+          $ref: '#/components/responses/SessionDetailResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Sessions
+      - Sessions
     delete:
       operationId: deleteSession
-      summary: Delete a session (Logout)
+      summary: Delete a session
+      description: Delete a session
       responses:
         '204':
           description: Session deleted
       tags:
-        - Sessions
-  # /users:
-  #   get:
-  #     operationId: listUsers
-  #     summary: List all users
-  #     parameters:
-  #       - $ref: '#/components/parameters/PageParam'
-  #       - $ref: '#/components/parameters/LimitParam'
-  #       - name: email
-  #         in: query
-  #         description: Filter by email address
-  #         schema:
-  #           type: string
-  #       - name: sort_by
-  #         in: query
-  #         description: Sort field
-  #         schema:
-  #           type: string
-  #           enum:
-  #             - created_at
-  #             - name
-  #       - name: order
-  #         in: query
-  #         schema:
-  #           type: string
-  #           enum:
-  #             - asc
-  #             - desc
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/ListUsersResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #     tags:
-  #       - Users
-  #   post:
-  #     operationId: createUser
-  #     summary: Create a new user
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserCreate'
-  #     responses:
-  #       '201':
-  #         $ref: '#/components/responses/CreateUserResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '409':
-  #         $ref: '#/components/responses/Conflict'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #     tags:
-  #       - Users
-  # '/users/{id}':
-  #   parameters:
-  #     - $ref: '#/components/parameters/ResourceId'
-  #   get:
-  #     operationId: getUser
-  #     summary: Get a user by ID
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/GetUserDetailResponse'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #     tags:
-  #       - Users
-  #   patch:
-  #     operationId: updateUser
-  #     summary: Update a user
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserUpdate'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/UpdateUserResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #     tags:
-  #       - Users
-  #   delete:
-  #     operationId: deleteUser
-  #     summary: Delete a user
-  #     responses:
-  #       '204':
-  #         description: User deleted successfully
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #     tags:
-  #       - Users
+      - Sessions
   /workspaces:
     get:
       operationId: listWorkspaces
       summary: List workspaces
+      description: List all workspaces for the current user
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/LimitParam'
-        - name: owner_id
-          in: query
-          description: Filter by owner ID
-          schema:
-            type: string
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/LimitParam'
+      - name: owner_id
+        in: query
+        description: Filter by owner ID
+        schema:
+          type: string
       responses:
         '200':
-          $ref: '#/components/responses/ListWorkspacesResponse'
+          $ref: '#/components/responses/WorkspaceListResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Workspaces
+      - Workspaces
     post:
       operationId: createWorkspace
       summary: Create a workspace
+      description: Create a new workspace
       requestBody:
         required: true
         content:
@@ -326,58 +485,62 @@ paths:
               $ref: '#/components/schemas/WorkspaceCreate'
       responses:
         '201':
-          $ref: '#/components/responses/CreateWorkspaceResponse'
+          $ref: '#/components/responses/WorkspaceCreateResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Workspaces
-  '/workspaces/{id}':
+      - Workspaces
+  /workspaces/{id}:
     parameters:
-      - $ref: '#/components/parameters/ResourceId'
+    - $ref: '#/components/parameters/ResourceId'
     get:
       operationId: getWorkspace
       summary: Get workspace details
+      description: Get details of a specific workspace
       responses:
         '200':
-          $ref: '#/components/responses/GetWorkspaceDetailResponse'
+          $ref: '#/components/responses/WorkspaceDetailResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Workspaces
+      - Workspaces
     patch:
       operationId: updateWorkspace
       summary: Update workspace
+      description: Update an existing workspace
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkspaceUpdate'
+              $ref: '#/components/schemas/WorkspaceCreate'
       responses:
         '200':
-          $ref: '#/components/responses/UpdateWorkspaceResponse'
+          $ref: '#/components/responses/WorkspaceUpdateResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/ErrorResponse'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/ErrorResponse'
         '500':
-          $ref: '#/components/responses/InternalServerError'
+          $ref: '#/components/responses/ErrorResponse'
       tags:
-        - Workspaces
+      - Workspaces
     delete:
       operationId: deleteWorkspace
       summary: Delete workspace
+      description: Delete a workspace
       responses:
         '204':
           description: Workspace deleted
       tags:
-        - Workspaces
+      - Workspaces
 components:
   parameters:
     LimitParam:
+      description: Number of items to return per page
       name: limit
       in: query
       schema:
@@ -386,12 +549,19 @@ components:
         maximum: 100
         minimum: 1
     PageParam:
+      description: Page number for pagination
       name: page
       in: query
       schema:
         type: integer
         default: 1
         minimum: 1
+    ParentIdParam:
+      name: parent_id
+      in: query
+      description: Filter by parent page ID
+      schema:
+        type: string
     ResourceId:
       name: id
       in: path
@@ -399,7 +569,261 @@ components:
       description: Unique identifier of the resource.
       schema:
         type: string
+    WorkspaceIdParam:
+      name: workspace_id
+      in: query
+      description: Filter by workspace ID
+      schema:
+        type: string
   schemas:
+    Assignment:
+      allOf:
+      - $ref: '#/components/schemas/PageBase'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/AssignmentProperties'
+    AssignmentCreate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseCreate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/AssignmentProperties'
+    AssignmentProperties:
+      type: object
+      properties:
+        due_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          default: todo
+          enum:
+          - todo
+          - in_progress
+          - done
+    AssignmentUpdate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseUpdate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/AssignmentProperties'
+    Course:
+      allOf:
+      - $ref: '#/components/schemas/PageBase'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/CourseProperties'
+    CourseCreate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseCreate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/CourseProperties'
+    CourseProperties:
+      type: object
+      properties:
+        subject:
+          type: string
+          example: Mathematics
+        instructor:
+          type: string
+          example: Dr. Alan Turing
+        semester:
+          type: string
+          example: Spring 2026
+        credits:
+          type: integer
+          example: 3
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+    CourseUpdate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseUpdate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/CourseProperties'
+    Error:
+      type: object
+      properties:
+        id:
+          description: Error instance ID.
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        reason:
+          description: Human-readable reason.
+          type: string
+          example: Resource Not Found
+        status:
+          description: Status string (e.g., 'error').
+          type: string
+          example: Not Found
+        error:
+          description: Error type.
+          type: string
+          example: The requested resource could not be found
+        code:
+          description: Application-specific error code.
+          type: integer
+          example: 404
+        details:
+          description: Additional details about the error.
+          type: object
+          example:
+            missingResource: assignment with ID 123 not found
+      required:
+      - id
+      - reason
+      - status
+      - error
+      - code
+    Folder:
+      allOf:
+      - $ref: '#/components/schemas/PageBase'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - folder
+          properties:
+            $ref: '#/components/schemas/FolderProperties'
+    FolderCreate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseCreate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/FolderProperties'
+    FolderProperties:
+      type: object
+      properties:
+        color:
+          type: string
+          example: '#3B82F6'
+        sort_by:
+          type: string
+          example: title_asc
+    FolderUpdate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseUpdate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/FolderProperties'
+    Note:
+      allOf:
+      - $ref: '#/components/schemas/PageBase'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/NoteProperties'
+    NoteCreate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseCreate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/NoteProperties'
+    NoteProperties:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          example:
+          - meeting-notes
+          - q1-planning
+        cover_image:
+          type: string
+          format: uri
+          example: https://example.com/images/abstract-header.png
+    NoteUpdate:
+      allOf:
+      - $ref: '#/components/schemas/PageBaseUpdate'
+      - type: object
+        properties:
+          properties:
+            $ref: '#/components/schemas/NoteProperties'
+    PageBase:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the page.
+          type: string
+          example: CZM6ZsUwNuqZinoRDsMek
+        workspace_id:
+          description: ID of the workspace this page belongs to.
+          type: string
+          example: CZM6ZsUwNuqZinoRDsMek
+        parent_id:
+          description: ID of the parent page, null if it's a top-level page.
+          type: string
+          example: CZM6ZsUwNuqZinoRDsMek
+        title:
+          description: Title of the page.
+          type: string
+          example: My Page
+        icon:
+          description: Icon representing the page, can be an emoji or a URL to an
+            image.
+          type: string
+          example: "\U0001F4C4"
+        created_by:
+          description: ID of the user who created the page. Empty for the current
+            authenticated session.
+          type: string
+          example: CZM6ZsUwNuqZinoRDsMek
+        created_at:
+          description: Timestamp when the page was created.
+          type: string
+          format: date-time
+          example: '2024-01-01T12:00:00Z'
+        updated_at:
+          description: Timestamp when the page was last updated.
+          type: string
+          format: date-time
+          example: '2024-01-02T12:00:00Z'
+    PageBaseCreate:
+      type: object
+      properties:
+        workspace_id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+        content:
+          type: string
+        icon:
+          type: string
+      required:
+      - workspace_id
+      - title
+      - content
+    PageBaseUpdate:
+      type: object
+      properties:
+        parent_id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+        content:
+          type: string
+        icon:
+          type: string
     Pagination:
       type: object
       properties:
@@ -407,120 +831,33 @@ components:
           type: integer
         limit:
           type: integer
-        hasMore:
+        has_more:
           type: boolean
-    User:
-      description: User resource.
-      type: object
-      properties:
-        id:
-          description: Unique identifier.
-          type: string
-        email:
-          description: User email address (unique).
-          type: string
-          format: email
-        name:
-          description: User display name.
-          type: string
-        avatarUrl:
-          description: URL to user avatar.
-          type: string
-          format: uri
-          nullable: true
-        provider:
-          description: Authentication provider name.
-          type: string
-        providerId:
-          description: Identifier from the authentication provider.
-          type: string
-        createdAt:
-          description: Account creation timestamp.
-          type: string
-          format: date-time
-      required:
-        - id
-        - email
-        - name
-        - provider
-        - providerId
-        - createdAt
-    UserCreate:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-        name:
-          type: string
-        avatarUrl:
-          type: string
-          format: uri
-          nullable: true
-        provider:
-          type: string
-        providerId:
-          type: string
-      required:
-        - email
-        - name
-        - provider
-        - providerId
-    UserUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-        avatarUrl:
-          type: string
-          format: uri
-          nullable: true
     Session:
       description: User session
       type: object
       properties:
-        userId:
+        user_id:
           description: User ID, empty for the current authenticated session.
           type: string
         id:
           description: Session token (identifier).
           type: string
-        expiresAt:
+        expires_at:
           type: string
           format: date-time
-        ipAddress:
+        ip_address:
           type: string
-          nullable: true
-        userAgent:
+        user_agent:
           type: string
-          nullable: true
-        createdAt:
+        created_at:
           type: string
           format: date-time
       required:
-        - id
-        - userId
-        - expiresAt
-        - createdAt
-    SessionCreate:
-      type: object
-      properties:
-        token:
-          description: Session token.
-          type: string
-        expiresAt:
-          type: string
-          format: date-time
-        ipAddress:
-          type: string
-          nullable: true
-        userAgent:
-          type: string
-          nullable: true
-      required:
-        - userId
-        - token
-        - expiresAt
+      - id
+      - user_id
+      - expires_at
+      - created_at
     Workspace:
       type: object
       properties:
@@ -530,228 +867,34 @@ components:
         name:
           description: Name of the workspace.
           type: string
-        ownerId:
-          description: ID of the user who owns the workspace, empty for the current authenticated session.
+        owner_id:
+          description: ID of the user who owns the workspace, empty for the current
+            authenticated session.
           type: string
-        createdAt:
+        created_at:
           type: string
           format: date-time
       required:
-        - id
-        - name
-        - ownerId
-        - createdAt
+      - id
+      - name
+      - owner_id
+      - created_at
     WorkspaceCreate:
       type: object
       properties:
         name:
           type: string
-        ownerId:
-          description: ID of the owner.
-          type: string
       required:
-        - name
-        - ownerId
-    WorkspaceUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-    PageType:
-      description: Type of the page.
-      type: string
-      enum:
-        - folder
-        - note
-        - course
-        - assignment
-    Page:
-      type: object
-      properties:
-        id:
-          description: Unique identifier.
-          type: string
-        workspaceId:
-          description: ID of the workspace.
-          type: string
-        parentId:
-          description: ID of the parent page.
-          type: string
-          nullable: true
-        title:
-          type: string
-        icon:
-          type: string
-          nullable: true
-        type:
-          $ref: '#/components/schemas/PageType'
-        contentHtml:
-          type: string
-          nullable: true
-        contentBlob:
-          description: Binary content encoded in Base64.
-          type: string
-          format: byte
-          nullable: true
-        properties:
-          description: JSON object containing page properties.
-          type: object
-        createdBy:
-          description: ID of the user who created the page.
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-        - id
-        - workspaceId
-        - title
-        - type
-        - createdBy
-        - createdAt
-        - updatedAt
-    PageCreate:
-      type: object
-      properties:
-        workspaceId:
-          type: string
-        parentId:
-          type: string
-          nullable: true
-        title:
-          type: string
-          default: Untitled
-        icon:
-          type: string
-          nullable: true
-        type:
-          $ref: '#/components/schemas/PageType'
-        contentHtml:
-          type: string
-          nullable: true
-        contentBlob:
-          type: string
-          format: byte
-          nullable: true
-        properties:
-          type: object
-        createdBy:
-          description: ID of the creator.
-          type: string
-      required:
-        - workspaceId
-        - type
-        - createdBy
-    PageUpdate:
-      type: object
-      properties:
-        parentId:
-          type: string
-          nullable: true
-        title:
-          type: string
-        icon:
-          type: string
-          nullable: true
-        type:
-          $ref: '#/components/schemas/PageType'
-        contentHtml:
-          type: string
-          nullable: true
-        contentBlob:
-          type: string
-          format: byte
-          nullable: true
-        properties:
-          type: object
-    Error:
-      type: object
-      properties:
-        id:
-          description: Error instance ID.
-          type: string
-        reason:
-          description: Human-readable reason.
-          type: string
-        status:
-          description: 'Status string (e.g., ''error'').'
-          type: string
-        error:
-          description: Error type.
-          type: string
-        code:
-          description: Application-specific error code.
-          type: integer
-        details:
-          description: Additional details about the error.
-          type: object
-      required:
-        - id
-        - reason
-        - status
-        - error
-        - code
+      - name
   responses:
-    BadRequest:
-      description: Bad Request
+    AssignmentDetailResponse:
+      description: Assignment details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            id: err_123
-            reason: Invalid input data
-            status: error
-            error: Bad Request
-            code: 400
-            details:
-              field: email
-              message: Must be a valid email address
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            id: err_404
-            reason: Resource not found
-            status: error
-            error: Not Found
-            code: 404
-            details: {}
-    Conflict:
-      description: 'Conflict (e.g., duplicate entry)'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            id: err_409
-            reason: Resource already exists
-            status: error
-            error: Conflict
-            code: 409
-            details:
-              field: email
-    InternalServerError:
-      description: Internal Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            id: err_500
-            reason: An unexpected error occurred
-            status: error
-            error: Internal Server Error
-            code: 500
-            details: {}
-    ListPagesResponse:
-      description: A list of pages
+            $ref: '#/components/schemas/Assignment'
+    AssignmentListResponse:
+      description: List of assignments
       content:
         application/json:
           schema:
@@ -760,28 +903,79 @@ components:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Page'
+                  $ref: '#/components/schemas/Assignment'
               pagination:
                 $ref: '#/components/schemas/Pagination'
-    CreatePageResponse:
-      description: Page created successfully
+    CourseDetailResponse:
+      description: Course details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Page'
-    GetPageDetailResponse:
-      description: Page details
+            $ref: '#/components/schemas/Course'
+    CourseListResponse:
+      description: List of courses
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Page'
-    UpdatePageResponse:
-      description: Page updated
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    ErrorResponse:
+      description: Generic error response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Page'
-    ListSessionsResponse:
+            $ref: '#/components/schemas/Error'
+    FolderDetailResponse:
+      description: Folder details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Folder'
+    FolderListResponse:
+      description: List of folders
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    NoteDetailResponse:
+      description: Note details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Note'
+    NoteListResponse:
+      description: List of notes
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+              pagination:
+                $ref: '#/components/schemas/Pagination'
+    SessionDetailResponse:
+      description: Session details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Session'
+    SessionListResponse:
       description: List of sessions
       content:
         application/json:
@@ -794,50 +988,19 @@ components:
                   $ref: '#/components/schemas/Session'
               pagination:
                 $ref: '#/components/schemas/Pagination'
-    CreateSessionResponse:
-      description: Session created
+    WorkspaceCreateResponse:
+      description: Workspace created
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Session'
-    GetSessionDetailResponse:
-      description: Session details
+            $ref: '#/components/schemas/Workspace'
+    WorkspaceDetailResponse:
+      description: Workspace details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Session'
-    ListUsersResponse:
-      description: A list of users
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-              pagination:
-                $ref: '#/components/schemas/Pagination'
-    CreateUserResponse:
-      description: User created successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
-    GetUserDetailResponse:
-      description: User details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
-    UpdateUserResponse:
-      description: User updated successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
-    ListWorkspacesResponse:
+            $ref: '#/components/schemas/Workspace'
+    WorkspaceListResponse:
       description: List of workspaces
       content:
         application/json:
@@ -850,19 +1013,7 @@ components:
                   $ref: '#/components/schemas/Workspace'
               pagination:
                 $ref: '#/components/schemas/Pagination'
-    CreateWorkspaceResponse:
-      description: Workspace created
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Workspace'
-    GetWorkspaceDetailResponse:
-      description: Workspace details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Workspace'
-    UpdateWorkspaceResponse:
+    WorkspaceUpdateResponse:
       description: Workspace updated
       content:
         application/json:
@@ -874,15 +1025,21 @@ components:
       in: cookie
       name: session
 tags:
-  - name: Auth
-    description: Authentication operations
-  - name: Pages
-    description: Page content management
-  - name: Sessions
-    description: Session management operations
-  # - name: Users
-  #   description: User management operations
-  - name: Workspaces
-    description: Workspace operations
+- name: Assignments
+  description: Assignment management operations
+- name: Auth
+  description: Authentication operations
+- name: Courses
+  description: Course management operations
+- name: Folders
+  description: Folder management operations
+- name: Health
+  description: API health check endpoint
+- name: Notes
+  description: Note management operations
+- name: Sessions
+  description: Session management operations
+- name: Workspaces
+  description: Workspace operations
 security:
-  - cookieAuth: []
+- cookieAuth: []
