@@ -1,9 +1,9 @@
--- name: GetuserIidById :one
+-- name: GetUserIidById :one
 SELECT iid
 FROM users
 WHERE "id" = $1;
 
--- name: GetuserById :one
+-- name: GetUserById :one
 SELECT *
 FROM users
 WHERE "id" = $1;

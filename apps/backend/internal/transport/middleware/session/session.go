@@ -1,11 +1,12 @@
 package msession
 
 import (
-	"backend/internal/gen/sqlc"
+	db "backend/internal/gen/sqlc"
+	errort "backend/internal/transport/error"
 	"context"
-	"net/http"
 
 	"github.com/labstack/echo/v5"
+	"github.com/ory/herodot"
 )
 
 type usercontextKeyType string
@@ -39,7 +40,7 @@ func (m *sessionMiddleware) LoadSession(next echo.HandlerFunc) echo.HandlerFunc 
 			return next(c)
 		}
 
-		user, err := m.queries.GetuserById(c.Request().Context(), session.UserID)
+		user, err := m.queries.GetUserById(c.Request().Context(), session.UserID)
 		if err != nil {
 			return next(c)
 		}
@@ -55,7 +56,7 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		_, err := GetUserFromContext(c.Request().Context())
 		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "authentication required")
+			return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("authentication required").WithDebug(err.Error()))
 		}
 
 		return next(c)

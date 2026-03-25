@@ -27,6 +27,10 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
+	userIid, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
+	}
 
 	sessions, err := args.queries.ListSessionsByUserId(ctx, db.ListSessionsByUserIdParams{
 		UserID: user.ID,
@@ -50,7 +54,7 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 		}
 		sessionModels = append(sessionModels, models.Session{
 			Id:        iid,
-			UserId:    user.Iid.String(),
+			UserId:    userIid,
 			ExpiresAt: s.ExpiresAt,
 			IpAddress: s.IpAddress,
 			UserAgent: s.UserAgent,
@@ -91,6 +95,10 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
+	userIid, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
+	}
 
 	session, err := queries.GetSessionById(ctx, db.GetSessionByIdParams{
 		ID:     sessionId,
@@ -110,7 +118,7 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 		IpAddress: session.IpAddress,
 		UserAgent: session.UserAgent,
 		CreatedAt: session.CreatedAt,
-		UserId:    user.Iid.String(),
+		UserId:    userIid,
 	}, nil
 }
 

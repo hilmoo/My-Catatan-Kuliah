@@ -11,14 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-const getuserById = `-- name: GetuserById :one
+const getUserById = `-- name: GetUserById :one
 SELECT id, iid, email, name, avatar_url, provider, provider_id, created_at
 FROM users
 WHERE "id" = $1
 `
 
-func (q *Queries) GetuserById(ctx context.Context, id int32) (User, error) {
-	row := q.db.QueryRow(ctx, getuserById, id)
+func (q *Queries) GetUserById(ctx context.Context, id int32) (User, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -33,14 +33,14 @@ func (q *Queries) GetuserById(ctx context.Context, id int32) (User, error) {
 	return i, err
 }
 
-const getuserIidById = `-- name: GetuserIidById :one
+const getUserIidById = `-- name: GetUserIidById :one
 SELECT iid
 FROM users
 WHERE "id" = $1
 `
 
-func (q *Queries) GetuserIidById(ctx context.Context, id int32) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, getuserIidById, id)
+func (q *Queries) GetUserIidById(ctx context.Context, id int32) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, getUserIidById, id)
 	var iid uuid.UUID
 	err := row.Scan(&iid)
 	return iid, err

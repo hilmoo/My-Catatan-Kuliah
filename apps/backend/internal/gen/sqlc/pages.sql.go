@@ -198,9 +198,9 @@ func (q *Queries) GetPageTypesByIidAndUser(ctx context.Context, arg GetPageTypes
 const getValidParentForFolder = `-- name: GetValidParentForFolder :one
 SELECT id
 FROM pages
-WHERE iid = $1 
-  AND "type" = 'folder'
-  AND "created_by" = $2
+WHERE iid = $1
+    AND "type" = 'folder'
+    AND "created_by" = $2
 `
 
 type GetValidParentForFolderParams struct {
@@ -218,9 +218,9 @@ func (q *Queries) GetValidParentForFolder(ctx context.Context, arg GetValidParen
 const getValidParentIdForAssignment = `-- name: GetValidParentIdForAssignment :one
 SELECT id
 FROM pages
-WHERE iid = $1 
-  AND "type" = 'course'
-  AND "created_by" = $2
+WHERE iid = $1
+    AND "type" = 'course'
+    AND "created_by" = $2
 `
 
 type GetValidParentIdForAssignmentParams struct {
@@ -238,9 +238,9 @@ func (q *Queries) GetValidParentIdForAssignment(ctx context.Context, arg GetVali
 const getValidParentIdForCourse = `-- name: GetValidParentIdForCourse :one
 SELECT id
 FROM pages
-WHERE iid = $1 
-  AND "type" = 'folder'
-  AND "created_by" = $2
+WHERE iid = $1
+    AND "type" = 'folder'
+    AND "created_by" = $2
 `
 
 type GetValidParentIdForCourseParams struct {
@@ -258,9 +258,9 @@ func (q *Queries) GetValidParentIdForCourse(ctx context.Context, arg GetValidPar
 const getValidParentIdForNote = `-- name: GetValidParentIdForNote :one
 SELECT id
 FROM pages
-WHERE iid = $1 
-  AND "type" IN ('folder', 'course', 'note')
-  AND "created_by" = $2
+WHERE iid = $1
+    AND "type" IN ('folder', 'course', 'note')
+    AND "created_by" = $2
 `
 
 type GetValidParentIdForNoteParams struct {
@@ -284,15 +284,14 @@ FROM pages p
     JOIN users u ON p.created_by = u.id
     JOIN workspaces w ON p.workspace_id = w.id
     LEFT JOIN pages pp ON p.parent_id = pp.id
-WHERE 
-    ($1::integer IS NULL 
-        OR p.workspace_id = $1::integer)
-    AND ($2::integer IS NULL 
-        OR p.parent_id = $2::integer)
-    AND p.type = $3
-    AND p.created_by = $4::integer
-    AND ($5::uuid IS NULL
-        OR p.iid < $5::uuid)
+WHERE ($1::integer IS NULL
+    OR p.workspace_id = $1::integer)
+AND ($2::integer IS NULL
+    OR p.parent_id = $2::integer)
+AND p.type = $3
+AND p.created_by = $4::integer
+AND ($5::uuid IS NULL
+    OR p.iid < $5::uuid)
 ORDER BY p.iid DESC
 LIMIT $6::integer
 `
