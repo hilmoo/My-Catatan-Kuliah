@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  default:
+    desc: Run the development server
+    cmds:
+      - npm run dev
+
+  format:
+    desc: Format the codebase
+    cmds:
+      - npm run fmt
+
+  lint:
+    desc: Lint the codebase
+    cmds:
+      - npm run lint:fix
+
+  gen-api:
+    desc: Generate API client code
+    cmds:
+      - npm run orval
