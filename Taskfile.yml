@@ -6,6 +6,9 @@ includes:
   backend:
     taskfile: ./apps/backend/Taskfile.yml
     dir: ./apps/backend
+  frontend:
+    taskfile: ./apps/frontend/Taskfile.yml
+    dir: ./apps/frontend
 
 tasks:
   migrate-add:*:
