@@ -21,4 +21,5 @@ tasks:
   gen-api:
     desc: Generate API client code
     cmds:
+      - rm -rf src/api
       - npm run orval
