@@ -1,7 +1,7 @@
 package helpert
 
 import (
-	"backend/internal/gen/sqlc"
+	db "backend/internal/gen/sqlc"
 	"backend/internal/store/config"
 	"backend/internal/transport/validation"
 )

@@ -4,6 +4,7 @@ import (
 	db "backend/internal/gen/sqlc"
 	errort "backend/internal/transport/error"
 	"context"
+	"net/http"
 
 	"github.com/labstack/echo/v5"
 	"github.com/ory/herodot"
@@ -70,6 +71,6 @@ func RequireNoAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			return errort.HttpError(c, herodot.ErrBadRequest.WithReason("already authenticated"))
 		}
 
-		return c.Redirect(204, "/")
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
 	}
 }

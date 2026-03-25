@@ -8,11 +8,11 @@ import (
 	"backend/internal/feature/page"
 	"backend/internal/feature/session"
 	"backend/internal/feature/workspace"
-	"backend/internal/gen/sqlc"
+	db "backend/internal/gen/sqlc"
 	"backend/internal/store/config"
 	helpert "backend/internal/transport/helper"
-	"backend/internal/transport/middleware/log"
-	"backend/internal/transport/middleware/session"
+	mlog "backend/internal/transport/middleware/log"
+	msession "backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -48,7 +48,7 @@ func initHandler(args initHandlerParams) *echo.Echo {
 	api := e.Group("/api")
 	health.NewHttpHandler().RegisterRoutes(api)
 
-	noAuth := api.Group("/api")
+	noAuth := e.Group("/api")
 	noAuth.Use(msession.RequireNoAuth)
 	auth.NewHttpHandler(httpHandlerParams).RegisterRoutes(noAuth)
 

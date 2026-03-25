@@ -58,6 +58,10 @@ func googleCallbackService(
 		_ = resp.Body.Close()
 	}()
 
+	if resp.StatusCode != 200 {
+		return "", herodot.ErrInternalServerError.WithReason("failed to get user info from Google").WithDebug("non-200 response: " + resp.Status)
+	}
+
 	var userInfo googleUserInfo
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
 		return "", herodot.ErrInternalServerError.WithReason("failed to decode user info").WithDebug(err.Error())
