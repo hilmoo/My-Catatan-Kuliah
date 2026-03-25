@@ -1,7 +1,8 @@
 package msession
 
 import (
-	"backend/internal/gen/sqlc"
+	db "backend/internal/gen/sqlc"
+
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"

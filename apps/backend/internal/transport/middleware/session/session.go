@@ -62,3 +62,14 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(c)
 	}
 }
+
+func RequireNoAuth(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c *echo.Context) error {
+		_, err := GetUserFromContext(c.Request().Context())
+		if err == nil {
+			return errort.HttpError(c, herodot.ErrBadRequest.WithReason("already authenticated"))
+		}
+
+		return c.Redirect(204, "/")
+	}
+}

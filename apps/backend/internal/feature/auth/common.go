@@ -5,10 +5,6 @@ import (
 	"encoding/base64"
 )
 
-const (
-	AlreadyAuthenticated = "ALREADY_AUTHENTICATED"
-)
-
 func generateRandomString() (string, error) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)

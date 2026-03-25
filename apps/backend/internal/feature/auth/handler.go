@@ -44,10 +44,6 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
 	state, err := googleLoginService()
 	if err != nil {
-		if err.IDField == AlreadyAuthenticated {
-			return c.Redirect(http.StatusTemporaryRedirect, "/")
-		}
-
 		return errort.HttpError(c, err)
 	}
 

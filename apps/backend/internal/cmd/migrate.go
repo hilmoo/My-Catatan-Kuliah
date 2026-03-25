@@ -84,12 +84,26 @@ func runMigration(cfg config.Config, command string, args cli.Args) error {
 	case "up":
 		return goose.Up(db, dir)
 	case "up-to":
-		version, _ := strconv.ParseInt(args.Get(1), 10, 64)
+		if args.Len() < 2 {
+			return fmt.Errorf("missing version argument for 'migrate up-to'")
+		}
+		versionStr := args.Get(1)
+		version, parseErr := strconv.ParseInt(versionStr, 10, 64)
+		if parseErr != nil {
+			return fmt.Errorf("invalid version %q for 'migrate up-to': %v", versionStr, parseErr)
+		}
 		return goose.UpTo(db, dir, version)
 	case "down":
 		return goose.Down(db, dir)
 	case "down-to":
-		version, _ := strconv.ParseInt(args.Get(1), 10, 64)
+		if args.Len() < 2 {
+			return fmt.Errorf("missing version argument for 'migrate down-to'")
+		}
+		versionStr := args.Get(1)
+		version, parseErr := strconv.ParseInt(versionStr, 10, 64)
+		if parseErr != nil {
+			return fmt.Errorf("invalid version %q for 'migrate down-to': %v", versionStr, parseErr)
+		}
 		return goose.DownTo(db, dir, version)
 	case "status":
 		return goose.Status(db, dir)
