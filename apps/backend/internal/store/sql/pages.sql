@@ -1,25 +1,25 @@
--- name: GetPageAssignmentIdByIidAndUserForParent :one
-SELECT id
-FROM pages
-WHERE iid = $1
-    AND "type" = 'course'
-    AND "created_by" = $2;
-
--- name: GetPageFolderIdByIidAndUserForParent :one
+-- name: GetValidParentIdForCourse :one
 SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'folder'
     AND "created_by" = $2;
 
--- name: GetPageNoteIdByIidAndUserForParent :one
+-- name: GetValidParentIdForAssignment :one
+SELECT id
+FROM pages
+WHERE iid = $1
+    AND "type" = 'course'
+    AND "created_by" = $2;
+
+-- name: GetValidParentIdForNote :one
 SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" IN ('folder', 'course', 'note')
     AND "created_by" = $2;
 
--- name: GetPageCourseIdByIidAndUserForParent :one
+-- name: GetValidParentForFolder :one
 SELECT id
 FROM pages
 WHERE iid = $1
@@ -47,15 +47,14 @@ FROM pages p
     JOIN users u ON p.created_by = u.id
     JOIN workspaces w ON p.workspace_id = w.id
     LEFT JOIN pages pp ON p.parent_id = pp.id
-WHERE 
-    (sqlc.narg('workspace_id')::integer IS NULL 
-        OR p.workspace_id = sqlc.narg('workspace_id')::integer)
-    AND (sqlc.narg('parent_id')::integer IS NULL 
-        OR p.parent_id = sqlc.narg('parent_id')::integer)
-    AND p.type = sqlc.arg('type')
-    AND p.created_by = sqlc.arg('created_by')::integer
-    AND (sqlc.narg('cursor')::uuid IS NULL
-        OR p.iid < sqlc.narg('cursor')::uuid)
+WHERE (sqlc.narg('workspace_id')::integer IS NULL
+    OR p.workspace_id = sqlc.narg('workspace_id')::integer)
+AND (sqlc.narg('parent_id')::integer IS NULL
+    OR p.parent_id = sqlc.narg('parent_id')::integer)
+AND p.type = sqlc.arg('type')
+AND p.created_by = sqlc.arg('created_by')::integer
+AND (sqlc.narg('cursor')::uuid IS NULL
+    OR p.iid < sqlc.narg('cursor')::uuid)
 ORDER BY p.iid DESC
 LIMIT sqlc.arg('limit')::integer;
 

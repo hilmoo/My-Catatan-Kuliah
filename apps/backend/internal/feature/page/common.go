@@ -29,7 +29,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 
 	switch args.pageType {
 	case models.PageCreateTypeFolder:
-		parentId, err := args.queries.GetPageFolderIdByIidAndUserForParent(ctx, db.GetPageFolderIdByIidAndUserForParentParams{
+		parentId, err := args.queries.GetValidParentForFolder(ctx, db.GetValidParentForFolderParams{
 			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
@@ -39,7 +39,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 		return &parentId, nil
 
 	case models.PageCreateTypeCourse:
-		parentId, err := args.queries.GetPageCourseIdByIidAndUserForParent(ctx, db.GetPageCourseIdByIidAndUserForParentParams{
+		parentId, err := args.queries.GetValidParentIdForCourse(ctx, db.GetValidParentIdForCourseParams{
 			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
@@ -49,7 +49,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 		return &parentId, nil
 
 	case models.PageCreateTypeNote:
-		parentId, err := args.queries.GetPageNoteIdByIidAndUserForParent(ctx, db.GetPageNoteIdByIidAndUserForParentParams{
+		parentId, err := args.queries.GetValidParentIdForNote(ctx, db.GetValidParentIdForNoteParams{
 			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
@@ -59,7 +59,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 		return &parentId, nil
 
 	case models.PageCreateTypeAssignment:
-		parentId, err := args.queries.GetPageAssignmentIdByIidAndUserForParent(ctx, db.GetPageAssignmentIdByIidAndUserForParentParams{
+		parentId, err := args.queries.GetValidParentIdForAssignment(ctx, db.GetValidParentIdForAssignmentParams{
 			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})

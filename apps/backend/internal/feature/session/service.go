@@ -8,7 +8,6 @@ import (
 	"backend/utils/uuidx"
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/ory/herodot"
 )
 
@@ -100,9 +99,13 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to get session details").WithDebug(err.Error())
 	}
+	sessionIid, err := uuidx.ToBase58(session.ID)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode session ID").WithDebug(err.Error())
+	}
 
 	return &models.SessionDetailResponse{
-		Id:        session.ID.String(),
+		Id:        sessionIid,
 		ExpiresAt: session.ExpiresAt,
 		IpAddress: session.IpAddress,
 		UserAgent: session.UserAgent,
@@ -112,7 +115,7 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 }
 
 func deleteSessionService(ctx context.Context, sessionIdStr string, queries *db.Queries) *herodot.DefaultError {
-	sessionId, err := uuid.Parse(sessionIdStr)
+	sessionId, err := uuidx.FromBase58(sessionIdStr)
 	if err != nil {
 		return herodot.ErrBadRequest.WithReason("invalid session ID").WithDebug(err.Error())
 	}

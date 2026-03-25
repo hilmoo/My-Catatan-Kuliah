@@ -9,7 +9,7 @@ func HttpToBase58(u uuid.UUID, name string) (string, *herodot.DefaultError) {
 	val, err := ToBase58(u)
 	if err != nil {
 		return "", herodot.ErrBadRequest.
-			WithReason("failed to parse " + name).
+			WithReason("failed to encode " + name).
 			WithDebug(err.Error())
 	}
 	return val, nil
