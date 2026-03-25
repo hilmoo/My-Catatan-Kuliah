@@ -1,0 +1,16 @@
+# https://github.com/thim81/openapi-format
+output: openapi-formatted.yaml
+keepComments: true
+sort: true
+sortSet:
+  sortPathsBy: tags
+casingSet:
+  operationId: camelCase
+  properties: snakeCase
+  parameters: snakeCase
+  componentsSchemas: PascalCase
+  componentsParameters: camelCase
+  componentsRequestBodies: PascalCase
+  componentsResponses: PascalCase
+  componentsHeaders: PascalCase
+  componentsExamples: camelCase
