@@ -6,12 +6,20 @@
     "uv@0.10.6",
     "nodejs@24.12.0",
     "pnpm@10.29.2",
-    "goose@3.26.0"
+    "goose@3.26.0",
+    "sqlc@1.30.0",
+    "golangci-lint@2.11.3",
+    "pgformatter@5.9",
+    "yq-go@4.52"
   ],
   "shell": {
     "init_hook": [
-      "export \"GOROOT=$(go env GOROOT)\""
+      "export \"GOROOT=$(go env GOROOT)\"",
+      "export PATH=$PATH:$(go env GOPATH)/bin"
     ]
+  },
+  "env": {
+    "VACUUM": "apps/openapi.yaml"
   },
   "env_from": ".env"
 }

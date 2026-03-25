@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  GREETING: Hello, world!
+
+tasks:
+  default:
+    desc: Print a greeting message
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  gen-api:
+    desc: Generate API code using oapi-codegen
+    vars:
+      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/b78831761b659f483a4f12241ff5eba54dc2fa72/transform_openapi.py
+      OPENAPI_JSON: ../openapi.out.json
+    cmds:
+      - yq -o=json ../openapi.yaml > {{.OPENAPI_JSON}}
+      - uv run {{.SCRIPT}} {{.OPENAPI_JSON}} {{.OPENAPI_JSON}}
+      - go tool oapi-codegen -config=oapi-codegen.models.yml {{.OPENAPI_JSON}}
+      - go tool oapi-codegen -config=oapi-codegen.server.yml {{.OPENAPI_JSON}}
+      - sed -i 's/form:/query:/g' internal/gen/models/models.go
+  
+  gen-sql:
+    desc: Generate SQL code using sqlc
+    cmds:
+      - rm -rf internal/gen/sqlc
+      - sqlc generate -f sqlc.yaml
+  
+  lint:
+    desc: Run linters
+    cmds:
+      - golangci-lint run ./...
