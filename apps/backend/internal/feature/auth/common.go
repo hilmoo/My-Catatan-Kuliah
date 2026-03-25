@@ -9,7 +9,7 @@ const (
 	AlreadyAuthenticated = "ALREADY_AUTHENTICATED"
 )
 
-func genereateRandomString() (string, error) {
+func generateRandomString() (string, error) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {

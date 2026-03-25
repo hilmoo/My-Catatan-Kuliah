@@ -2,10 +2,6 @@ import argparse
 from ruamel.yaml import YAML
 
 def sort_dict(d):
-    """
-    Sorts a dictionary (or CommentedMap) in-place by keys.
-    Preserves the ruamel.yaml CommentedMap type to keep comments.
-    """
     if isinstance(d, dict):
         for key in sorted(d.keys()):
             d.move_to_end(key)

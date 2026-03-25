@@ -443,28 +443,26 @@ components:
           type: string
         icon:
           type: string
+    PageAllProperties:
+      oneOf:
+      - $ref: '#/components/schemas/PagePropertiesCourse'
+      - $ref: '#/components/schemas/PagePropertiesAssignment'
+      - $ref: '#/components/schemas/PagePropertiesFolder'
+      - $ref: '#/components/schemas/PagePropertiesNote'
     PageCreate:
       allOf:
       - $ref: '#/components/schemas/PageBaseCreate'
       - type: object
         properties:
           properties:
-            oneOf:
-            - $ref: '#/components/schemas/PagePropertiesCourse'
-            - $ref: '#/components/schemas/PagePropertiesAssignment'
-            - $ref: '#/components/schemas/PagePropertiesFolder'
-            - $ref: '#/components/schemas/PagePropertiesNote'
+            $ref: '#/components/schemas/PageAllProperties'
     PageDetail:
       allOf:
       - $ref: '#/components/schemas/PageBase'
       - type: object
         properties:
           properties:
-            oneOf:
-            - $ref: '#/components/schemas/PagePropertiesCourse'
-            - $ref: '#/components/schemas/PagePropertiesAssignment'
-            - $ref: '#/components/schemas/PagePropertiesFolder'
-            - $ref: '#/components/schemas/PagePropertiesNote'
+            $ref: '#/components/schemas/PageAllProperties'
     PagePropertiesAssignment:
       type: object
       properties:
@@ -528,11 +526,7 @@ components:
       - type: object
         properties:
           properties:
-            oneOf:
-            - $ref: '#/components/schemas/PagePropertiesCourse'
-            - $ref: '#/components/schemas/PagePropertiesAssignment'
-            - $ref: '#/components/schemas/PagePropertiesFolder'
-            - $ref: '#/components/schemas/PagePropertiesNote'
+            $ref: '#/components/schemas/PageAllProperties'
     Pagination:
       type: object
       properties:

@@ -1,10 +1,9 @@
 [project]
 name = "scripts"
 version = "0.1.0"
-description = "Add your description here"
+description = "Scripts"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "pyyaml>=6.0.3",
     "ruamel-yaml>=0.19.1",
 ]

@@ -9,7 +9,6 @@ import (
 	"backend/internal/transport/validation"
 	"backend/utils/uuidx"
 	"errors"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/labstack/echo/v5"
@@ -80,29 +79,13 @@ func (h *httpHandler) createPage(c *echo.Context) error {
 	}
 
 	var payloadProperties []byte
-	if payload.Properties != nil {
-		payloadProperties, err = httpMarshalValidateProperties(httpMarshalValidatePropertiesParams{
-			vld:      h.validate,
-			pageType: payload.Type,
-			GetProps: func() (any, error) {
-				pagetype := db.PageType(payload.Type)
-				switch pagetype {
-				case db.PageTypeFolder:
-					return payload.Properties.AsPagePropertiesFolder()
-				case db.PageTypeCourse:
-					return payload.Properties.AsPagePropertiesCourse()
-				case db.PageTypeNote:
-					return payload.Properties.AsPagePropertiesNote()
-				case db.PageTypeAssignment:
-					return payload.Properties.AsPagePropertiesAssignment()
-				default:
-					return nil, fmt.Errorf("unsupported page type: %s", payload.Type)
-				}
-			},
-		})
-		if err != nil {
-			return errort.HttpError(c, err)
-		}
+	payloadProperties, err = httpMarshalValidateProperties(httpMarshalValidatePropertiesParams{
+		vld:        h.validate,
+		pageType:   db.PageType(payload.Type),
+		properties: payload.Properties,
+	})
+	if err != nil {
+		return errort.HttpError(c, err)
 	}
 
 	resp, err := createPageservice(c.Request().Context(), createPageserviceParams{
@@ -146,29 +129,13 @@ func (h *httpHandler) updatePage(c *echo.Context) error {
 	}
 
 	var payloadProperties []byte
-	if payload.Properties != nil {
-		payloadProperties, err = httpMarshalValidateProperties(httpMarshalValidatePropertiesParams{
-			vld:      h.validate,
-			pageType: models.PageCreateType(pageType),
-			GetProps: func() (any, error) {
-				pagetype := db.PageType(pageType)
-				switch pagetype {
-				case db.PageTypeFolder:
-					return payload.Properties.AsPagePropertiesFolder()
-				case db.PageTypeCourse:
-					return payload.Properties.AsPagePropertiesCourse()
-				case db.PageTypeNote:
-					return payload.Properties.AsPagePropertiesNote()
-				case db.PageTypeAssignment:
-					return payload.Properties.AsPagePropertiesAssignment()
-				default:
-					return nil, fmt.Errorf("unsupported page type: %s", pagetype)
-				}
-			},
-		})
-		if err != nil {
-			return errort.HttpError(c, err)
-		}
+	payloadProperties, err = httpMarshalValidateProperties(httpMarshalValidatePropertiesParams{
+		vld:        h.validate,
+		pageType:   db.PageType(pageType),
+		properties: payload.Properties,
+	})
+	if err != nil {
+		return errort.HttpError(c, err)
 	}
 
 	resp, err := updatePageservice(c.Request().Context(), updatePageserviceParams{

@@ -25,7 +25,7 @@ type pageData struct {
 }
 
 func buildAssignmentModel(data pageData) (*models.PageDetail, *herodot.DefaultError) {
-	id, err := uuidx.HttpToBase58(data.Iid, "assignment ID")
+	id, err := uuidx.HttpToBase58(data.Iid, "page ID")
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func buildAssignmentModel(data pageData) (*models.PageDetail, *herodot.DefaultEr
 		return nil, err
 	}
 
-	var properties models.PageDetail_Properties
+	var properties models.PageAllProperties
 	if data.Properties != nil {
 		errs := properties.UnmarshalJSON(data.Properties)
 		if errs != nil {

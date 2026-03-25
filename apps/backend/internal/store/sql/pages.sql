@@ -26,6 +26,12 @@ WHERE iid = $1
     AND "type" = 'folder'
     AND "created_by" = $2;
 
+-- name: GetPageIdByIidAndUser :one
+SELECT id
+FROM pages
+WHERE iid = $1
+    AND "created_by" = $2;
+
 -- name: GetPageTypesByIidAndUser :one
 SELECT type
 FROM pages
@@ -44,6 +50,8 @@ FROM pages p
 WHERE 
     (sqlc.narg('workspace_id')::integer IS NULL 
         OR p.workspace_id = sqlc.narg('workspace_id')::integer)
+    AND (sqlc.narg('parent_id')::integer IS NULL 
+        OR p.parent_id = sqlc.narg('parent_id')::integer)
     AND p.type = sqlc.arg('type')
     AND p.created_by = sqlc.arg('created_by')::integer
     AND (sqlc.narg('cursor')::uuid IS NULL

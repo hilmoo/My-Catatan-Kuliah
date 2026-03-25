@@ -15,6 +15,8 @@ type Config struct {
 	LogLevel   string `env:"LOG_LEVEL" envDefault:"INFO"`
 	Domain     string `env:"DOMAIN,required"`
 	Secret     string `env:"SECRET,required"`
+	AppEnv     string `env:"APP_ENV,required"`
+	IsProd     bool
 
 	// Google OAuth
 	GoogleClientID     string `env:"GOOGLE_CLIENT_ID,required"`
@@ -30,6 +32,8 @@ func LoadConfig() (Config, error) {
 		return c, fmt.Errorf("env config: %w", err)
 	}
 
+	c.IsProd = c.AppEnv == "production"
+
 	c.GoogleOauthConfig = loadAuthProvider(c)
 
 	return c, nil
@@ -40,7 +44,7 @@ func loadAuthProvider(config Config) *oauth2.Config {
 		ClientID:     config.GoogleClientID,
 		ClientSecret: config.GoogleClientSecret,
 		Endpoint:     google.Endpoint,
-		RedirectURL:  config.Domain + "/auth/oauth/callback/google",
+		RedirectURL:  config.Domain + "/api/auth/oauth/callback/google",
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email",

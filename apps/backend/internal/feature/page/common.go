@@ -74,39 +74,55 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 }
 
 type httpMarshalValidatePropertiesParams struct {
-	vld      *validation.Vld
-	GetProps func() (any, error)
-	pageType models.PageCreateType
+	vld        *validation.Vld
+	properties *models.PageAllProperties
+	pageType   db.PageType
 }
 
 func httpMarshalValidateProperties(args httpMarshalValidatePropertiesParams) ([]byte, *herodot.DefaultError) {
-	props, err := args.GetProps()
-	if err != nil {
-		return nil, herodot.ErrBadRequest.WithReasonf("invalid %s properties: %v", args.pageType, err)
+	if args.properties == nil {
+		return nil, nil
 	}
 
-	switch p := props.(type) {
-	case *models.PagePropertiesFolder:
-		if errH := validation.ValidatePayload(args.vld, p); errH != nil {
+	pagetype := db.PageType(args.pageType)
+	switch pagetype {
+	case db.PageTypeFolder:
+		p, err := args.properties.AsPagePropertiesFolder()
+		if err != nil {
+			return nil, herodot.ErrBadRequest.WithReasonf("invalid folder properties: %v", err)
+		}
+		if errH := validation.ValidatePayload(args.vld, &p); errH != nil {
 			return nil, errH
 		}
-	case *models.PagePropertiesCourse:
-		if errH := validation.ValidatePayload(args.vld, p); errH != nil {
+	case db.PageTypeCourse:
+		p, err := args.properties.AsPagePropertiesCourse()
+		if err != nil {
+			return nil, herodot.ErrBadRequest.WithReasonf("invalid course properties: %v", err)
+		}
+		if errH := validation.ValidatePayload(args.vld, &p); errH != nil {
 			return nil, errH
 		}
-	case *models.PagePropertiesNote:
-		if errH := validation.ValidatePayload(args.vld, p); errH != nil {
+	case db.PageTypeNote:
+		p, err := args.properties.AsPagePropertiesNote()
+		if err != nil {
+			return nil, herodot.ErrBadRequest.WithReasonf("invalid note properties: %v", err)
+		}
+		if errH := validation.ValidatePayload(args.vld, &p); errH != nil {
 			return nil, errH
 		}
-	case *models.PagePropertiesAssignment:
-		if errH := validation.ValidatePayload(args.vld, p); errH != nil {
+	case db.PageTypeAssignment:
+		p, err := args.properties.AsPagePropertiesAssignment()
+		if err != nil {
+			return nil, herodot.ErrBadRequest.WithReasonf("invalid assignment properties: %v", err)
+		}
+		if errH := validation.ValidatePayload(args.vld, &p); errH != nil {
 			return nil, errH
 		}
 	default:
 		return nil, herodot.ErrBadRequest.WithReasonf("unsupported page type: %s", args.pageType)
 	}
 
-	byteProps, err := json.Marshal(props)
+	byteProps, err := json.Marshal(args.properties)
 	if err != nil {
 		return nil, herodot.ErrBadRequest.WithReasonf("failed to marshal %s properties: %v", args.pageType, err)
 	}

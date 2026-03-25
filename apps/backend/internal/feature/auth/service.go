@@ -12,7 +12,7 @@ import (
 )
 
 func googleLoginService() (string, *herodot.DefaultError) {
-	state, err := genereateRandomString()
+	state, err := generateRandomString()
 	if err != nil {
 		return "", herodot.ErrInternalServerError.WithReason("failed to generate state").WithDebug(err.Error())
 	}
@@ -39,7 +39,7 @@ func googleCallbackService(
 	ctx context.Context,
 	args googleCallbackServiceParams,
 ) (string, *herodot.DefaultError) {
-	token, err := genereateRandomString()
+	token, err := generateRandomString()
 	if err != nil {
 		return "", herodot.ErrInternalServerError.WithReason("failed to generate session token").WithDebug(err.Error())
 	}

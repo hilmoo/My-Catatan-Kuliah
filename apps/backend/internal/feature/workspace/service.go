@@ -94,6 +94,10 @@ func createWorkspaceService(ctx context.Context, args createWorkspaceServicePara
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
+	userIid, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
+	}
 
 	workspace, err := args.queries.CreateWorkspace(ctx, db.CreateWorkspaceParams{
 		Name:    args.body.Name,
@@ -111,7 +115,7 @@ func createWorkspaceService(ctx context.Context, args createWorkspaceServicePara
 	return &models.WorkspaceDetailResponse{
 		Id:        id,
 		Name:      workspace.Name,
-		OwnerId:   "",
+		OwnerId:   userIid,
 		CreatedAt: workspace.CreatedAt,
 	}, nil
 }
@@ -153,6 +157,10 @@ func getWorkspaceDetailsService(ctx context.Context, args getWorkspaceDetailsSer
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
+	userIid, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
+	}
 
 	workspaceId, err := uuidx.FromBase58(args.id)
 	if err != nil {
@@ -175,7 +183,7 @@ func getWorkspaceDetailsService(ctx context.Context, args getWorkspaceDetailsSer
 	return &models.WorkspaceDetailResponse{
 		Id:        id,
 		Name:      workspace.Name,
-		OwnerId:   "",
+		OwnerId:   userIid,
 		CreatedAt: workspace.CreatedAt,
 	}, nil
 
@@ -191,6 +199,10 @@ func updateWorkspaceService(ctx context.Context, args updateWorkspaceServicePara
 	user, err := msession.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
+	}
+	userIid, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
 	}
 
 	workspaceId, err := uuidx.FromBase58(args.id)
@@ -215,7 +227,7 @@ func updateWorkspaceService(ctx context.Context, args updateWorkspaceServicePara
 	return &models.WorkspaceDetailResponse{
 		Id:        id,
 		Name:      workspace.Name,
-		OwnerId:   "",
+		OwnerId:   userIid,
 		CreatedAt: workspace.CreatedAt,
 	}, nil
 }

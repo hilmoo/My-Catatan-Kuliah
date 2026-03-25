@@ -115,17 +115,22 @@ type Error struct {
 	// Details Additional details about the error.
 	Details *map[string]interface{} `json:"details,omitempty" validate:"omitempty"`
 
-	// Error Error type.
-	Error string `json:"error" validate:"required"`
-
 	// Id Error instance ID.
 	Id string `json:"id" validate:"required"`
+
+	// Message Error type.
+	Message *string `json:"message,omitempty" validate:"omitempty"`
 
 	// Reason Human-readable reason.
 	Reason string `json:"reason" validate:"required"`
 
 	// Status Status string (e.g., 'error').
 	Status string `json:"status" validate:"required"`
+}
+
+// PageAllProperties defines model for PageAllProperties.
+type PageAllProperties struct {
+	union json.RawMessage
 }
 
 // PageBase defines model for PageBase.
@@ -187,8 +192,8 @@ type PageCreate struct {
 	Icon *string `json:"icon,omitempty" validate:"omitempty"`
 
 	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *PageCreate_Properties `json:"properties,omitempty"`
+	ParentId   *string            `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *PageAllProperties `json:"properties,omitempty"`
 
 	// Title For folders, it's the folder name. For courses, it's the course name. For assignments, it's the assignment name. For notes, it's the note title.
 	Title string `json:"title" validate:"required"`
@@ -196,11 +201,6 @@ type PageCreate struct {
 	// Type The type of the page, which determines its properties and behavior.
 	Type        PageCreateType `json:"type" validate:"required,oneof=course assignment folder note"`
 	WorkspaceId string         `json:"workspace_id" validate:"required"`
-}
-
-// PageCreate_Properties defines model for PageCreate.Properties.
-type PageCreate_Properties struct {
-	union json.RawMessage
 }
 
 // PageCreateType The type of the page, which determines its properties and behavior.
@@ -221,8 +221,8 @@ type PageDetail struct {
 	Id *string `json:"id,omitempty" validate:"omitempty"`
 
 	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *PageDetail_Properties `json:"properties,omitempty"`
+	ParentId   *string            `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *PageAllProperties `json:"properties,omitempty"`
 
 	// Title Title of the page.
 	Title *string `json:"title,omitempty" validate:"omitempty"`
@@ -232,11 +232,6 @@ type PageDetail struct {
 
 	// WorkspaceId ID of the workspace this page belongs to.
 	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
-}
-
-// PageDetail_Properties defines model for PageDetail.Properties.
-type PageDetail_Properties struct {
-	union json.RawMessage
 }
 
 // PagePropertiesAssignment defines model for PagePropertiesAssignment.
@@ -272,15 +267,10 @@ type PagePropertiesNote struct {
 
 // PageUpdate defines model for PageUpdate.
 type PageUpdate struct {
-	Icon       *string                `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *PageUpdate_Properties `json:"properties,omitempty"`
-	Title      *string                `json:"title,omitempty" validate:"omitempty"`
-}
-
-// PageUpdate_Properties defines model for PageUpdate.Properties.
-type PageUpdate_Properties struct {
-	union json.RawMessage
+	Icon       *string            `json:"icon,omitempty" validate:"omitempty"`
+	ParentId   *string            `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *PageAllProperties `json:"properties,omitempty"`
+	Title      *string            `json:"title,omitempty" validate:"omitempty"`
 }
 
 // Pagination defines model for Pagination.
@@ -445,22 +435,22 @@ type CreateWorkspaceJSONRequestBody = WorkspaceCreate
 // UpdateWorkspaceJSONRequestBody defines body for UpdateWorkspace for application/json ContentType.
 type UpdateWorkspaceJSONRequestBody = WorkspaceUpdate
 
-// AsPagePropertiesCourse returns the union data inside the PageCreate_Properties as a PagePropertiesCourse
-func (t PageCreate_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
+// AsPagePropertiesCourse returns the union data inside the PageAllProperties as a PagePropertiesCourse
+func (t PageAllProperties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
 	var body PagePropertiesCourse
 	err := json.Unmarshal(t.union, &body)
 	return body, err
 }
 
-// FromPagePropertiesCourse overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesCourse
-func (t *PageCreate_Properties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
+// FromPagePropertiesCourse overwrites any union data inside the PageAllProperties as the provided PagePropertiesCourse
+func (t *PageAllProperties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
 }
 
-// MergePagePropertiesCourse performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesCourse
-func (t *PageCreate_Properties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
+// MergePagePropertiesCourse performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesCourse
+func (t *PageAllProperties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -471,22 +461,22 @@ func (t *PageCreate_Properties) MergePagePropertiesCourse(v PagePropertiesCourse
 	return err
 }
 
-// AsPagePropertiesAssignment returns the union data inside the PageCreate_Properties as a PagePropertiesAssignment
-func (t PageCreate_Properties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
+// AsPagePropertiesAssignment returns the union data inside the PageAllProperties as a PagePropertiesAssignment
+func (t PageAllProperties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
 	var body PagePropertiesAssignment
 	err := json.Unmarshal(t.union, &body)
 	return body, err
 }
 
-// FromPagePropertiesAssignment overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesAssignment
-func (t *PageCreate_Properties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
+// FromPagePropertiesAssignment overwrites any union data inside the PageAllProperties as the provided PagePropertiesAssignment
+func (t *PageAllProperties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
 }
 
-// MergePagePropertiesAssignment performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesAssignment
-func (t *PageCreate_Properties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
+// MergePagePropertiesAssignment performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesAssignment
+func (t *PageAllProperties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -497,22 +487,22 @@ func (t *PageCreate_Properties) MergePagePropertiesAssignment(v PagePropertiesAs
 	return err
 }
 
-// AsPagePropertiesFolder returns the union data inside the PageCreate_Properties as a PagePropertiesFolder
-func (t PageCreate_Properties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
+// AsPagePropertiesFolder returns the union data inside the PageAllProperties as a PagePropertiesFolder
+func (t PageAllProperties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
 	var body PagePropertiesFolder
 	err := json.Unmarshal(t.union, &body)
 	return body, err
 }
 
-// FromPagePropertiesFolder overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesFolder
-func (t *PageCreate_Properties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
+// FromPagePropertiesFolder overwrites any union data inside the PageAllProperties as the provided PagePropertiesFolder
+func (t *PageAllProperties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
 }
 
-// MergePagePropertiesFolder performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesFolder
-func (t *PageCreate_Properties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
+// MergePagePropertiesFolder performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesFolder
+func (t *PageAllProperties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -523,22 +513,22 @@ func (t *PageCreate_Properties) MergePagePropertiesFolder(v PagePropertiesFolder
 	return err
 }
 
-// AsPagePropertiesNote returns the union data inside the PageCreate_Properties as a PagePropertiesNote
-func (t PageCreate_Properties) AsPagePropertiesNote() (PagePropertiesNote, error) {
+// AsPagePropertiesNote returns the union data inside the PageAllProperties as a PagePropertiesNote
+func (t PageAllProperties) AsPagePropertiesNote() (PagePropertiesNote, error) {
 	var body PagePropertiesNote
 	err := json.Unmarshal(t.union, &body)
 	return body, err
 }
 
-// FromPagePropertiesNote overwrites any union data inside the PageCreate_Properties as the provided PagePropertiesNote
-func (t *PageCreate_Properties) FromPagePropertiesNote(v PagePropertiesNote) error {
+// FromPagePropertiesNote overwrites any union data inside the PageAllProperties as the provided PagePropertiesNote
+func (t *PageAllProperties) FromPagePropertiesNote(v PagePropertiesNote) error {
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
 }
 
-// MergePagePropertiesNote performs a merge with any union data inside the PageCreate_Properties, using the provided PagePropertiesNote
-func (t *PageCreate_Properties) MergePagePropertiesNote(v PagePropertiesNote) error {
+// MergePagePropertiesNote performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesNote
+func (t *PageAllProperties) MergePagePropertiesNote(v PagePropertiesNote) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -549,240 +539,12 @@ func (t *PageCreate_Properties) MergePagePropertiesNote(v PagePropertiesNote) er
 	return err
 }
 
-func (t PageCreate_Properties) MarshalJSON() ([]byte, error) {
+func (t PageAllProperties) MarshalJSON() ([]byte, error) {
 	b, err := t.union.MarshalJSON()
 	return b, err
 }
 
-func (t *PageCreate_Properties) UnmarshalJSON(b []byte) error {
-	err := t.union.UnmarshalJSON(b)
-	return err
-}
-
-// AsPagePropertiesCourse returns the union data inside the PageDetail_Properties as a PagePropertiesCourse
-func (t PageDetail_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
-	var body PagePropertiesCourse
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesCourse overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesCourse
-func (t *PageDetail_Properties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesCourse performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesCourse
-func (t *PageDetail_Properties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesAssignment returns the union data inside the PageDetail_Properties as a PagePropertiesAssignment
-func (t PageDetail_Properties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
-	var body PagePropertiesAssignment
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesAssignment overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesAssignment
-func (t *PageDetail_Properties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesAssignment performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesAssignment
-func (t *PageDetail_Properties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesFolder returns the union data inside the PageDetail_Properties as a PagePropertiesFolder
-func (t PageDetail_Properties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
-	var body PagePropertiesFolder
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesFolder overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesFolder
-func (t *PageDetail_Properties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesFolder performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesFolder
-func (t *PageDetail_Properties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesNote returns the union data inside the PageDetail_Properties as a PagePropertiesNote
-func (t PageDetail_Properties) AsPagePropertiesNote() (PagePropertiesNote, error) {
-	var body PagePropertiesNote
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesNote overwrites any union data inside the PageDetail_Properties as the provided PagePropertiesNote
-func (t *PageDetail_Properties) FromPagePropertiesNote(v PagePropertiesNote) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesNote performs a merge with any union data inside the PageDetail_Properties, using the provided PagePropertiesNote
-func (t *PageDetail_Properties) MergePagePropertiesNote(v PagePropertiesNote) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-func (t PageDetail_Properties) MarshalJSON() ([]byte, error) {
-	b, err := t.union.MarshalJSON()
-	return b, err
-}
-
-func (t *PageDetail_Properties) UnmarshalJSON(b []byte) error {
-	err := t.union.UnmarshalJSON(b)
-	return err
-}
-
-// AsPagePropertiesCourse returns the union data inside the PageUpdate_Properties as a PagePropertiesCourse
-func (t PageUpdate_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
-	var body PagePropertiesCourse
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesCourse overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesCourse
-func (t *PageUpdate_Properties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesCourse performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesCourse
-func (t *PageUpdate_Properties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesAssignment returns the union data inside the PageUpdate_Properties as a PagePropertiesAssignment
-func (t PageUpdate_Properties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
-	var body PagePropertiesAssignment
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesAssignment overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesAssignment
-func (t *PageUpdate_Properties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesAssignment performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesAssignment
-func (t *PageUpdate_Properties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesFolder returns the union data inside the PageUpdate_Properties as a PagePropertiesFolder
-func (t PageUpdate_Properties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
-	var body PagePropertiesFolder
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesFolder overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesFolder
-func (t *PageUpdate_Properties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesFolder performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesFolder
-func (t *PageUpdate_Properties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesNote returns the union data inside the PageUpdate_Properties as a PagePropertiesNote
-func (t PageUpdate_Properties) AsPagePropertiesNote() (PagePropertiesNote, error) {
-	var body PagePropertiesNote
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesNote overwrites any union data inside the PageUpdate_Properties as the provided PagePropertiesNote
-func (t *PageUpdate_Properties) FromPagePropertiesNote(v PagePropertiesNote) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesNote performs a merge with any union data inside the PageUpdate_Properties, using the provided PagePropertiesNote
-func (t *PageUpdate_Properties) MergePagePropertiesNote(v PagePropertiesNote) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-func (t PageUpdate_Properties) MarshalJSON() ([]byte, error) {
-	b, err := t.union.MarshalJSON()
-	return b, err
-}
-
-func (t *PageUpdate_Properties) UnmarshalJSON(b []byte) error {
+func (t *PageAllProperties) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }

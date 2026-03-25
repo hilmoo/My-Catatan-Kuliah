@@ -36,7 +36,7 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
-	var workspaceIdp *int32
+	var workspaceID *int32
 	if args.params.WorkspaceId != nil {
 		workspaceIid, errH := uuidx.HttpFromBase58(*args.params.WorkspaceId, "workspace ID")
 		if errH != nil {
@@ -52,11 +52,31 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 			}
 			return nil, herodot.ErrInternalServerError.WithReason("failed to get workspace").WithDebug(err.Error())
 		}
-		workspaceIdp = &workspaceId
+		workspaceID = &workspaceId
+	}
+
+	var parentID *int32
+	if args.params.ParentId != nil {
+		parentIid, errH := uuidx.HttpFromBase58(*args.params.ParentId, "parent ID")
+		if errH != nil {
+			return nil, errH
+		}
+		parentId, err := args.queries.GetPageIdByIidAndUser(ctx, db.GetPageIdByIidAndUserParams{
+			Iid:       parentIid,
+			CreatedBy: user.ID,
+		})
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, herodot.ErrNotFound.WithReason("workspace not found").WithDebug(err.Error())
+			}
+			return nil, herodot.ErrInternalServerError.WithReason("failed to get workspace").WithDebug(err.Error())
+		}
+		parentID = &parentId
 	}
 
 	Pages, err := args.queries.ListPagesByWorkspaceIdAndType(ctx, db.ListPagesByWorkspaceIdAndTypeParams{
-		WorkspaceID: workspaceIdp,
+		WorkspaceID: workspaceID,
+		ParentID:    parentID,
 		Type:        pageType,
 		CreatedBy:   user.ID,
 		Limit:       int32(fetchLimit),
@@ -168,8 +188,8 @@ func createPageservice(ctx context.Context, args createPageserviceParams) (*mode
 		userId:    user.ID,
 	})
 	if err != nil {
-		if errors.Is(err, herodot.ErrBadRequest) {
-			return nil, err.(*herodot.DefaultError)
+		if derr, ok := errors.AsType[*herodot.DefaultError](err); ok {
+			return nil, derr
 		}
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, herodot.ErrNotFound.WithReason("parent page not found").WithDebug(err.Error())
@@ -218,8 +238,9 @@ func updatePageservice(ctx context.Context, args updatePageserviceParams) (*mode
 		userId:    args.userId,
 	})
 	if err != nil {
-		if errors.Is(err, herodot.ErrBadRequest) {
-			return nil, err.(*herodot.DefaultError)
+		var derr *herodot.DefaultError
+		if errors.As(err, &derr) {
+			return nil, derr
 		}
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, herodot.ErrNotFound.WithReason("parent page not found").WithDebug(err.Error())

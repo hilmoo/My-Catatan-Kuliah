@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/labstack/echo/v5"
@@ -28,7 +27,7 @@ func GetUserFromContext(ctx context.Context) (db.User, error) {
 
 	user, ok := val.(db.User)
 	if !ok {
-		return db.User{}, errors.New("context value is not of type *db.User")
+		return db.User{}, errors.New("context value is not of type db.User")
 	}
 
 	return user, nil
@@ -42,9 +41,7 @@ func GetSessionToken(c *echo.Context) (string, error) {
 	return cookie.Value, nil
 }
 
-func cookieTemplate() *http.Cookie {
-	isProd := os.Getenv("APP_ENV") == "production"
-
+func cookieTemplate(isProd bool) *http.Cookie {
 	return &http.Cookie{
 		Name:     sessionCookieName,
 		Path:     "/",
@@ -54,15 +51,15 @@ func cookieTemplate() *http.Cookie {
 	}
 }
 
-func SetNewCookies(c *echo.Context, token string) {
-	cookie := cookieTemplate()
+func SetNewCookies(c *echo.Context, token string, isProd bool) {
+	cookie := cookieTemplate(isProd)
 	cookie.Value = token
 	cookie.Expires = time.Now().Add(7 * 24 * time.Hour)
 	c.SetCookie(cookie)
 }
 
-func ClearSessionCookies(c *echo.Context) {
-	cookie := cookieTemplate()
+func ClearSessionCookies(c *echo.Context, isProd bool) {
+	cookie := cookieTemplate(isProd)
 	cookie.MaxAge = -1
 	cookie.Expires = time.Unix(0, 0)
 	c.SetCookie(cookie)

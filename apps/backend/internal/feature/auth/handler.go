@@ -20,6 +20,7 @@ type httpHandler struct {
 	queries           *db.Queries
 	googleOauthConfig *oauth2.Config
 	secret            string
+	isProd            bool
 }
 
 func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
@@ -55,6 +56,7 @@ func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
 		Path:     "/",
 		Expires:  time.Now().Add(10 * time.Minute),
 		HttpOnly: true,
+		Secure:   h.isProd,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -89,7 +91,7 @@ func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
 		return errort.HttpError(c, errH)
 	}
 
-	msession.SetNewCookies(c, sessionToken)
+	msession.SetNewCookies(c, sessionToken, h.isProd)
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 
@@ -108,6 +110,6 @@ func (h *httpHandler) logout(c *echo.Context) error {
 		return errort.HttpError(c, errH)
 	}
 
-	msession.ClearSessionCookies(c)
+	msession.ClearSessionCookies(c, h.isProd)
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }

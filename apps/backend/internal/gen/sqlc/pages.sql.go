@@ -217,6 +217,25 @@ func (q *Queries) GetPageFolderIdByIidAndUserForParent(ctx context.Context, arg 
 	return id, err
 }
 
+const getPageIdByIidAndUser = `-- name: GetPageIdByIidAndUser :one
+SELECT id
+FROM pages
+WHERE iid = $1
+    AND "created_by" = $2
+`
+
+type GetPageIdByIidAndUserParams struct {
+	Iid       uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) GetPageIdByIidAndUser(ctx context.Context, arg GetPageIdByIidAndUserParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getPageIdByIidAndUser, arg.Iid, arg.CreatedBy)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getPageNoteIdByIidAndUserForParent = `-- name: GetPageNoteIdByIidAndUserForParent :one
 SELECT id
 FROM pages
@@ -268,16 +287,19 @@ FROM pages p
 WHERE 
     ($1::integer IS NULL 
         OR p.workspace_id = $1::integer)
-    AND p.type = $2
-    AND p.created_by = $3::integer
-    AND ($4::uuid IS NULL
-        OR p.iid < $4::uuid)
+    AND ($2::integer IS NULL 
+        OR p.parent_id = $2::integer)
+    AND p.type = $3
+    AND p.created_by = $4::integer
+    AND ($5::uuid IS NULL
+        OR p.iid < $5::uuid)
 ORDER BY p.iid DESC
-LIMIT $5::integer
+LIMIT $6::integer
 `
 
 type ListPagesByWorkspaceIdAndTypeParams struct {
 	WorkspaceID *int32
+	ParentID    *int32
 	Type        PageType
 	CreatedBy   int32
 	Cursor      *uuid.UUID
@@ -304,6 +326,7 @@ type ListPagesByWorkspaceIdAndTypeRow struct {
 func (q *Queries) ListPagesByWorkspaceIdAndType(ctx context.Context, arg ListPagesByWorkspaceIdAndTypeParams) ([]ListPagesByWorkspaceIdAndTypeRow, error) {
 	rows, err := q.db.Query(ctx, listPagesByWorkspaceIdAndType,
 		arg.WorkspaceID,
+		arg.ParentID,
 		arg.Type,
 		arg.CreatedBy,
 		arg.Cursor,
