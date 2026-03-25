@@ -62,6 +62,6 @@ func SetNewCookies(c *echo.Context, token string, isProd bool) {
 func ClearSessionCookies(c *echo.Context, isProd bool) {
 	cookie := cookieTemplate(isProd)
 	cookie.MaxAge = -1
-	cookie.Expires = time.Unix(0, 0)
+	cookie.Expires = time.Now().Add(-1 * time.Hour)
 	c.SetCookie(cookie)
 }

@@ -396,7 +396,7 @@ type ListPagesParams struct {
 	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
 
 	// Type Filter by page type
-	Type *ListPagesParamsType `query:"type,omitempty" json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
+	Type ListPagesParamsType `query:"type" json:"type" validate:"required,oneof=course assignment folder note"`
 }
 
 // ListPagesParamsType defines parameters for ListPages.

@@ -8,7 +8,6 @@ import (
 	msession "backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v5"
 	"github.com/ory/herodot"
@@ -47,15 +46,7 @@ func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
 		return errort.HttpError(c, err)
 	}
 
-	c.SetCookie(&http.Cookie{
-		Name:     "state",
-		Value:    state,
-		Path:     "/",
-		Expires:  time.Now().Add(10 * time.Minute),
-		HttpOnly: true,
-		Secure:   h.isProd,
-		SameSite: http.SameSiteLaxMode,
-	})
+	setStateCookie(c, state, h.isProd)
 
 	authUrl := h.googleOauthConfig.AuthCodeURL(state)
 	return c.Redirect(http.StatusTemporaryRedirect, authUrl)
@@ -75,6 +66,8 @@ func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
 	if params.State != stateCookie.Value {
 		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("invalid state parameter"))
 	}
+
+	clearStateCookie(c, h.isProd)
 
 	sessionToken, errH := googleCallbackService(c.Request().Context(), googleCallbackServiceParams{
 		code:        params.Code,

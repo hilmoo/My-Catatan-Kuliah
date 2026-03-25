@@ -25,15 +25,15 @@ func FromBase58ToP(s string) (*uuid.UUID, error) {
 	return &u, nil
 }
 
-func PToBase58(u *uuid.UUID) *string {
+func PToBase58(u *uuid.UUID) (*string, error) {
 	if u == nil {
-		return nil
+		return nil, nil
 	}
 	s, err := ToBase58(*u)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &s
+	return &s, nil
 }
 
 func PFromBase58(s *string) (*uuid.UUID, error) {

@@ -20,10 +20,7 @@ type listPagesServiceParams struct {
 }
 
 func listPagesService(ctx context.Context, args listPagesServiceParams) (*models.PageListResponse, *herodot.DefaultError) {
-	pageType := db.PageTypeFolder
-	if args.params.Type != nil {
-		pageType = db.PageType(*args.params.Type)
-	}
+	pageType := db.PageType(args.params.Type)
 
 	limit, cursor, err := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
 	if err != nil {

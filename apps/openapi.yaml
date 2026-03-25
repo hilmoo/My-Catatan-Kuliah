@@ -85,6 +85,7 @@ paths:
           - assignment
           - folder
           - note
+        required: true
       responses:
         '200':
           $ref: '#/components/responses/PageListResponse'

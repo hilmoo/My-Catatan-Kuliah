@@ -48,13 +48,18 @@ func buildAssignmentModel(data pageData) (*models.PageDetail, *herodot.DefaultEr
 		}
 	}
 
+	parentIid, errs := uuidx.PToBase58(data.ParentIid)
+	if errs != nil {
+		return nil, herodot.ErrInternalServerError.WithReasonf("failed to encode parent ID: %v", errs)
+	}
+
 	return &models.PageDetail{
 		CreatedAt:   &data.CreatedAt,
 		CreatedBy:   &authorId,
 		Icon:        data.Icon,
 		Id:          &id,
 		Properties:  &properties,
-		ParentId:    uuidx.PToBase58(data.ParentIid),
+		ParentId:    parentIid,
 		Title:       &data.Title,
 		UpdatedAt:   &data.UpdatedAt,
 		WorkspaceId: &workspaceId,
