@@ -194,7 +194,7 @@ func updateWorkspaceService(ctx context.Context, args updateWorkspaceServicePara
 	workspace, err := args.queries.UpdateWorkspaceByIidAndUser(ctx, db.UpdateWorkspaceByIidAndUserParams{
 		Iid:     workspaceId,
 		OwnerID: user.ID,
-		Name:    &args.body.Name,
+		Name:    args.body.Name,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to update workspace").WithDebug(err.Error())

@@ -64,8 +64,9 @@ paths:
   /pages:
     get:
       operationId: listPages
-      summary: List courses
-      description: List all courses
+      summary: List pages
+      description: List all pages for the current user, with optional filtering by
+        workspace, parent page, and type
       parameters:
       - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
@@ -267,7 +268,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkspaceCreate'
+              $ref: '#/components/schemas/WorkspaceUpdate'
       responses:
         '200':
           $ref: '#/components/responses/WorkspaceUpdateResponse'
@@ -384,8 +385,7 @@ components:
           type: string
           example: "\U0001F4C4"
         created_by:
-          description: ID of the user who created the page. Empty for the current
-            authenticated session.
+          description: ID of the user who created the page. authenticated session.
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         created_at:
@@ -410,12 +410,16 @@ components:
             cannot be top-level pages.
           type: string
         title:
-          type: string
-        content:
+          description: For folders, it's the folder name. For courses, it's the course
+            name. For assignments, it's the assignment name. For notes, it's the note
+            title.
           type: string
         icon:
+          description: Icon representing the page, can be an emoji or a URL to an
+            image.
           type: string
         type:
+          description: The type of the page, which determines its properties and behavior.
           type: string
           enum:
           - course
@@ -425,7 +429,6 @@ components:
       required:
       - workspace_id
       - title
-      - content
       - type
     PageBaseUpdate:
       type: object
@@ -433,8 +436,6 @@ components:
         parent_id:
           type: string
         title:
-          type: string
-        content:
           type: string
         icon:
           type: string
@@ -449,8 +450,6 @@ components:
             - $ref: '#/components/schemas/PagePropertiesAssignment'
             - $ref: '#/components/schemas/PagePropertiesFolder'
             - $ref: '#/components/schemas/PagePropertiesNote'
-        required:
-        - properties
     PageDetail:
       allOf:
       - $ref: '#/components/schemas/PageBase'
@@ -544,7 +543,7 @@ components:
       type: object
       properties:
         user_id:
-          description: User ID, empty for the current authenticated session.
+          description: User ID.
           type: string
         id:
           description: Session token (identifier).
@@ -574,8 +573,7 @@ components:
           description: Name of the workspace.
           type: string
         owner_id:
-          description: ID of the user who owns the workspace, empty for the current
-            authenticated session.
+          description: ID of the user who owns the workspace authenticated session.
           type: string
         created_at:
           type: string
@@ -592,6 +590,11 @@ components:
           type: string
       required:
       - name
+    WorkspaceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
   responses:
     ErrorResponse:
       description: Generic error response

@@ -133,7 +133,7 @@ type PageBase struct {
 	// CreatedAt Timestamp when the page was created.
 	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
 
-	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	// CreatedBy ID of the user who created the page. authenticated session.
 	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
 
 	// Icon Icon representing the page, can be an emoji or a URL to an image.
@@ -157,22 +157,25 @@ type PageBase struct {
 
 // PageBaseCreate defines model for PageBaseCreate.
 type PageBaseCreate struct {
-	Content string  `json:"content" validate:"required"`
-	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
 
 	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    *string            `json:"parent_id,omitempty" validate:"omitempty"`
-	Title       string             `json:"title" validate:"required"`
+	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
+
+	// Title For folders, it's the folder name. For courses, it's the course name. For assignments, it's the assignment name. For notes, it's the note title.
+	Title string `json:"title" validate:"required"`
+
+	// Type The type of the page, which determines its properties and behavior.
 	Type        PageBaseCreateType `json:"type" validate:"required,oneof=course assignment folder note"`
 	WorkspaceId string             `json:"workspace_id" validate:"required"`
 }
 
-// PageBaseCreateType defines model for PageBaseCreate.Type.
+// PageBaseCreateType The type of the page, which determines its properties and behavior.
 type PageBaseCreateType string
 
 // PageBaseUpdate defines model for PageBaseUpdate.
 type PageBaseUpdate struct {
-	Content  *string `json:"content,omitempty" validate:"omitempty"`
 	Icon     *string `json:"icon,omitempty" validate:"omitempty"`
 	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
 	Title    *string `json:"title,omitempty" validate:"omitempty"`
@@ -180,15 +183,19 @@ type PageBaseUpdate struct {
 
 // PageCreate defines model for PageCreate.
 type PageCreate struct {
-	Content string  `json:"content" validate:"required"`
-	Icon    *string `json:"icon,omitempty" validate:"omitempty"`
+	// Icon Icon representing the page, can be an emoji or a URL to an image.
+	Icon *string `json:"icon,omitempty" validate:"omitempty"`
 
 	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId    *string               `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties  PageCreate_Properties `json:"properties"`
-	Title       string                `json:"title" validate:"required"`
-	Type        PageCreateType        `json:"type" validate:"required,oneof=course assignment folder note"`
-	WorkspaceId string                `json:"workspace_id" validate:"required"`
+	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
+	Properties *PageCreate_Properties `json:"properties,omitempty"`
+
+	// Title For folders, it's the folder name. For courses, it's the course name. For assignments, it's the assignment name. For notes, it's the note title.
+	Title string `json:"title" validate:"required"`
+
+	// Type The type of the page, which determines its properties and behavior.
+	Type        PageCreateType `json:"type" validate:"required,oneof=course assignment folder note"`
+	WorkspaceId string         `json:"workspace_id" validate:"required"`
 }
 
 // PageCreate_Properties defines model for PageCreate.Properties.
@@ -196,7 +203,7 @@ type PageCreate_Properties struct {
 	union json.RawMessage
 }
 
-// PageCreateType defines model for PageCreate.Type.
+// PageCreateType The type of the page, which determines its properties and behavior.
 type PageCreateType string
 
 // PageDetail defines model for PageDetail.
@@ -204,7 +211,7 @@ type PageDetail struct {
 	// CreatedAt Timestamp when the page was created.
 	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
 
-	// CreatedBy ID of the user who created the page. Empty for the current authenticated session.
+	// CreatedBy ID of the user who created the page. authenticated session.
 	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
 
 	// Icon Icon representing the page, can be an emoji or a URL to an image.
@@ -265,7 +272,6 @@ type PagePropertiesNote struct {
 
 // PageUpdate defines model for PageUpdate.
 type PageUpdate struct {
-	Content    *string                `json:"content,omitempty" validate:"omitempty"`
 	Icon       *string                `json:"icon,omitempty" validate:"omitempty"`
 	ParentId   *string                `json:"parent_id,omitempty" validate:"omitempty"`
 	Properties *PageUpdate_Properties `json:"properties,omitempty"`
@@ -294,7 +300,7 @@ type Session struct {
 	IpAddress *string `json:"ip_address,omitempty" validate:"omitempty"`
 	UserAgent *string `json:"user_agent,omitempty" validate:"omitempty"`
 
-	// UserId User ID, empty for the current authenticated session.
+	// UserId User ID.
 	UserId string `json:"user_id" validate:"required"`
 }
 
@@ -308,13 +314,18 @@ type Workspace struct {
 	// Name Name of the workspace.
 	Name string `json:"name" validate:"required"`
 
-	// OwnerId ID of the user who owns the workspace, empty for the current authenticated session.
+	// OwnerId ID of the user who owns the workspace authenticated session.
 	OwnerId string `json:"owner_id" validate:"required"`
 }
 
 // WorkspaceCreate defines model for WorkspaceCreate.
 type WorkspaceCreate struct {
 	Name string `json:"name" validate:"required"`
+}
+
+// WorkspaceUpdate defines model for WorkspaceUpdate.
+type WorkspaceUpdate struct {
+	Name *string `json:"name,omitempty" validate:"omitempty"`
 }
 
 // CursorParam defines model for CursorParam.
@@ -432,7 +443,7 @@ type UpdatePageJSONRequestBody = PageUpdate
 type CreateWorkspaceJSONRequestBody = WorkspaceCreate
 
 // UpdateWorkspaceJSONRequestBody defines body for UpdateWorkspace for application/json ContentType.
-type UpdateWorkspaceJSONRequestBody = WorkspaceCreate
+type UpdateWorkspaceJSONRequestBody = WorkspaceUpdate
 
 // AsPagePropertiesCourse returns the union data inside the PageCreate_Properties as a PagePropertiesCourse
 func (t PageCreate_Properties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {

@@ -7,9 +7,9 @@ import (
 	"backend/utils/pagination"
 	"backend/utils/uuidx"
 	"context"
-	"encoding/json"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/ory/herodot"
 )
@@ -101,23 +101,18 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 }
 
 type getPageDetailsServiceParams struct {
-	queries *db.Queries
-	id      string
+	queries  *db.Queries
+	targetId uuid.UUID
 }
 
 func getPageDetailsService(ctx context.Context, args getPageDetailsServiceParams) (*models.PageDetailResponse, *herodot.DefaultError) {
-	pageId, errH := uuidx.HttpFromBase58(args.id, "page ID")
-	if errH != nil {
-		return nil, errH
-	}
-
 	user, err := msession.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
 	page, err := args.queries.GetPageByIid(ctx, db.GetPageByIidParams{
-		Iid:       pageId,
+		Iid:       args.targetId,
 		CreatedBy: user.ID,
 	})
 	if err != nil {
@@ -131,8 +126,9 @@ func getPageDetailsService(ctx context.Context, args getPageDetailsServiceParams
 }
 
 type createPageserviceParams struct {
-	queries *db.Queries
-	payload *models.CreatePageJSONRequestBody
+	queries           *db.Queries
+	payload           *models.CreatePageJSONRequestBody
+	payloadProperties []byte
 }
 
 func createPageservice(ctx context.Context, args createPageserviceParams) (*models.PageDetailResponse, *herodot.DefaultError) {
@@ -174,18 +170,13 @@ func createPageservice(ctx context.Context, args createPageserviceParams) (*mode
 		return nil, herodot.ErrInternalServerError.WithReason("failed to get parent page").WithDebug(err.Error())
 	}
 
-	properties, err := args.payload.Properties.MarshalJSON()
-	if err != nil {
-		return nil, herodot.ErrBadRequest.WithReason("invalid properties").WithDebug(err.Error())
-	}
-
 	page, err := args.queries.CreatePage(ctx, db.CreatePageParams{
 		WorkspaceID: workspaceId,
 		ParentID:    parentId,
 		Title:       args.payload.Title,
 		Icon:        args.payload.Icon,
 		Type:        db.PageType(args.payload.Type),
-		Properties:  json.RawMessage(properties),
+		Properties:  args.payloadProperties,
 		CreatedByID: user.ID,
 	})
 	if err != nil {
@@ -199,43 +190,25 @@ func createPageservice(ctx context.Context, args createPageserviceParams) (*mode
 }
 
 type updatePageserviceParams struct {
-	queries *db.Queries
-	id      string
-	payload *models.UpdatePageJSONRequestBody
+	queries           *db.Queries
+	targetId          uuid.UUID
+	payload           *models.UpdatePageJSONRequestBody
+	userId            int32
+	pageType          db.PageType
+	payloadProperties []byte
 }
 
 func updatePageservice(ctx context.Context, args updatePageserviceParams) (*models.PageDetailResponse, *herodot.DefaultError) {
-	targetId, errH := uuidx.HttpFromBase58(args.id, "page ID")
-	if errH != nil {
-		return nil, errH
-	}
-
-	user, err := msession.GetUserFromContext(ctx)
-	if err != nil {
-		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
-	}
-
-	pageType, err := args.queries.GetPageTypesByIidAndUser(ctx, db.GetPageTypesByIidAndUserParams{
-		Iid:       targetId,
-		CreatedBy: user.ID,
-	})
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, herodot.ErrNotFound.WithReason("page not found").WithDebug(err.Error())
-		}
-		return nil, herodot.ErrInternalServerError.WithReason("failed to get page type").WithDebug(err.Error())
-	}
-
 	var parentId *int32
 	parentIid, errH := uuidx.HttpPFromBase58(args.payload.ParentId, "parent ID")
 	if errH != nil {
 		return nil, errH
 	}
-	parentId, err = getPageParentId(ctx, getParentIdParams{
+	parentId, err := getPageParentId(ctx, getParentIdParams{
 		queries:   args.queries,
-		pageType:  models.PageCreateType(pageType),
+		pageType:  models.PageCreateType(args.pageType),
 		parentIid: parentIid,
-		userId:    user.ID,
+		userId:    args.userId,
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -244,18 +217,13 @@ func updatePageservice(ctx context.Context, args updatePageserviceParams) (*mode
 		return nil, herodot.ErrInternalServerError.WithReason("failed to get parent page").WithDebug(err.Error())
 	}
 
-	properties, err := args.payload.Properties.MarshalJSON()
-	if err != nil {
-		return nil, herodot.ErrBadRequest.WithReason("invalid properties").WithDebug(err.Error())
-	}
-
 	page, err := args.queries.UpdatePage(ctx, db.UpdatePageParams{
 		Title:      args.payload.Title,
 		ParentID:   parentId,
 		Icon:       args.payload.Icon,
-		Properties: json.RawMessage(properties),
-		Iid:        targetId,
-		CreatedBy:  user.ID,
+		Properties: args.payloadProperties,
+		Iid:        args.targetId,
+		CreatedBy:  args.userId,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to update page").WithDebug(err.Error())
@@ -265,23 +233,18 @@ func updatePageservice(ctx context.Context, args updatePageserviceParams) (*mode
 }
 
 type deletePageserviceParams struct {
-	queries *db.Queries
-	id      string
+	queries  *db.Queries
+	targetId uuid.UUID
 }
 
 func deletePageservice(ctx context.Context, args deletePageserviceParams) *herodot.DefaultError {
-	targetId, errH := uuidx.HttpFromBase58(args.id, "page ID")
-	if errH != nil {
-		return errH
-	}
-
 	user, err := msession.GetUserFromContext(ctx)
 	if err != nil {
 		return herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
 	err = args.queries.DeletePage(ctx, db.DeletePageParams{
-		Iid:       targetId,
+		Iid:       args.targetId,
 		CreatedBy: user.ID,
 	})
 	if err != nil {

@@ -14,35 +14,17 @@ import (
 
 const createPage = `-- name: CreatePage :one
 WITH inserted AS (
-    INSERT INTO pages (
-        "workspace_id", 
-        "parent_id", 
-        "title", 
-        "icon", 
-        "type", 
-        "properties", 
-        "created_by"
-    )
-    VALUES (
-        $1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7
-    )
-    RETURNING id, iid, workspace_id, parent_id, title, icon, type, properties, created_by, created_at, updated_at
-)
-SELECT 
-    p.id, p.iid, p.workspace_id, p.parent_id, p.title, p.icon, p.type, p.properties, p.created_by, p.created_at, p.updated_at,
-    u.iid AS user_iid,
-    pp.iid AS parent_iid,
-    w.iid AS workspace_iid
-FROM inserted p
-    JOIN users u ON p.created_by = u.id
-    JOIN workspaces w ON p.workspace_id = w.id
-    LEFT JOIN pages pp ON p.parent_id = pp.id
+INSERT INTO pages("workspace_id", "parent_id", "title", "icon", "type", "properties", "created_by")
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING id, iid, workspace_id, parent_id, title, icon, type, properties, created_by, created_at, updated_at)
+    SELECT p.id, p.iid, p.workspace_id, p.parent_id, p.title, p.icon, p.type, p.properties, p.created_by, p.created_at, p.updated_at,
+        u.iid AS user_iid,
+        pp.iid AS parent_iid,
+        w.iid AS workspace_iid
+    FROM inserted p
+        JOIN users u ON p.created_by = u.id
+        JOIN workspaces w ON p.workspace_id = w.id
+        LEFT JOIN pages pp ON p.parent_id = pp.id
 `
 
 type CreatePageParams struct {
@@ -360,7 +342,8 @@ func (q *Queries) ListPagesByWorkspaceIdAndType(ctx context.Context, arg ListPag
 
 const updatePage = `-- name: UpdatePage :one
 WITH updated AS (
-    UPDATE pages
+    UPDATE
+        pages
     SET title = COALESCE($1::text, title),
         parent_id = COALESCE($2::integer, parent_id),
         icon = COALESCE($3::text, icon),
@@ -368,18 +351,27 @@ WITH updated AS (
         updated_at = NOW()
     WHERE pages.iid = $5
         AND pages.created_by = $6
-    RETURNING id, iid, workspace_id, parent_id, title, icon, type, properties, created_by, created_at, updated_at
+    RETURNING id,
+        iid,
+        workspace_id,
+        parent_id,
+        title,
+        icon,
+        type,
+        properties,
+        created_by,
+        created_at,
+        updated_at
 )
-SELECT 
-    p.id, p.iid, p.workspace_id, p.parent_id, p.title, p.icon, p.type, p.properties, p.created_by, p.created_at, p.updated_at,
+SELECT p.id, p.iid, p.workspace_id, p.parent_id, p.title, p.icon, p.type, p.properties, p.created_by, p.created_at, p.updated_at,
     p.updated_at,
     u.iid AS user_iid,
     pp.iid AS parent_iid,
     w.iid AS workspace_iid
 FROM updated p
-JOIN users u ON p.created_by = u.id
-JOIN workspaces w ON p.workspace_id = w.id
-LEFT JOIN pages pp ON p.parent_id = pp.id
+    JOIN users u ON p.created_by = u.id
+    JOIN workspaces w ON p.workspace_id = w.id
+    LEFT JOIN pages pp ON p.parent_id = pp.id
 `
 
 type UpdatePageParams struct {
