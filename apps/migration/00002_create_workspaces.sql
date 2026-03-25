@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE "workspaces"(
     "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "iid" uuid DEFAULT uuidv7() NOT NULL,
+    "iid" uuid DEFAULT uuidv7() NOT NULL UNIQUE,
     "name" text NOT NULL,
     "owner_id" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW()

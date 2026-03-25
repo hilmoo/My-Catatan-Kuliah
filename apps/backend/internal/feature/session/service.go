@@ -45,8 +45,12 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 
 	sessionModels := make([]models.Session, 0, len(sessions))
 	for _, s := range sessions {
+		iid, err := uuidx.ToBase58(s.ID)
+		if err != nil {
+			return nil, herodot.ErrInternalServerError.WithReason("failed to encode session ID").WithDebug(err.Error())
+		}
 		sessionModels = append(sessionModels, models.Session{
-			Id:        s.ID.String(),
+			Id:        iid,
 			UserId:    user.Iid.String(),
 			ExpiresAt: s.ExpiresAt,
 			IpAddress: s.IpAddress,
@@ -79,7 +83,7 @@ func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*
 }
 
 func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries *db.Queries) (*models.SessionDetailResponse, *herodot.DefaultError) {
-	sessionId, err := uuid.Parse(sessionIdStr)
+	sessionId, err := uuidx.FromBase58(sessionIdStr)
 	if err != nil {
 		return nil, herodot.ErrBadRequest.WithReason("invalid session ID").WithDebug(err.Error())
 	}

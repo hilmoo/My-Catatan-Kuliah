@@ -28,7 +28,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group.GET("", h.listWorkspaces)
 	group.POST("", h.createWorkspace)
 	group.GET("/:id", h.getWorkspaceDetails)
-	group.PUT("/:id", h.updateWorkspace)
+	group.PATCH("/:id", h.updateWorkspace)
 	group.DELETE("/:id", h.deleteWorkspace)
 }
 
@@ -63,7 +63,7 @@ func (h *httpHandler) createWorkspace(c *echo.Context) error {
 		return errort.HttpError(c, err)
 	}
 
-	return c.JSON(200, resp)
+	return c.JSON(201, resp)
 }
 
 func (h *httpHandler) deleteWorkspace(c *echo.Context) error {

@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE "document_chunks"(
     "id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "page_id" integer NOT NULL, -- Changed from note_id
+    "page_id" integer NOT NULL,
     "workspace_id" integer NOT NULL,
     "chunk_index" integer NOT NULL,
     "content" text NOT NULL,

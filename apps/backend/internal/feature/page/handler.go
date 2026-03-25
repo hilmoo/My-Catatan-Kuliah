@@ -33,7 +33,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group.GET("", h.listPages)
 	group.GET("/:id", h.getPageDetails)
 	group.POST("", h.createPage)
-	group.PUT("/:id", h.updatePage)
+	group.PATCH("/:id", h.updatePage)
 	group.DELETE("/:id", h.deletePage)
 }
 
@@ -97,7 +97,7 @@ func (h *httpHandler) createPage(c *echo.Context) error {
 		return errort.HttpError(c, err)
 	}
 
-	return c.JSON(200, resp)
+	return c.JSON(201, resp)
 }
 
 func (h *httpHandler) updatePage(c *echo.Context) error {

@@ -29,13 +29,14 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 		queries:           args.Queries,
 		googleOauthConfig: args.Config.GoogleOauthConfig,
 		secret:            args.Config.Secret,
+		isProd:            args.Config.IsProd,
 	}
 }
 
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/auth")
 
-	group.GET("/oauth", h.oauthGoogleLogin)
+	group.GET("/oauth/google", h.oauthGoogleLogin)
 	group.GET("/oauth/callback/google", h.oauthGoogleCallback)
 	group.POST("/logout", h.logout)
 }

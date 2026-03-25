@@ -9,7 +9,7 @@ CREATE TYPE page_type AS ENUM(
 
 CREATE TABLE "pages"(
     "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "iid" uuid DEFAULT uuidv7() NOT NULL,
+    "iid" uuid DEFAULT uuidv7() NOT NULL UNIQUE,
     "workspace_id" integer NOT NULL,
     "parent_id" integer REFERENCES "pages"("id") ON DELETE CASCADE,
     "title" text NOT NULL DEFAULT 'Untitled',

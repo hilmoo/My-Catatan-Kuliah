@@ -67,9 +67,9 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 		})
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				return nil, herodot.ErrNotFound.WithReason("workspace not found").WithDebug(err.Error())
+				return nil, herodot.ErrNotFound.WithReason("parent not found").WithDebug(err.Error())
 			}
-			return nil, herodot.ErrInternalServerError.WithReason("failed to get workspace").WithDebug(err.Error())
+			return nil, herodot.ErrInternalServerError.WithReason("failed to get parent").WithDebug(err.Error())
 		}
 		parentID = &parentId
 	}
