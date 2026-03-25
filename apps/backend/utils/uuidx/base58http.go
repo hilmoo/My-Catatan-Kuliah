@@ -8,7 +8,7 @@ import (
 func HttpToBase58(u uuid.UUID, name string) (string, *herodot.DefaultError) {
 	val, err := ToBase58(u)
 	if err != nil {
-		return "", herodot.ErrInternalServerError.
+		return "", herodot.ErrBadRequest.
 			WithReason("failed to parse " + name).
 			WithDebug(err.Error())
 	}
@@ -18,7 +18,7 @@ func HttpToBase58(u uuid.UUID, name string) (string, *herodot.DefaultError) {
 func HttpFromBase58(s string, name string) (uuid.UUID, *herodot.DefaultError) {
 	u, err := FromBase58(s)
 	if err != nil {
-		return uuid.Nil, herodot.ErrInternalServerError.
+		return uuid.Nil, herodot.ErrBadRequest.
 			WithReason("invalid " + name).
 			WithDebug(err.Error())
 	}
@@ -32,7 +32,7 @@ func HttpPFromBase58(s *string, name string) (*uuid.UUID, *herodot.DefaultError)
 
 	u, err := FromBase58ToP(*s)
 	if err != nil {
-		return nil, herodot.ErrInternalServerError.
+		return nil, herodot.ErrBadRequest.
 			WithReason("invalid " + name).
 			WithDebug(err.Error())
 	}

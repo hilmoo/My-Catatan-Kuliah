@@ -1,9 +1,14 @@
-import yaml
 import argparse
+from ruamel.yaml import YAML
 
 def sort_dict(d):
+    """
+    Sorts a dictionary (or CommentedMap) in-place by keys.
+    Preserves the ruamel.yaml CommentedMap type to keep comments.
+    """
     if isinstance(d, dict):
-        return dict(sorted(d.items(), key=lambda x: x[0]))
+        for key in sorted(d.keys()):
+            d.move_to_end(key)
     return d
 
 def main():
@@ -12,20 +17,22 @@ def main():
     parser.add_argument("output", help="Path to output YAML file")
     args = parser.parse_args()
 
+    yaml = YAML()
+    yaml.preserve_quotes = True
+
     with open(args.input, "r", encoding="utf-8") as f:
-        doc = yaml.safe_load(f)
+        doc = yaml.load(f)
 
-    components = doc.get("components", {})
-
-    components["schemas"] = sort_dict(components.get("schemas", {}))
-    components["parameters"] = sort_dict(components.get("parameters", {}))
-    components["responses"] = sort_dict(components.get("responses", {}))
-    components["securitySchemes"] = sort_dict(components.get("securitySchemes", {}))
+    components = doc.get("components")
+    if components:
+        for section in ["schemas", "parameters", "responses", "securitySchemes"]:
+            if section in components:
+                sort_dict(components[section])
 
     doc["components"] = components
 
     with open(args.output, "w", encoding="utf-8") as f:
-        yaml.dump(doc, f, sort_keys=False)
+        yaml.dump(doc, f)
 
 if __name__ == "__main__":
     main()

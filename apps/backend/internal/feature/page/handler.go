@@ -131,7 +131,7 @@ func (h *httpHandler) updatePage(c *echo.Context) error {
 
 	user, errs := msession.GetUserFromContext(c.Request().Context())
 	if errs != nil {
-		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(err.Error()))
+		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(errs.Error()))
 	}
 
 	pageType, errs := h.queries.GetPageTypesByIidAndUser(c.Request().Context(), db.GetPageTypesByIidAndUserParams{

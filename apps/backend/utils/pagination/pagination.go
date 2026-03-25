@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetPagination(cursorStr *string, limit *int, defaultLimit int) (int, *uuid.UUID) {
+func GetPagination(cursorStr *string, limit *int, defaultLimit int) (int, *uuid.UUID, error) {
 	actualLimit := defaultLimit
 	if limit != nil && *limit > 0 {
 		actualLimit = *limit
@@ -14,8 +14,8 @@ func GetPagination(cursorStr *string, limit *int, defaultLimit int) (int, *uuid.
 
 	cursor, err := uuidx.PFromBase58(cursorStr)
 	if err != nil {
-		cursor = nil
+		return 0, nil, err
 	}
 
-	return actualLimit, cursor
+	return actualLimit, cursor, nil
 }

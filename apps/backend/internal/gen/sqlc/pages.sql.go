@@ -265,21 +265,23 @@ FROM pages p
     JOIN users u ON p.created_by = u.id
     JOIN workspaces w ON p.workspace_id = w.id
     LEFT JOIN pages pp ON p.parent_id = pp.id
-WHERE p."workspace_id" = $1
-    AND p."type" = $2
-    AND p."created_by" = $3
-    AND ($5::uuid IS NULL
-        OR p.iid < $5::uuid)
+WHERE 
+    ($1::integer IS NULL 
+        OR p.workspace_id = $1::integer)
+    AND p.type = $2
+    AND p.created_by = $3::integer
+    AND ($4::uuid IS NULL
+        OR p.iid < $4::uuid)
 ORDER BY p.iid DESC
-LIMIT $4
+LIMIT $5::integer
 `
 
 type ListPagesByWorkspaceIdAndTypeParams struct {
-	WorkspaceID int32
+	WorkspaceID *int32
 	Type        PageType
 	CreatedBy   int32
-	Limit       int32
 	Cursor      *uuid.UUID
+	Limit       int32
 }
 
 type ListPagesByWorkspaceIdAndTypeRow struct {
@@ -304,8 +306,8 @@ func (q *Queries) ListPagesByWorkspaceIdAndType(ctx context.Context, arg ListPag
 		arg.WorkspaceID,
 		arg.Type,
 		arg.CreatedBy,
-		arg.Limit,
 		arg.Cursor,
+		arg.Limit,
 	)
 	if err != nil {
 		return nil, err

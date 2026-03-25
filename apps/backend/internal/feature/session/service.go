@@ -18,7 +18,10 @@ type listSessionsServiceParams struct {
 }
 
 func listSessionsService(ctx context.Context, args listSessionsServiceParams) (*models.SessionListResponse, *herodot.DefaultError) {
-	limit, cursor := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
+	limit, cursor, err := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
+	if err != nil {
+		return nil, herodot.ErrBadRequest.WithReason("invalid pagination cursor").WithDebug(err.Error())
+	}
 	fetchLimit := limit + 1
 
 	user, err := msession.GetUserFromContext(ctx)

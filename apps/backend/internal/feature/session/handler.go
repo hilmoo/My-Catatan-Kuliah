@@ -2,9 +2,9 @@ package session
 
 import (
 	"backend/internal/gen/models"
-	"backend/internal/gen/sqlc"
+	db "backend/internal/gen/sqlc"
 	errort "backend/internal/transport/error"
-	"backend/internal/transport/helper"
+	helpert "backend/internal/transport/helper"
 	"backend/internal/transport/validation"
 
 	"github.com/labstack/echo/v5"

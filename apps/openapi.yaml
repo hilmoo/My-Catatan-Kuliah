@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Workspace Management API
   version: 1.0.0
-  description: API specification for managing users, workspaces, and pages.
+  description: 'API specification for managing users, workspaces, and pages.'
 servers:
 - url: /api
   description: Base URL for API endpoints
@@ -11,7 +11,8 @@ paths:
     get:
       operationId: redirectToGoogleOAuth
       summary: Redirect to Google OAuth
-      description: Initiates OAuth flow by redirecting to Google authorization endpoint
+      description: Initiates OAuth flow by redirecting to Google authorization 
+        endpoint
       responses:
         '302':
           description: Redirect to Google OAuth authorization URL
@@ -22,8 +23,8 @@ paths:
     get:
       operationId: handleGoogleOAuthCallback
       summary: Handle Google OAuth callback
-      description: Handles the callback from Google OAuth, exchanges code for session
-        token, and redirects to frontend with session token
+      description: 'Handles the callback from Google OAuth, exchanges code for session
+        token, and redirects to frontend with session token'
       parameters:
       - name: code
         in: query
@@ -42,7 +43,7 @@ paths:
           description: Redirect to frontend with session token
           headers:
             Location:
-              description: URL to redirect the user to, including session token
+              description: 'URL to redirect the user to, including session token'
               schema:
                 type: string
         '400':
@@ -54,7 +55,8 @@ paths:
     get:
       operationId: healthCheck
       summary: Health check endpoint
-      description: Returns a simple status message to indicate the API is running.
+      description: Returns a simple status message to indicate the API is 
+        running.
       responses:
         '204':
           description: API is healthy
@@ -65,8 +67,8 @@ paths:
     get:
       operationId: listPages
       summary: List pages
-      description: List all pages for the current user, with optional filtering by
-        workspace, parent page, and type
+      description: 'List all pages for the current user, with optional filtering by
+        workspace, parent page, and type'
       parameters:
       - $ref: '#/components/parameters/CursorParam'
       - $ref: '#/components/parameters/LimitParam'
@@ -95,7 +97,7 @@ paths:
     post:
       operationId: createPage
       summary: Create a page
-      description: Create a new page (course, assignment, folder, or note)
+      description: 'Create a new page (course, assignment, folder, or note)'
       requestBody:
         required: true
         content:
@@ -111,7 +113,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
       tags:
       - Pages
-  /pages/{id}:
+  '/pages/{id}':
     parameters:
     - $ref: '#/components/parameters/ResourceId'
     get:
@@ -130,7 +132,7 @@ paths:
     patch:
       operationId: updatePage
       summary: Update page
-      description: Update an existing page (course, assignment, folder, or note)
+      description: 'Update an existing page (course, assignment, folder, or note)'
       requestBody:
         content:
           application/json:
@@ -150,7 +152,7 @@ paths:
     delete:
       operationId: deletePage
       summary: Delete page
-      description: Delete a page (course, assignment, folder, or note)
+      description: 'Delete a page (course, assignment, folder, or note)'
       responses:
         '204':
           description: Page deleted
@@ -173,7 +175,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
       tags:
       - Sessions
-  /sessions/{id}:
+  '/sessions/{id}':
     parameters:
     - name: id
       in: path
@@ -244,7 +246,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
       tags:
       - Workspaces
-  /workspaces/{id}:
+  '/workspaces/{id}':
     parameters:
     - $ref: '#/components/parameters/ResourceId'
     get:
@@ -338,10 +340,10 @@ components:
           type: string
           example: Resource Not Found
         status:
-          description: Status string (e.g., 'error').
+          description: 'Status string (e.g., ''error'').'
           type: string
           example: Not Found
-        error:
+        message:
           description: Error type.
           type: string
           example: The requested resource could not be found
@@ -372,7 +374,7 @@ components:
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         parent_id:
-          description: ID of the parent page, null if it's a top-level page.
+          description: 'ID of the parent page, null if it''s a top-level page.'
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         title:
@@ -380,12 +382,13 @@ components:
           type: string
           example: My Page
         icon:
-          description: Icon representing the page, can be an emoji or a URL to an
-            image.
+          description: 'Icon representing the page, can be an emoji or a URL to an
+            image.'
           type: string
-          example: "\U0001F4C4"
+          example: "📄"
         created_by:
-          description: ID of the user who created the page. authenticated session.
+          description: ID of the user who created the page. authenticated 
+            session.
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         created_at:
@@ -404,22 +407,23 @@ components:
         workspace_id:
           type: string
         parent_id:
-          description: Folders can be nested under another folder. Courses can only
+          description: 'Folders can be nested under another folder. Courses can only
             be nested under folders. Assignments can only be nested under courses.
             Notes can be nested under folders, courses, or other notes. Only Assignments
-            cannot be top-level pages.
+            cannot be top-level pages.'
           type: string
         title:
-          description: For folders, it's the folder name. For courses, it's the course
-            name. For assignments, it's the assignment name. For notes, it's the note
-            title.
+          description: 'For folders, it''s the folder name. For courses, it''s the
+            course name. For assignments, it''s the assignment name. For notes, it''s
+            the note title.'
           type: string
         icon:
-          description: Icon representing the page, can be an emoji or a URL to an
-            image.
+          description: 'Icon representing the page, can be an emoji or a URL to an
+            image.'
           type: string
         type:
-          description: The type of the page, which determines its properties and behavior.
+          description: 'The type of the page, which determines its properties and
+            behavior.'
           type: string
           enum:
           - course
@@ -517,7 +521,7 @@ components:
         cover_image:
           type: string
           format: uri
-          example: https://example.com/images/abstract-header.png
+          example: 'https://example.com/images/abstract-header.png'
     PageUpdate:
       allOf:
       - $ref: '#/components/schemas/PageBaseUpdate'
@@ -573,7 +577,8 @@ components:
           description: Name of the workspace.
           type: string
         owner_id:
-          description: ID of the user who owns the workspace authenticated session.
+          description: ID of the user who owns the workspace authenticated 
+            session.
           type: string
         created_at:
           type: string

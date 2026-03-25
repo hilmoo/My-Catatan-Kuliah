@@ -25,7 +25,10 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 		pageType = db.PageType(*args.params.Type)
 	}
 
-	limit, cursor := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
+	limit, cursor, err := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
+	if err != nil {
+		return nil, herodot.ErrBadRequest.WithReason("invalid pagination cursor").WithDebug(err.Error())
+	}
 	fetchLimit := limit + 1
 
 	user, err := msession.GetUserFromContext(ctx)
@@ -33,13 +36,13 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
-	var workspaceId int32
+	var workspaceIdp *int32
 	if args.params.WorkspaceId != nil {
 		workspaceIid, errH := uuidx.HttpFromBase58(*args.params.WorkspaceId, "workspace ID")
 		if errH != nil {
 			return nil, errH
 		}
-		workspaceId, err = args.queries.GetWorkspaceIdByIidAndUser(ctx, db.GetWorkspaceIdByIidAndUserParams{
+		workspaceId, err := args.queries.GetWorkspaceIdByIidAndUser(ctx, db.GetWorkspaceIdByIidAndUserParams{
 			Iid:     workspaceIid,
 			OwnerID: user.ID,
 		})
@@ -49,10 +52,11 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 			}
 			return nil, herodot.ErrInternalServerError.WithReason("failed to get workspace").WithDebug(err.Error())
 		}
+		workspaceIdp = &workspaceId
 	}
 
 	Pages, err := args.queries.ListPagesByWorkspaceIdAndType(ctx, db.ListPagesByWorkspaceIdAndTypeParams{
-		WorkspaceID: workspaceId,
+		WorkspaceID: workspaceIdp,
 		Type:        pageType,
 		CreatedBy:   user.ID,
 		Limit:       int32(fetchLimit),
@@ -211,7 +215,6 @@ func updatePageservice(ctx context.Context, args updatePageserviceParams) (*mode
 		queries:   args.queries,
 		pageType:  models.PageCreateType(args.pageType),
 		parentIid: parentIid,
-		targetId:  args.targetId,
 		userId:    args.userId,
 	})
 	if err != nil {

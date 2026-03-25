@@ -17,12 +17,19 @@ type listWorkspacesServiceParams struct {
 }
 
 func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams) (*models.WorkspaceListResponse, *herodot.DefaultError) {
-	limit, cursor := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
+	limit, cursor, err := pagination.GetPagination(args.params.Cursor, args.params.Limit, 20)
+	if err != nil {
+		return nil, herodot.ErrBadRequest.WithReason("invalid pagination cursor").WithDebug(err.Error())
+	}
 	fetchLimit := limit + 1
 
 	user, err := msession.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
+	}
+	userIid, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
 	}
 
 	workspaces, err := args.queries.ListWorkspacesByUserId(ctx, db.ListWorkspacesByUserIdParams{
@@ -43,12 +50,12 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 	for _, w := range workspaces {
 		id, err := uuidx.ToBase58(w.Iid)
 		if err != nil {
-			 return nil, herodot.ErrInternalServerError.WithReason("failed to encode workspace id").WithDebug(err.Error())
+			return nil, herodot.ErrInternalServerError.WithReason("failed to encode workspace id").WithDebug(err.Error())
 		}
 		workspaceModels = append(workspaceModels, models.Workspace{
 			Id:        id,
 			Name:      w.Name,
-			OwnerId:   w.Iid.String(),
+			OwnerId:   userIid,
 			CreatedAt: w.CreatedAt,
 		})
 	}

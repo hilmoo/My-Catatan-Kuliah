@@ -41,13 +41,15 @@ FROM pages p
     JOIN users u ON p.created_by = u.id
     JOIN workspaces w ON p.workspace_id = w.id
     LEFT JOIN pages pp ON p.parent_id = pp.id
-WHERE p."workspace_id" = $1
-    AND p."type" = $2
-    AND p."created_by" = $3
-    AND (sqlc.narg(CURSOR)::uuid IS NULL
-        OR p.iid < sqlc.narg(CURSOR)::uuid)
+WHERE 
+    (sqlc.narg('workspace_id')::integer IS NULL 
+        OR p.workspace_id = sqlc.narg('workspace_id')::integer)
+    AND p.type = sqlc.arg('type')
+    AND p.created_by = sqlc.arg('created_by')::integer
+    AND (sqlc.narg('cursor')::uuid IS NULL
+        OR p.iid < sqlc.narg('cursor')::uuid)
 ORDER BY p.iid DESC
-LIMIT $4;
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: GetPageByIid :one
 SELECT p.*,

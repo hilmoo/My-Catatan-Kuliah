@@ -16,7 +16,6 @@ type getParentIdParams struct {
 	queries   *db.Queries
 	pageType  models.PageCreateType
 	parentIid *uuid.UUID
-	targetId  uuid.UUID
 	userId    int32
 }
 
@@ -31,7 +30,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 	switch args.pageType {
 	case models.PageCreateTypeFolder:
 		parentId, err := args.queries.GetPageFolderIdByIidAndUserForParent(ctx, db.GetPageFolderIdByIidAndUserForParentParams{
-			Iid:       args.targetId,
+			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
 		if err != nil {
@@ -41,7 +40,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 
 	case models.PageCreateTypeCourse:
 		parentId, err := args.queries.GetPageCourseIdByIidAndUserForParent(ctx, db.GetPageCourseIdByIidAndUserForParentParams{
-			Iid:       args.targetId,
+			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
 		if err != nil {
@@ -51,7 +50,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 
 	case models.PageCreateTypeNote:
 		parentId, err := args.queries.GetPageNoteIdByIidAndUserForParent(ctx, db.GetPageNoteIdByIidAndUserForParentParams{
-			Iid:       args.targetId,
+			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
 		if err != nil {
@@ -61,7 +60,7 @@ func getPageParentId(ctx context.Context, args getParentIdParams) (*int32, error
 
 	case models.PageCreateTypeAssignment:
 		parentId, err := args.queries.GetPageAssignmentIdByIidAndUserForParent(ctx, db.GetPageAssignmentIdByIidAndUserForParentParams{
-			Iid:       args.targetId,
+			Iid:       *args.parentIid,
 			CreatedBy: args.userId,
 		})
 		if err != nil {

@@ -2,10 +2,10 @@ package auth
 
 import (
 	"backend/internal/gen/models"
-	"backend/internal/gen/sqlc"
-	"backend/internal/transport/error"
-	"backend/internal/transport/helper"
-	"backend/internal/transport/middleware/session"
+	db "backend/internal/gen/sqlc"
+	errort "backend/internal/transport/error"
+	helpert "backend/internal/transport/helper"
+	msession "backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
 	"net/http"
 	"time"
