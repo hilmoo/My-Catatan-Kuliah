@@ -98,6 +98,9 @@ func (h *httpHandler) createAssignment(c *echo.Context) error {
 			}
 		},
 	})
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
 
 	resp, err := createPageservice(c.Request().Context(), createPageserviceParams{
 		queries:           h.queries,
@@ -154,6 +157,9 @@ func (h *httpHandler) updateAssignment(c *echo.Context) error {
 			}
 		},
 	})
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
 
 	resp, err := updatePageservice(c.Request().Context(), updatePageserviceParams{
 		queries:           h.queries,
