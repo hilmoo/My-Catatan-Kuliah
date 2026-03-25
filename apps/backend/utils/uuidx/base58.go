@@ -35,3 +35,10 @@ func PToBase58(u *uuid.UUID) *string {
 	}
 	return &s
 }
+
+func PFromBase58(s *string) (*uuid.UUID, error) {
+	if s == nil {
+		return nil, nil
+	}
+	return FromBase58ToP(*s)
+}

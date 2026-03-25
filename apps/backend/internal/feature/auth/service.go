@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"backend/internal/gen/sqlc"
-	"backend/internal/transport/middleware/session"
+	db "backend/internal/gen/sqlc"
+	msession "backend/internal/transport/middleware/session"
 	"context"
 	"encoding/json"
 	"time"
@@ -64,10 +64,11 @@ func googleCallbackService(
 	}
 
 	user, err := args.queries.UpdateOrCreateUser(ctx, db.UpdateOrCreateUserParams{
-		Name:  userInfo.Name,
-		Email: userInfo.Email,
-		AvatarUrl: &userInfo.Picture,
-		ProviderID: "google",
+		Email:      userInfo.Email,
+		Name:       userInfo.Name,
+		AvatarUrl:  &userInfo.Picture,
+		Provider:   db.ProviderGoogle,
+		ProviderID: userInfo.ID,
 	})
 	if err != nil {
 		return "", herodot.ErrInternalServerError.WithReason("failed to create or update user").WithDebug(err.Error())

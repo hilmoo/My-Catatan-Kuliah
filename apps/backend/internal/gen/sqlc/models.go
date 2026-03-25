@@ -57,6 +57,47 @@ func (ns NullPageType) Value() (driver.Value, error) {
 	return string(ns.PageType), nil
 }
 
+type Provider string
+
+const (
+	ProviderGoogle Provider = "google"
+)
+
+func (e *Provider) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = Provider(s)
+	case string:
+		*e = Provider(s)
+	default:
+		return fmt.Errorf("unsupported scan type for Provider: %T", src)
+	}
+	return nil
+}
+
+type NullProvider struct {
+	Provider Provider
+	Valid    bool // Valid is true if Provider is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullProvider) Scan(value interface{}) error {
+	if value == nil {
+		ns.Provider, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.Provider.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullProvider) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.Provider), nil
+}
+
 type DocumentChunk struct {
 	ID          int64
 	PageID      int32
@@ -105,6 +146,7 @@ type User struct {
 	Email      string
 	Name       string
 	AvatarUrl  *string
+	Provider   Provider
 	ProviderID string
 	CreatedAt  time.Time
 }

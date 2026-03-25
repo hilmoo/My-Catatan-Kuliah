@@ -13,12 +13,12 @@ type Config struct {
 	ListenPort int    `env:"LISTEN_PORT" envDefault:"8080"`
 	ListenAddr string `env:"LISTEN_ADDR" envDefault:"0.0.0.0"`
 	LogLevel   string `env:"LOG_LEVEL" envDefault:"INFO"`
-	Domain     string `env:"DOMAIN, required"`
-	Secret     string `env:"SECRET, required"`
+	Domain     string `env:"DOMAIN,required"`
+	Secret     string `env:"SECRET,required"`
 
 	// Google OAuth
-	GoogleClientID     string `env:"GOOGLE_CLIENT_ID, required"`
-	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET, required"`
+	GoogleClientID     string `env:"GOOGLE_CLIENT_ID,required"`
+	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET,required"`
 	GoogleOauthConfig  *oauth2.Config
 
 	DatabaseUrl string `env:"DATABASE_URL,required"`

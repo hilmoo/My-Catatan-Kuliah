@@ -6,8 +6,7 @@ WHERE "hash_token" = $1
 
 -- name: CreateNewSession :exec
 INSERT INTO sessions("user_id", "hash_token", "expires_at", "ip_address", "user_agent")
-    VALUES ($1, $2, $3, $4, $5)
-RETURNING *;
+    VALUES ($1, $2, $3, $4, $5);
 
 -- name: DeleteSessionByToken :exec
 DELETE FROM sessions

@@ -1,12 +1,17 @@
 -- +goose Up
 -- +goose StatementBegin
+CREATE TYPE provider AS ENUM(
+    'google'
+);
+
 CREATE TABLE users(
     "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     "iid" uuid NOT NULL UNIQUE DEFAULT uuidv7(),
     "email" text UNIQUE NOT NULL,
     "name" text NOT NULL,
     "avatar_url" text,
-    "provider_id" text NOT NULL UNIQUE,
+    "provider" provider NOT NULL,
+    "provider_id" text NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW()
 );
 

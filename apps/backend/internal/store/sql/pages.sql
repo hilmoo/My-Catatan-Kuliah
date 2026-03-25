@@ -1,26 +1,26 @@
--- name: GetPageAssignmentParentIdByIidAndUser :one
-SELECT parent_id
+-- name: GetPageAssignmentIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'course'
     AND "created_by" = $2;
 
--- name: GetPageFolderParentIdByIidAndUser :one
-SELECT parent_id
+-- name: GetPageFolderIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'folder'
     AND "created_by" = $2;
 
--- name: GetPageNoteParentIdByIidAndUser :one
-SELECT parent_id
+-- name: GetPageNoteIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" IN ('folder', 'course', 'note')
     AND "created_by" = $2;
 
--- name: GetPageCourseParentIdByIidAndUser :one
-SELECT parent_id
+-- name: GetPageCourseIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'folder'
@@ -99,7 +99,6 @@ WITH updated AS (
         updated_at
 )
 SELECT p.*,
-    p.updated_at,
     u.iid AS user_iid,
     pp.iid AS parent_iid,
     w.iid AS workspace_iid

@@ -42,7 +42,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
 	state, err := googleLoginService()
 	if err != nil {
-		if err.IDField == AlreadAuthenticated {
+		if err.IDField == AlreadyAuthenticated {
 			return c.Redirect(http.StatusTemporaryRedirect, "/")
 		}
 
@@ -89,7 +89,7 @@ func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
 		return errort.HttpError(c, errH)
 	}
 
-	msession.SetnewCookies(c, sessionToken)
+	msession.SetNewCookies(c, sessionToken)
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 

@@ -100,24 +100,24 @@ func (q *Queries) DeletePage(ctx context.Context, arg DeletePageParams) error {
 	return err
 }
 
-const getPageAssignmentParentIdByIidAndUser = `-- name: GetPageAssignmentParentIdByIidAndUser :one
-SELECT parent_id
+const getPageAssignmentIdByIidAndUserForParent = `-- name: GetPageAssignmentIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'course'
     AND "created_by" = $2
 `
 
-type GetPageAssignmentParentIdByIidAndUserParams struct {
+type GetPageAssignmentIdByIidAndUserForParentParams struct {
 	Iid       uuid.UUID
 	CreatedBy int32
 }
 
-func (q *Queries) GetPageAssignmentParentIdByIidAndUser(ctx context.Context, arg GetPageAssignmentParentIdByIidAndUserParams) (*int32, error) {
-	row := q.db.QueryRow(ctx, getPageAssignmentParentIdByIidAndUser, arg.Iid, arg.CreatedBy)
-	var parent_id *int32
-	err := row.Scan(&parent_id)
-	return parent_id, err
+func (q *Queries) GetPageAssignmentIdByIidAndUserForParent(ctx context.Context, arg GetPageAssignmentIdByIidAndUserForParentParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getPageAssignmentIdByIidAndUserForParent, arg.Iid, arg.CreatedBy)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getPageByIid = `-- name: GetPageByIid :one
@@ -177,64 +177,64 @@ func (q *Queries) GetPageByIid(ctx context.Context, arg GetPageByIidParams) (Get
 	return i, err
 }
 
-const getPageCourseParentIdByIidAndUser = `-- name: GetPageCourseParentIdByIidAndUser :one
-SELECT parent_id
+const getPageCourseIdByIidAndUserForParent = `-- name: GetPageCourseIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'folder'
     AND "created_by" = $2
 `
 
-type GetPageCourseParentIdByIidAndUserParams struct {
+type GetPageCourseIdByIidAndUserForParentParams struct {
 	Iid       uuid.UUID
 	CreatedBy int32
 }
 
-func (q *Queries) GetPageCourseParentIdByIidAndUser(ctx context.Context, arg GetPageCourseParentIdByIidAndUserParams) (*int32, error) {
-	row := q.db.QueryRow(ctx, getPageCourseParentIdByIidAndUser, arg.Iid, arg.CreatedBy)
-	var parent_id *int32
-	err := row.Scan(&parent_id)
-	return parent_id, err
+func (q *Queries) GetPageCourseIdByIidAndUserForParent(ctx context.Context, arg GetPageCourseIdByIidAndUserForParentParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getPageCourseIdByIidAndUserForParent, arg.Iid, arg.CreatedBy)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
-const getPageFolderParentIdByIidAndUser = `-- name: GetPageFolderParentIdByIidAndUser :one
-SELECT parent_id
+const getPageFolderIdByIidAndUserForParent = `-- name: GetPageFolderIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" = 'folder'
     AND "created_by" = $2
 `
 
-type GetPageFolderParentIdByIidAndUserParams struct {
+type GetPageFolderIdByIidAndUserForParentParams struct {
 	Iid       uuid.UUID
 	CreatedBy int32
 }
 
-func (q *Queries) GetPageFolderParentIdByIidAndUser(ctx context.Context, arg GetPageFolderParentIdByIidAndUserParams) (*int32, error) {
-	row := q.db.QueryRow(ctx, getPageFolderParentIdByIidAndUser, arg.Iid, arg.CreatedBy)
-	var parent_id *int32
-	err := row.Scan(&parent_id)
-	return parent_id, err
+func (q *Queries) GetPageFolderIdByIidAndUserForParent(ctx context.Context, arg GetPageFolderIdByIidAndUserForParentParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getPageFolderIdByIidAndUserForParent, arg.Iid, arg.CreatedBy)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
-const getPageNoteParentIdByIidAndUser = `-- name: GetPageNoteParentIdByIidAndUser :one
-SELECT parent_id
+const getPageNoteIdByIidAndUserForParent = `-- name: GetPageNoteIdByIidAndUserForParent :one
+SELECT id
 FROM pages
 WHERE iid = $1
     AND "type" IN ('folder', 'course', 'note')
     AND "created_by" = $2
 `
 
-type GetPageNoteParentIdByIidAndUserParams struct {
+type GetPageNoteIdByIidAndUserForParentParams struct {
 	Iid       uuid.UUID
 	CreatedBy int32
 }
 
-func (q *Queries) GetPageNoteParentIdByIidAndUser(ctx context.Context, arg GetPageNoteParentIdByIidAndUserParams) (*int32, error) {
-	row := q.db.QueryRow(ctx, getPageNoteParentIdByIidAndUser, arg.Iid, arg.CreatedBy)
-	var parent_id *int32
-	err := row.Scan(&parent_id)
-	return parent_id, err
+func (q *Queries) GetPageNoteIdByIidAndUserForParent(ctx context.Context, arg GetPageNoteIdByIidAndUserForParentParams) (int32, error) {
+	row := q.db.QueryRow(ctx, getPageNoteIdByIidAndUserForParent, arg.Iid, arg.CreatedBy)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getPageTypesByIidAndUser = `-- name: GetPageTypesByIidAndUser :one
@@ -364,7 +364,6 @@ WITH updated AS (
         updated_at
 )
 SELECT p.id, p.iid, p.workspace_id, p.parent_id, p.title, p.icon, p.type, p.properties, p.created_by, p.created_at, p.updated_at,
-    p.updated_at,
     u.iid AS user_iid,
     pp.iid AS parent_iid,
     w.iid AS workspace_iid
@@ -395,7 +394,6 @@ type UpdatePageRow struct {
 	CreatedBy    int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	UpdatedAt_2  time.Time
 	UserIid      uuid.UUID
 	ParentIid    *uuid.UUID
 	WorkspaceIid uuid.UUID
@@ -423,7 +421,6 @@ func (q *Queries) UpdatePage(ctx context.Context, arg UpdatePageParams) (UpdateP
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.UpdatedAt_2,
 		&i.UserIid,
 		&i.ParentIid,
 		&i.WorkspaceIid,

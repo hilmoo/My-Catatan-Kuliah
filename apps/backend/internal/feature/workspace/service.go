@@ -43,12 +43,12 @@ func listWorkspacesService(ctx context.Context, args listWorkspacesServiceParams
 	for _, w := range workspaces {
 		id, err := uuidx.ToBase58(w.Iid)
 		if err != nil {
-			continue
+			 return nil, herodot.ErrInternalServerError.WithReason("failed to encode workspace id").WithDebug(err.Error())
 		}
 		workspaceModels = append(workspaceModels, models.Workspace{
 			Id:        id,
 			Name:      w.Name,
-			OwnerId:   "",
+			OwnerId:   w.Iid.String(),
 			CreatedAt: w.CreatedAt,
 		})
 	}

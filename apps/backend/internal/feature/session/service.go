@@ -100,6 +100,7 @@ func getSessionDetailsService(ctx context.Context, sessionIdStr string, queries 
 		IpAddress: session.IpAddress,
 		UserAgent: session.UserAgent,
 		CreatedAt: session.CreatedAt,
+		UserId:    user.Iid.String(),
 	}, nil
 }
 

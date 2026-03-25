@@ -164,6 +164,9 @@ func createPageservice(ctx context.Context, args createPageserviceParams) (*mode
 		userId:    user.ID,
 	})
 	if err != nil {
+		if errors.Is(err, herodot.ErrBadRequest) {
+			return nil, err.(*herodot.DefaultError)
+		}
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, herodot.ErrNotFound.WithReason("parent page not found").WithDebug(err.Error())
 		}
@@ -208,9 +211,13 @@ func updatePageservice(ctx context.Context, args updatePageserviceParams) (*mode
 		queries:   args.queries,
 		pageType:  models.PageCreateType(args.pageType),
 		parentIid: parentIid,
+		targetId:  args.targetId,
 		userId:    args.userId,
 	})
 	if err != nil {
+		if errors.Is(err, herodot.ErrBadRequest) {
+			return nil, err.(*herodot.DefaultError)
+		}
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, herodot.ErrNotFound.WithReason("parent page not found").WithDebug(err.Error())
 		}

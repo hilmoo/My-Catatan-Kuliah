@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v5"
@@ -19,29 +20,18 @@ func HashSessionToken(secret, token string) string {
 	return base64.URLEncoding.EncodeToString(hashToken.Sum(nil))
 }
 
-func GetUserFromContext(ctx context.Context) (*db.User, error) {
+func GetUserFromContext(ctx context.Context) (db.User, error) {
 	val := ctx.Value(userContextKey)
 	if val == nil {
-		return nil, errors.New("no authenticated user in context")
+		return db.User{}, errors.New("no authenticated user in context")
 	}
 
-	user, ok := val.(*db.User)
+	user, ok := val.(db.User)
 	if !ok {
-		return nil, errors.New("context value is not of type *db.User")
+		return db.User{}, errors.New("context value is not of type *db.User")
 	}
 
 	return user, nil
-}
-
-func SetnewCookies(c *echo.Context, token string) {
-	c.SetCookie(&http.Cookie{
-		Name:     sessionCookieName,
-		Value:    token,
-		Path:     "/",
-		Expires:  time.Now().Add(7 * 24 * time.Hour),
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	})
 }
 
 func GetSessionToken(c *echo.Context) (string, error) {
@@ -52,10 +42,28 @@ func GetSessionToken(c *echo.Context) (string, error) {
 	return cookie.Value, nil
 }
 
+func cookieTemplate() *http.Cookie {
+	isProd := os.Getenv("APP_ENV") == "production"
+
+	return &http.Cookie{
+		Name:     sessionCookieName,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   isProd,
+		SameSite: http.SameSiteLaxMode,
+	}
+}
+
+func SetNewCookies(c *echo.Context, token string) {
+	cookie := cookieTemplate()
+	cookie.Value = token
+	cookie.Expires = time.Now().Add(7 * 24 * time.Hour)
+	c.SetCookie(cookie)
+}
+
 func ClearSessionCookies(c *echo.Context) {
-	c.SetCookie(&http.Cookie{
-		Name:  sessionCookieName,
-		Value: "",
-	},
-	)
+	cookie := cookieTemplate()
+	cookie.MaxAge = -1
+	cookie.Expires = time.Unix(0, 0)
+	c.SetCookie(cookie)
 }

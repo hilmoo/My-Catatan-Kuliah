@@ -2,12 +2,15 @@ package msession
 
 import (
 	"backend/internal/gen/sqlc"
+	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
 )
 
-const userContextKey = "authenticated_user"
+type usercontextKeyType string
+
+const userContextKey usercontextKeyType = "authenticated_user"
 const sessionCookieName = "session"
 
 type sessionMiddleware struct {
@@ -41,7 +44,8 @@ func (m *sessionMiddleware) LoadSession(next echo.HandlerFunc) echo.HandlerFunc 
 			return next(c)
 		}
 
-		c.Set(userContextKey, user)
+		ctx := context.WithValue(c.Request().Context(), userContextKey, user)
+		c.SetRequest(c.Request().WithContext(ctx))
 
 		return next(c)
 	}
@@ -49,9 +53,9 @@ func (m *sessionMiddleware) LoadSession(next echo.HandlerFunc) echo.HandlerFunc 
 
 func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {
-		user := c.Get(userContextKey)
-		if user == nil {
-			return c.Redirect(http.StatusTemporaryRedirect, "/")
+		_, err := GetUserFromContext(c.Request().Context())
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "authentication required")
 		}
 
 		return next(c)

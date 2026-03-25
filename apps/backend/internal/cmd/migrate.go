@@ -10,6 +10,8 @@ import (
 
 	"github.com/pressly/goose/v3"
 	"github.com/urfave/cli/v3"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func migrateCommand(cfg config.Config) *cli.Command {

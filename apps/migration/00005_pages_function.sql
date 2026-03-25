@@ -80,6 +80,10 @@ CREATE TRIGGER enforce_page_hierarchy_rules
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
+DROP TRIGGER IF EXISTS enforce_page_hierarchy_rules ON "pages";
+
+DROP FUNCTION IF EXISTS check_page_hierarchy();
+
 DROP TRIGGER IF EXISTS set_updated_at_pages ON "pages";
 
 DROP FUNCTION IF EXISTS trigger_set_updated_at();

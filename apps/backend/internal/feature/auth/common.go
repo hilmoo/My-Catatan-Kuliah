@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	AlreadAuthenticated = "ALREADY_AUTHENTICATED"
+	AlreadyAuthenticated = "ALREADY_AUTHENTICATED"
 )
 
 func genereateRandomString() (string, error) {

@@ -12,7 +12,7 @@ import (
 )
 
 const getuserById = `-- name: GetuserById :one
-SELECT id, iid, email, name, avatar_url, provider_id, created_at
+SELECT id, iid, email, name, avatar_url, provider, provider_id, created_at
 FROM users
 WHERE "id" = $1
 `
@@ -26,6 +26,7 @@ func (q *Queries) GetuserById(ctx context.Context, id int32) (User, error) {
 		&i.Email,
 		&i.Name,
 		&i.AvatarUrl,
+		&i.Provider,
 		&i.ProviderID,
 		&i.CreatedAt,
 	)
@@ -46,20 +47,22 @@ func (q *Queries) GetuserIidById(ctx context.Context, id int32) (uuid.UUID, erro
 }
 
 const updateOrCreateUser = `-- name: UpdateOrCreateUser :one
-INSERT INTO users(email, name, avatar_url, provider_id)
-    VALUES ($1, $2, $3, $4)
+INSERT INTO users(email, name, avatar_url, provider, provider_id)
+    VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (email)
     DO UPDATE SET
         name = EXCLUDED.name,
         avatar_url = EXCLUDED.avatar_url,
+        provider = EXCLUDED.provider,
         provider_id = EXCLUDED.provider_id
-    RETURNING id, iid, email, name, avatar_url, provider_id, created_at
+    RETURNING id, iid, email, name, avatar_url, provider, provider_id, created_at
 `
 
 type UpdateOrCreateUserParams struct {
 	Email      string
 	Name       string
 	AvatarUrl  *string
+	Provider   Provider
 	ProviderID string
 }
 
@@ -68,6 +71,7 @@ func (q *Queries) UpdateOrCreateUser(ctx context.Context, arg UpdateOrCreateUser
 		arg.Email,
 		arg.Name,
 		arg.AvatarUrl,
+		arg.Provider,
 		arg.ProviderID,
 	)
 	var i User
@@ -77,6 +81,7 @@ func (q *Queries) UpdateOrCreateUser(ctx context.Context, arg UpdateOrCreateUser
 		&i.Email,
 		&i.Name,
 		&i.AvatarUrl,
+		&i.Provider,
 		&i.ProviderID,
 		&i.CreatedAt,
 	)

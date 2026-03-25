@@ -15,7 +15,6 @@ import (
 const createNewSession = `-- name: CreateNewSession :exec
 INSERT INTO sessions("user_id", "hash_token", "expires_at", "ip_address", "user_agent")
     VALUES ($1, $2, $3, $4, $5)
-RETURNING id, user_id, hash_token, expires_at, ip_address, user_agent, created_at
 `
 
 type CreateNewSessionParams struct {
