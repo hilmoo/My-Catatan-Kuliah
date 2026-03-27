@@ -1,0 +1,18 @@
+services:
+  workspace:
+    image: ghcr.io/hilmoo/containers/my-devcontainer:v0.3.0
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mycatatankuliah
+    volumes:
+      - my-catatan-kuliah-postgres:/var/lib/postgresql/18/docker
+    network_mode: service:workspace
+
+volumes:
+  my-catatan-kuliah-postgres:
