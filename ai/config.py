@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model: str = "gpt-4o-mini"
 
+    # Redis
+    redis_url: str = "redis://localhost:6379"
+
     model_config = {"env_file": "../.env"}
 
 
