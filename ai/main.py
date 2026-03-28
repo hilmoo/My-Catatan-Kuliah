@@ -51,7 +51,7 @@ def _sse_headers(response: StreamingResponse) -> StreamingResponse:
 
 class ChatRequest(BaseModel):
     id: str
-    user_id: str
+    user_id: int
     message: str
     workspace_id: int
 
@@ -122,7 +122,7 @@ async def chat(request: ChatRequest) -> StreamingResponse:
     )
 
 
-@app.get("/chat/{chat_id}/stream")
+@app.get("/chat/{chat_id}/stream", response_model=None)
 async def resume_stream(chat_id: str) -> StreamingResponse | Response:
     """Resume an active stream — replay buffered chunks from Redis.
 

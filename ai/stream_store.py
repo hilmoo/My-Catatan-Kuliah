@@ -37,7 +37,7 @@ def _stream_key(stream_id: str) -> str:
     return f"stream:{stream_id}"
 
 
-async def create_stream(chat_id: str, user_id: str, workspace_id: int) -> str:
+async def create_stream(chat_id: str, user_id: int, workspace_id: int) -> str:
     """Register a new active stream: upsert chat in Postgres, return stream_id."""
     stream_id = f"stream-{uuid.uuid4().hex}"
 
