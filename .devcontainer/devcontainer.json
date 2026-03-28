@@ -1,12 +1,12 @@
 {
 	"name": "My Devcontainer",
-	"image": "ghcr.io/hilmoo/containers/my-devcontainer:v0.3.0",
+	"dockerComposeFile": "compose.yaml",
+	"service": "workspace",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"moby": "false"
-		},
-		"ghcr.io/itsmechlark/features/postgresql:1": {
-			"version": "18"
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1" : {
+			"version": "latest",
+			"moby": false
 		}
 	},
 	"customizations": {
@@ -29,5 +29,8 @@
 		}
 	},
 	"remoteUser": "vscode",
-	"postCreateCommand": ".devcontainer/post-create.sh"
+	"postCreateCommand": ".devcontainer/post-create.sh",
+	"forwardPorts": [
+		5432 // postgres
+	]
 }
