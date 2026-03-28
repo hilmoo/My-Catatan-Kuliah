@@ -15,7 +15,7 @@ type Config struct {
 	LogLevel   string `env:"LOG_LEVEL" envDefault:"INFO"`
 	Domain     string `env:"DOMAIN,required"`
 	Secret     string `env:"SECRET,required"`
-	AppEnv     string `env:"APP_ENV,required"`
+	AppEnv     string `env:"APP_ENV"`
 	IsProd     bool
 
 	// Google OAuth
@@ -24,6 +24,7 @@ type Config struct {
 	GoogleOauthConfig  *oauth2.Config
 
 	DatabaseUrl string `env:"DATABASE_URL,required"`
+	NatsUrl     string `env:"NATS_URL,required"`
 }
 
 func LoadConfig() (Config, error) {

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package embedder.v1;
+
+option go_package = "proto/embedder/v1;embedderv1";
+
+message NewContent {
+  string id = 1;
+}

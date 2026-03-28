@@ -17,7 +17,8 @@
     "@types/pg": "^8.18.0",
     "better-sqlite3": "^12.6.2",
     "hono": "^4.12.3",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "proto": "workspace:^"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

@@ -3,7 +3,7 @@ name = "embedder"
 version = "0.1.0"
 description = "Listens for Postgres NOTIFY events on course_notes, chunks and embeds content for RAG pipeline"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.34.0",
@@ -13,6 +13,7 @@ dependencies = [
     "beautifulsoup4>=4.13.0",
     "langchain-text-splitters>=0.3.0",
     "pydantic-settings>=2.7.0",
+    "proto"
 ]
 
 [dependency-groups]
@@ -23,6 +24,9 @@ dev = [
     "ruff==0.15.6",
     "taskipy>=1.14.1",
 ]
+
+[tool.uv.sources]
+proto = { workspace = true }
 
 [tool.ruff.lint]
 select = ["ALL"]

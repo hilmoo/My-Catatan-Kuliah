@@ -3,26 +3,19 @@ import { Hono } from "hono";
 
 import { serve } from "@hono/node-server";
 import { createNodeWebSocket } from "@hono/node-ws";
-import { SQLite } from "./store/sqlite.js";
-import { Postgres } from "./store/postgres.js";
+import { Postgres } from "./store.js";
 
-const adapterName = process.env.ADAPTER ?? "sqlite";
-
-function createAdapter() {
-  switch (adapterName.toLowerCase()) {
-    case "sqlite_test":
-      return new SQLite();
-    default:
-      return new Postgres({
-        poolConfig: {
-          connectionString: process.env.DATABASE_URL,
-        },
-      });
-  }
-}
+import { NewContentSchema } from "proto";
+console.log(NewContentSchema);
 
 const hocuspocus = new Hocuspocus({
-  extensions: [createAdapter()],
+  extensions: [
+    new Postgres({
+      poolConfig: {
+        connectionString: process.env.DATABASE_URL,
+      },
+    }),
+  ],
 });
 
 const app = new Hono();
@@ -46,17 +39,18 @@ app.get(
         // @ts-ignore
         clientConnection?.handleMessage(new Uint8Array(evt.data));
       },
-      onClose(_evt, ws) {
+      onClose(_evt, _ws) {
         clientConnection?.handleClose();
       },
     };
   }),
 );
 
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3005;
 const server = serve(
   {
     fetch: app.fetch,
-    port: 3005,
+    port: port,
   },
   (info) => {
     hocuspocus.hooks("onListen", {
@@ -69,4 +63,4 @@ const server = serve(
 
 injectWebSocket(server);
 
-console.log("Hono server is running on ws://127.0.0.1:3005");
+console.log("Hocuspocus is running on port " + port);

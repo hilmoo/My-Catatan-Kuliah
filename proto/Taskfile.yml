@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+tasks:
+  default:
+    desc: run buf generate
+    cmds:
+      - rm -rf gen/python/src
+      - rm -rf gen/typescript/src
+      - buf generate

@@ -24,6 +24,11 @@ func Main(cfg config.Config) error {
 	}
 	defer db.Close()
 
+	err = initEvent(ctx, cfg)
+	if err != nil {
+		return err
+	}
+
 	logger := initLogger(cfg.LogLevel)
 	vld := validation.InitValidation()
 

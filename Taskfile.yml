@@ -9,8 +9,20 @@ includes:
   frontend:
     taskfile: ./apps/frontend/Taskfile.yml
     dir: ./apps/frontend
+  embedder:
+    taskfile: ./embedder/Taskfile.yml
+    dir: ./embedder
+  hocuspocus:
+    taskfile: ./hocuspocus/Taskfile.yml
+    dir: ./hocuspocus
 
 tasks:
+  buf-gen:
+    desc: Generate code from protobuf definitions
+    cmds:
+      - rm -rf proto-gen
+      - buf generate
+
   migrate-add:*:
     desc: Create a new database migration
     vars:
