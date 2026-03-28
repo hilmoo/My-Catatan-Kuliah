@@ -82,11 +82,13 @@ async def chat(request: ChatRequest) -> StreamingResponse:
             empty_events = [
                 format_sse({"type": "start", "messageId": "empty"}),
                 format_sse({"type": "text-start", "id": "text-1"}),
-                format_sse({
-                    "type": "text-delta",
-                    "id": "text-1",
-                    "delta": "Maaf, saya tidak menemukan catatan yang relevan untuk pertanyaan ini.",
-                }),
+                format_sse(
+                    {
+                        "type": "text-delta",
+                        "id": "text-1",
+                        "delta": "Maaf, saya tidak menemukan catatan yang relevan untuk pertanyaan ini.",
+                    }
+                ),
                 format_sse({"type": "text-end", "id": "text-1"}),
                 format_sse({"type": "finish"}),
                 "data: [DONE]\n\n",
@@ -138,9 +140,7 @@ async def resume_stream(chat_id: str) -> StreamingResponse | Response:
         for chunk in buffered:
             yield chunk
 
-    return _sse_headers(
-        StreamingResponse(replay(), media_type="text/event-stream")
-    )
+    return _sse_headers(StreamingResponse(replay(), media_type="text/event-stream"))
 
 
 @app.get("/health")
