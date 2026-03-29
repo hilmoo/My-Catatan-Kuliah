@@ -28,7 +28,8 @@
 				"oxc.oxc-vscode",
 				"bufbuild.vscode-buf",
 				"tamasfe.even-better-toml",
-				"task.vscode-task"
+				"task.vscode-task",
+				"charliermarsh.ruff"
 			]
 		}
 	},

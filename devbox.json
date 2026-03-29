@@ -17,7 +17,8 @@
   "shell": {
     "init_hook": [
       "export \"GOROOT=$(go env GOROOT)\"",
-      "export PATH=$PATH:$(go env GOPATH)/bin"
+      "export PATH=$PATH:$(go env GOPATH)/bin",
+      "uv python install 3.12"
     ]
   },
   "env": {

@@ -20,12 +20,6 @@ includes:
     dir: ./proto
 
 tasks:
-  buf-gen:
-    desc: Generate code from protobuf definitions
-    cmds:
-      - rm -rf proto-gen
-      - buf generate
-
   migrate-add:*:
     desc: Create a new database migration
     vars:

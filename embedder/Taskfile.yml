@@ -6,4 +6,4 @@ tasks:
   default:
     desc: run the embedder service
     cmds:
-      - uv run main.py
+      - uv run python -m app

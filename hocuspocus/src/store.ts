@@ -1,6 +1,6 @@
 import { Database } from "@hocuspocus/extension-database";
 import { TiptapTransformer } from "@hocuspocus/transformer";
-import { renderToHTMLString } from "@tiptap/static-renderer";
+import { renderToMarkdown } from "@tiptap/static-renderer";
 import StarterKit from "@tiptap/starter-kit";
 import { create, toBinary } from "@bufbuild/protobuf";
 import { NewContentSchema } from "proto";
@@ -10,7 +10,7 @@ import type { NatsService } from "./services/nats.js";
 import bs58 from "bs58";
 
 const fetchQuery = `SELECT content_blob FROM "pages_content" WHERE page_id = $1`;
-const updateQuery = `UPDATE "pages_content" SET content_blob = $1, content_html = $2 WHERE page_id = $3`;
+const updateQuery = `UPDATE "pages_content" SET content_blob = $1, content_markdown = $2 WHERE page_id = $3`;
 const getPageIdQuery = `SELECT id FROM "pages" WHERE iid = $1`;
 
 export class CourseNotesStore extends Database {
@@ -41,12 +41,12 @@ export class CourseNotesStore extends Database {
 
         const json = TiptapTransformer.fromYdoc(document, "default");
 
-        const html = renderToHTMLString({
+        const markdown = renderToMarkdown({
           extensions: [StarterKit],
           content: json,
         });
 
-        await this.pgService.pool.query(updateQuery, [state, html, pageId]);
+        await this.pgService.pool.query(updateQuery, [state, markdown, pageId]);
 
         const message = create(NewContentSchema, { id: pageId });
         const subject = `embedder.v1.newcontent.${pageId}`;

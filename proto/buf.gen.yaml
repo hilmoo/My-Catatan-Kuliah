@@ -4,6 +4,8 @@ inputs:
 plugins:
   - remote: buf.build/protocolbuffers/python:v34.1
     out: gen/python/proto
+  - remote: buf.build/protocolbuffers/pyi:v34.1
+    out: gen/python/proto
   - remote: buf.build/bufbuild/es:v2.11.0
     out: gen/typescript/src
   - remote: buf.build/protocolbuffers/go:v1.36.11

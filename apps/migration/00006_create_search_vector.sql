@@ -7,6 +7,7 @@ CREATE TABLE "document_chunks"(
     "page_id" integer NOT NULL,
     "workspace_id" integer NOT NULL,
     "chunk_index" integer NOT NULL,
+    "chunk_hash" text NOT NULL,
     "content" text NOT NULL,
     "embedding" vector(384) NOT NULL,
     "fts_vector" tsvector GENERATED ALWAYS AS (to_tsvector('indonesian', content)) STORED,
@@ -17,12 +18,11 @@ CREATE TABLE "document_chunks"(
 ALTER TABLE "document_chunks"
     ADD FOREIGN KEY ("page_id") REFERENCES "pages"("id") ON DELETE CASCADE;
 
-ALTER TABLE "document_chunks"
-    ADD FOREIGN KEY ("workspace_id") REFERENCES "workspaces"("id");
-
 CREATE INDEX idx_chunks_embedding ON "document_chunks" USING ivfflat("embedding" vector_cosine_ops) WITH (lists = 100);
 
 CREATE INDEX idx_chunks_fts ON "document_chunks" USING gin("fts_vector");
+
+CREATE INDEX idx_document_chunks_hash ON document_chunks(page_id, chunk_hash);
 
 -- +goose StatementEnd
 -- +goose Down

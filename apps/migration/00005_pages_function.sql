@@ -15,21 +15,6 @@ CREATE TRIGGER set_updated_at_pages
     FOR EACH ROW
     EXECUTE FUNCTION trigger_set_updated_at();
 
-CREATE OR REPLACE FUNCTION notify_page_change()
-    RETURNS TRIGGER
-    AS $$
-BEGIN
-    PERFORM pg_notify('page_changed', json_build_object('id', COALESCE(NEW.id, OLD.id), 'type', TG_OP)::text);
-    RETURN COALESCE(NEW, OLD);
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_page_change
-    AFTER INSERT OR UPDATE OR DELETE ON pages
-    FOR EACH ROW
-    EXECUTE FUNCTION notify_page_change();
-
 CREATE OR REPLACE FUNCTION check_page_hierarchy()
     RETURNS TRIGGER
     AS $$
@@ -78,19 +63,20 @@ CREATE TRIGGER enforce_page_hierarchy_rules
     EXECUTE FUNCTION check_page_hierarchy();
 
 CREATE OR REPLACE FUNCTION create_empty_pages_content()
-RETURNS TRIGGER AS $$
+    RETURNS TRIGGER
+    AS $$
 BEGIN
-    INSERT INTO pages_content (page_id, content_html, content_blob)
-    VALUES (NEW.id, NULL, NULL);
-
+    INSERT INTO pages_content(page_id, content_markdown, content_blob)
+        VALUES(NEW.id, NULL, NULL);
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$
+LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_create_empty_pages_content
-AFTER INSERT ON pages
-FOR EACH ROW
-EXECUTE FUNCTION create_empty_pages_content();
+    AFTER INSERT ON pages
+    FOR EACH ROW
+    EXECUTE FUNCTION create_empty_pages_content();
 
 -- +goose StatementEnd
 -- +goose Down
@@ -106,9 +92,5 @@ DROP FUNCTION IF EXISTS check_page_hierarchy();
 DROP TRIGGER IF EXISTS set_updated_at_pages ON "pages";
 
 DROP FUNCTION IF EXISTS trigger_set_updated_at();
-
-DROP TRIGGER IF EXISTS trg_page_change ON "pages";
-
-DROP FUNCTION IF EXISTS notify_page_change();
 
 -- +goose StatementEnd
