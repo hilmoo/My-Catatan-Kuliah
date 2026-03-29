@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/caarlos0/env/v11"
 	"golang.org/x/oauth2"
@@ -23,8 +24,10 @@ type Config struct {
 	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET,required"`
 	GoogleOauthConfig  *oauth2.Config
 
-	DatabaseUrl string `env:"DATABASE_URL,required"`
-	NatsUrl     string `env:"NATS_URL,required"`
+	DatabaseUrl         string `env:"DATABASE_URL,required"`
+	NatsUrl             string `env:"NATS_URL,required"`
+	HocuspocusUrl       string `env:"HOCUSPOCUS_URL,required"`
+	HocuspocusUrlParsed *url.URL
 }
 
 func LoadConfig() (Config, error) {
@@ -36,6 +39,12 @@ func LoadConfig() (Config, error) {
 	c.IsProd = c.AppEnv == "production"
 
 	c.GoogleOauthConfig = loadAuthProvider(c)
+
+	hocuspocusParsedUrl, err := url.Parse(c.HocuspocusUrl)
+	if err != nil {
+		return c, fmt.Errorf("invalid Hocuspocus URL: %w", err)
+	}
+	c.HocuspocusUrlParsed = hocuspocusParsedUrl
 
 	return c, nil
 }

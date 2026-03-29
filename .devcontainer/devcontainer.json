@@ -27,7 +27,8 @@
 				"stoplight.spectral",
 				"oxc.oxc-vscode",
 				"bufbuild.vscode-buf",
-				"tamasfe.even-better-toml"
+				"tamasfe.even-better-toml",
+				"task.vscode-task"
 			]
 		}
 	},

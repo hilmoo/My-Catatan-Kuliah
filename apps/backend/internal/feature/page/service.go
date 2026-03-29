@@ -8,6 +8,8 @@ import (
 	"backend/utils/uuidx"
 	"context"
 	"errors"
+	"net/http/httputil"
+	"net/url"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -280,4 +282,15 @@ func deletePageservice(ctx context.Context, args deletePageserviceParams) *herod
 	}
 
 	return nil
+}
+
+func proxyHocuspocusService(hocuspocusUrl *url.URL) (*httputil.ReverseProxy, *herodot.DefaultError) {
+	proxy := &httputil.ReverseProxy{
+		Rewrite: func(pr *httputil.ProxyRequest) {
+			pr.SetURL(hocuspocusUrl)
+			pr.Out.URL.Path = "/"
+		},
+	}
+
+	return proxy, nil
 }

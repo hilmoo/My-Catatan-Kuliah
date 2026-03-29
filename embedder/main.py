@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 import asyncpg_listen
 from fastapi import FastAPI
 
-import proto.embedder.v1.embedder_pb2 as proto
+import proto.embedder.v1.newcontent_pb2 as proto
 
 from chunker import process_html_to_chunks
 from config import settings

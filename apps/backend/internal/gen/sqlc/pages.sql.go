@@ -451,3 +451,20 @@ func (q *Queries) UpdatePage(ctx context.Context, arg UpdatePageParams) (UpdateP
 	)
 	return i, err
 }
+
+const validatePageIidAndUser = `-- name: ValidatePageIidAndUser :exec
+SELECT 1
+FROM pages
+WHERE iid = $1
+    AND "created_by" = $2
+`
+
+type ValidatePageIidAndUserParams struct {
+	Iid       uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) ValidatePageIidAndUser(ctx context.Context, arg ValidatePageIidAndUserParams) error {
+	_, err := q.db.Exec(ctx, validatePageIidAndUser, arg.Iid, arg.CreatedBy)
+	return err
+}

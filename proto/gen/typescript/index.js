@@ -1,1 +1,1 @@
-export * from "./src/embedder/v1/embedder_pb.js";
+export * from "./src/embedder/v1/newcontent_pb.js";

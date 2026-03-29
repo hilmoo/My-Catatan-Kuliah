@@ -1,62 +1,59 @@
-import type { DatabaseConfiguration } from "@hocuspocus/extension-database";
 import { Database } from "@hocuspocus/extension-database";
-import { Pool, type PoolConfig } from "pg";
 import { TiptapTransformer } from "@hocuspocus/transformer";
 import { renderToHTMLString } from "@tiptap/static-renderer";
 import StarterKit from "@tiptap/starter-kit";
+import { create, toBinary } from "@bufbuild/protobuf";
+import { NewContentSchema } from "proto";
 
-export const fetchQuery = `
-  SELECT content_blob FROM "course_notes" WHERE id = $1
-`;
+import type { PostgresService } from "./services/postgres.js";
+import type { NatsService } from "./services/nats.js";
+import bs58 from "bs58";
 
-export const updateQuery = `
-  UPDATE "course_notes" SET content_blob = $1, content = $2 WHERE id = $3
-`;
+const fetchQuery = `SELECT content_blob FROM "pages_content" WHERE page_id = $1`;
+const updateQuery = `UPDATE "pages_content" SET content_blob = $1, content_html = $2 WHERE page_id = $3`;
+const getPageIdQuery = `SELECT id FROM "pages" WHERE iid = $1`;
 
-export interface PostgresConfiguration extends DatabaseConfiguration {
-  /**
-   * pg Pool configuration options.
-   * https://node-postgres.com/apis/pool
-   */
-  poolConfig: PoolConfig;
-}
-
-export class Postgres extends Database {
-  pool?: Pool;
-
-  configuration: PostgresConfiguration = {
-    poolConfig: {},
-    fetch: async ({ documentName }) => {
-      const result = await this.pool?.query<{ content_blob: Buffer }>(
-        fetchQuery,
-        [documentName],
-      );
-      return result?.rows[0]?.content_blob ?? null;
-    },
-    store: async ({ documentName, state, document }) => {
-      const json = TiptapTransformer.fromYdoc(document, "default");
-
-      const html = renderToHTMLString({
-        extensions: [
-          StarterKit,
-        ],
-        content: json,
-      });
-
-      await this.pool?.query(updateQuery, [state, html, documentName]);
-    },
-  };
-
-  constructor(configuration?: Partial<PostgresConfiguration>) {
+export class CourseNotesStore extends Database {
+  constructor(
+    private readonly pgService: PostgresService,
+    private readonly natsService: NatsService,
+  ) {
     super({});
 
     this.configuration = {
-      ...this.configuration,
-      ...configuration,
-    };
-  }
+      fetch: async ({ documentName }) => {
+        const documentIid = bs58.decode(documentName);
+        const pageIdResult = await this.pgService.pool.query<{ id: number }>(getPageIdQuery, [
+          documentIid,
+        ]);
+        const pageId = pageIdResult?.rows[0]?.id;
+        const result = await this.pgService.pool.query<{ content_blob: Buffer }>(fetchQuery, [
+          pageId,
+        ]);
+        return result?.rows[0]?.content_blob ?? null;
+      },
+      store: async ({ documentName, state, document }) => {
+        const documentIid = bs58.decode(documentName);
+        const pageIdResult = await this.pgService.pool.query<{ id: number }>(getPageIdQuery, [
+          documentIid,
+        ]);
+        const pageId = pageIdResult?.rows[0]?.id;
 
-  async onConfigure() {
-    this.pool = new Pool(this.configuration.poolConfig);
+        const json = TiptapTransformer.fromYdoc(document, "default");
+
+        const html = renderToHTMLString({
+          extensions: [StarterKit],
+          content: json,
+        });
+
+        await this.pgService.pool.query(updateQuery, [state, html, pageId]);
+
+        const message = create(NewContentSchema, { id: pageId });
+        const subject = `embedder.v1.newcontent.${pageId}`;
+
+        if (!this.natsService.js) throw new Error("NATS JetStream client not initialized");
+        await this.natsService.js.publish(subject, toBinary(NewContentSchema, message));
+      },
+    };
   }
 }

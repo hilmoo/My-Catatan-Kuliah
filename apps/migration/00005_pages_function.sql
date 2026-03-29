@@ -77,9 +77,28 @@ CREATE TRIGGER enforce_page_hierarchy_rules
     FOR EACH ROW
     EXECUTE FUNCTION check_page_hierarchy();
 
+CREATE OR REPLACE FUNCTION create_empty_pages_content()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO pages_content (page_id, content_html, content_blob)
+    VALUES (NEW.id, NULL, NULL);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_create_empty_pages_content
+AFTER INSERT ON pages
+FOR EACH ROW
+EXECUTE FUNCTION create_empty_pages_content();
+
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
+DROP TRIGGER IF EXISTS trg_create_empty_pages_content ON pages;
+
+DROP FUNCTION IF EXISTS create_empty_pages_content();
+
 DROP TRIGGER IF EXISTS enforce_page_hierarchy_rules ON "pages";
 
 DROP FUNCTION IF EXISTS check_page_hierarchy();

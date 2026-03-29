@@ -77,6 +77,7 @@ paths:
       - name: type
         in: query
         description: Filter by page type
+        required: true
         schema:
           type: string
           default: folder
@@ -85,7 +86,6 @@ paths:
           - assignment
           - folder
           - note
-        required: true
       responses:
         '200':
           $ref: '#/components/responses/PageListResponse'
@@ -157,6 +157,22 @@ paths:
       responses:
         '204':
           description: Page deleted
+      tags:
+      - Pages
+  /pages/ws:
+    get:
+      operationId: subscribePageUpdates
+      description: Websocket endpoint for real-time page content
+      parameters:
+      - name: page_id
+        in: query
+        description: ID of the page to subscribe to for real-time updates
+        required: true
+        schema:
+          type: string
+      responses:
+        '301':
+          description: Switch to WebSocket protocol
       tags:
       - Pages
   /sessions:
@@ -363,6 +379,12 @@ components:
       - status
       - error
       - code
+    PageAllProperties:
+      oneOf:
+      - $ref: '#/components/schemas/PagePropertiesCourse'
+      - $ref: '#/components/schemas/PagePropertiesAssignment'
+      - $ref: '#/components/schemas/PagePropertiesFolder'
+      - $ref: '#/components/schemas/PagePropertiesNote'
     PageBase:
       type: object
       properties:
@@ -444,12 +466,6 @@ components:
           type: string
         icon:
           type: string
-    PageAllProperties:
-      oneOf:
-      - $ref: '#/components/schemas/PagePropertiesCourse'
-      - $ref: '#/components/schemas/PagePropertiesAssignment'
-      - $ref: '#/components/schemas/PagePropertiesFolder'
-      - $ref: '#/components/schemas/PagePropertiesNote'
     PageCreate:
       allOf:
       - $ref: '#/components/schemas/PageBaseCreate'

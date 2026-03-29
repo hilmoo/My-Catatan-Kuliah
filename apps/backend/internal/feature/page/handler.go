@@ -9,6 +9,7 @@ import (
 	"backend/internal/transport/validation"
 	"backend/utils/uuidx"
 	"errors"
+	"net/url"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/labstack/echo/v5"
@@ -16,14 +17,16 @@ import (
 )
 
 type httpHandler struct {
-	validate *validation.Vld
-	queries  *db.Queries
+	validate      *validation.Vld
+	queries       *db.Queries
+	hocuspocusUrl *url.URL
 }
 
 func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 	return &httpHandler{
-		validate: args.Validate,
-		queries:  args.Queries,
+		validate:      args.Validate,
+		queries:       args.Queries,
+		hocuspocusUrl: args.Config.HocuspocusUrlParsed,
 	}
 }
 
@@ -35,6 +38,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group.POST("", h.createPage)
 	group.PATCH("/:id", h.updatePage)
 	group.DELETE("/:id", h.deletePage)
+	group.Any("/ws", h.proxyHocuspocus)
 }
 
 func (h *httpHandler) listPages(c *echo.Context) error {
@@ -169,4 +173,40 @@ func (h *httpHandler) deletePage(c *echo.Context) error {
 	}
 
 	return c.NoContent(204)
+}
+
+func (h *httpHandler) proxyHocuspocus(c *echo.Context) error {
+	params, err := validation.BindValidatePayload[models.SubscribePageUpdatesParams](c, h.validate)
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	targetId, err := uuidx.HttpFromBase58(params.PageId, "page ID")
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	user, errs := msession.GetUserFromContext(c.Request().Context())
+	if errs != nil {
+		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(errs.Error()))
+	}
+
+	errs = h.queries.ValidatePageIidAndUser(c.Request().Context(), db.ValidatePageIidAndUserParams{
+		Iid:       targetId,
+		CreatedBy: user.ID,
+	})
+	if errs != nil {
+		if errors.Is(errs, pgx.ErrNoRows) {
+			return errort.HttpError(c, herodot.ErrNotFound.WithReason("page not found").WithDebug(errs.Error()))
+		}
+		return errort.HttpError(c, herodot.ErrInternalServerError.WithReason("failed to validate page access").WithDebug(errs.Error()))
+	}
+
+	proxy, err := proxyHocuspocusService(h.hocuspocusUrl)
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	proxy.ServeHTTP(c.Response(), c.Request())
+	return nil
 }

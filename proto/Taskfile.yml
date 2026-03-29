@@ -6,6 +6,8 @@ tasks:
   default:
     desc: run buf generate
     cmds:
-      - rm -rf gen/python/src
+      - rm -rf gen/python/proto
       - rm -rf gen/typescript/src
+      - rm -rf gen/go/pkg
       - buf generate
+      - cd gen/typescript && pnpm run build

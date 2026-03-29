@@ -15,6 +15,9 @@ includes:
   hocuspocus:
     taskfile: ./hocuspocus/Taskfile.yml
     dir: ./hocuspocus
+  proto:
+    taskfile: ./proto/Taskfile.yml
+    dir: ./proto
 
 tasks:
   buf-gen:

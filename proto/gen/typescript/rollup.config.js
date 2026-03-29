@@ -12,15 +12,12 @@ export default [
         sourcemap: true,
       },
     ],
-    plugins: [
-      resolve(),
-      commonjs(),
-    ],
+    plugins: [resolve(), commonjs()],
     external: ["@bufbuild/protobuf"],
   },
 
   {
-    input: "src/embedder/v1/embedder_pb.d.ts",
+    input: "src/embedder/v1/newcontent_pb.d.ts",
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
   },

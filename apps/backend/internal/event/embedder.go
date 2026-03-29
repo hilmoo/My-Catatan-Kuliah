@@ -10,7 +10,7 @@ import (
 func InitEmbedderStream(ctx context.Context, js jetstream.JetStream) {
 	cfg := jetstream.StreamConfig{
 		Name:              "EMBEDDER_NEW_CONTENT",
-		Subjects:          []string{"embedder.new-content.v1.>"},
+		Subjects:          []string{"embedder.v1.newcontent.>"},
 		Retention:         jetstream.WorkQueuePolicy,
 		MaxMsgsPerSubject: 1,
 		Discard:           jetstream.DiscardNew,
