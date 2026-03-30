@@ -27,6 +27,7 @@ export class CourseNotesStore extends Database {
           documentIid,
         ]);
         const pageId = pageIdResult?.rows[0]?.id;
+        if (!pageId) return null;
         const result = await this.pgService.pool.query<{ content_blob: Buffer }>(fetchQuery, [
           pageId,
         ]);

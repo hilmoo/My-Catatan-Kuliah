@@ -1,7 +1,7 @@
 package pagination
 
 import (
-	"backend/utils/uuidx"
+	"backend/internal/utils/uuidx"
 
 	"github.com/google/uuid"
 )

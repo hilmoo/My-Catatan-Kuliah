@@ -402,12 +402,6 @@ type ListPagesParams struct {
 // ListPagesParamsType defines parameters for ListPages.
 type ListPagesParamsType string
 
-// SubscribePageUpdatesParams defines parameters for SubscribePageUpdates.
-type SubscribePageUpdatesParams struct {
-	// PageId ID of the page to subscribe to for real-time updates
-	PageId string `query:"page_id" json:"page_id" validate:"required"`
-}
-
 // ListSessionsParams defines parameters for ListSessions.
 type ListSessionsParams struct {
 	// Cursor Cursor for pagination (last seen item ID)

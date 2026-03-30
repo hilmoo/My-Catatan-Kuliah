@@ -2,12 +2,11 @@ package event
 
 import (
 	"context"
-	"log"
 
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-func InitEmbedderStream(ctx context.Context, js jetstream.JetStream) {
+func InitEmbedderStream(ctx context.Context, js jetstream.JetStream) error {
 	cfg := jetstream.StreamConfig{
 		Name:              "EMBEDDER_NEW_CONTENT",
 		Subjects:          []string{"embedder.v1.newcontent.>"},
@@ -19,6 +18,8 @@ func InitEmbedderStream(ctx context.Context, js jetstream.JetStream) {
 
 	_, err := js.CreateOrUpdateStream(ctx, cfg)
 	if err != nil {
-		log.Fatalf("Failed to create embedder stream: %v", err)
+		return err
 	}
+
+	return nil
 }

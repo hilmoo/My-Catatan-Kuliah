@@ -7,7 +7,7 @@ import (
 	helpert "backend/internal/transport/helper"
 	msession "backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
-	"backend/utils/uuidx"
+	"backend/internal/utils/uuidx"
 	"errors"
 	"net/url"
 
@@ -38,7 +38,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group.POST("", h.createPage)
 	group.PATCH("/:id", h.updatePage)
 	group.DELETE("/:id", h.deletePage)
-	group.Any("/ws", h.proxyHocuspocus)
+	group.Any("/ws/:id", h.proxyHocuspocus)
 }
 
 func (h *httpHandler) listPages(c *echo.Context) error {
@@ -176,12 +176,9 @@ func (h *httpHandler) deletePage(c *echo.Context) error {
 }
 
 func (h *httpHandler) proxyHocuspocus(c *echo.Context) error {
-	params, err := validation.BindValidatePayload[models.SubscribePageUpdatesParams](c, h.validate)
-	if err != nil {
-		return errort.HttpError(c, err)
-	}
+	pageId := c.Param("id")
 
-	targetId, err := uuidx.HttpFromBase58(params.PageId, "page ID")
+	targetId, err := uuidx.HttpFromBase58(pageId, "page ID")
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
@@ -191,7 +188,7 @@ func (h *httpHandler) proxyHocuspocus(c *echo.Context) error {
 		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(errs.Error()))
 	}
 
-	errs = h.queries.ValidatePageIidAndUser(c.Request().Context(), db.ValidatePageIidAndUserParams{
+	exist, errs := h.queries.ValidatePageIidAndUser(c.Request().Context(), db.ValidatePageIidAndUserParams{
 		Iid:       targetId,
 		CreatedBy: user.ID,
 	})
@@ -200,6 +197,9 @@ func (h *httpHandler) proxyHocuspocus(c *echo.Context) error {
 			return errort.HttpError(c, herodot.ErrNotFound.WithReason("page not found").WithDebug(errs.Error()))
 		}
 		return errort.HttpError(c, herodot.ErrInternalServerError.WithReason("failed to validate page access").WithDebug(errs.Error()))
+	}
+	if !exist {
+		return errort.HttpError(c, herodot.ErrNotFound.WithReason("page not found"))
 	}
 
 	proxy, err := proxyHocuspocusService(h.hocuspocusUrl)

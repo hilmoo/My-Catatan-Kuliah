@@ -159,20 +159,15 @@ paths:
           description: Page deleted
       tags:
       - Pages
-  /pages/ws:
+  /pages/ws/{id}:
+    parameters:
+      - $ref: '#/components/parameters/ResourceId'
     get:
       operationId: subscribePageUpdates
       description: Websocket endpoint for real-time page content
-      parameters:
-      - name: page_id
-        in: query
-        description: ID of the page to subscribe to for real-time updates
-        required: true
-        schema:
-          type: string
       responses:
-        '301':
-          description: Switch to WebSocket protocol
+        '101':
+          description: Upgrade to WebSocket protocol
       tags:
       - Pages
   /sessions:
