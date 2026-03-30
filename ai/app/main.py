@@ -7,10 +7,10 @@ from fastapi.responses import StreamingResponse
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 
-from config import settings
-from llm import build_system_prompt
-from retriever import hybrid_search
-from stream_store import (
+from app.config import settings
+from app.llm import build_system_prompt
+from app.retriever import hybrid_search
+from app.stream_store import (
     append_chunk,
     close_redis,
     close_stream,
@@ -19,7 +19,7 @@ from stream_store import (
     init_redis,
     replay_stream,
 )
-from utils.stream import format_sse, stream_data
+from app.utils.stream import format_sse, stream_data
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

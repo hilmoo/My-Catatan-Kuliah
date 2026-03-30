@@ -6,4 +6,4 @@ https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol
 
 # running dev
 
-cd ai && uv run uvicorn main:app --reload --port 8002
+cd ai && uv run uvicorn app.main:app --reload --port 8002

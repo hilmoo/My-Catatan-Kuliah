@@ -3,7 +3,7 @@ import logging
 import asyncpg
 from sentence_transformers import SentenceTransformer
 
-from config import settings
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 

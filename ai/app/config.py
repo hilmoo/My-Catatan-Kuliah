@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # Redis
     redis_url: str = "redis://localhost:6379"
 
-    model_config = {"env_file": "../.env"}
+    model_config = {"env_file": "../../.env"}
 
 
 settings = Settings()  # type: ignore[reportCallIssue]  # loaded from .env

@@ -3,7 +3,7 @@ from collections.abc import AsyncIterator
 
 from openai import AsyncOpenAI
 
-from config import settings
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 

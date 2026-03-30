@@ -9,7 +9,7 @@ import uuid
 import asyncpg
 import redis.asyncio as aioredis
 
-from config import settings
+from app.config import settings
 
 # Redis connection pool (initialized on startup)
 _redis: aioredis.Redis | None = None
