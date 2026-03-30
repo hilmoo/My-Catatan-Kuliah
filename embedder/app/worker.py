@@ -43,7 +43,7 @@ class NatsWorker:
             # TODO: Consider using a more specific durable name or consumer group strategy in production
             durable="embedder-1",
             manual_ack=True,
-            pending_msgs_limit=1
+            pending_msgs_limit=1,
         )
         logger.info("Subscribed to %s via JetStream", self.subject)
 
