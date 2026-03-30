@@ -10,12 +10,12 @@ import (
 func InitNats(natsUrl string) (jetstream.JetStream, error) {
 	nc, err := nats.Connect(natsUrl)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to connect to NATS: %v", err)
+		return nil, fmt.Errorf("failed to connect to NATS: %v", err)
 	}
 
 	js, err := jetstream.New(nc)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create JetStream context: %v", err)
+		return nil, fmt.Errorf("failed to create JetStream context: %v", err)
 	}
 
 	return js, nil
