@@ -1,22 +1,36 @@
 {
 	"name": "My Devcontainer",
-	"image": "ghcr.io/hilmoo/containers/my-devcontainer:v0.3.0",
+	"dockerComposeFile": "compose.yaml",
+	"service": "workspace",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"moby": "false"
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1" : {
+			"version": "latest",
+			"moby": false
 		}
 	},
 	"customizations": {
 		"vscode": {
-			"settings": {},
+			"settings": {
+				"json.schemaDownload.trustedDomains": {
+					"https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json": true
+				},
+				"spectral.rulesetFile": "./apps/.spectral.yaml"
+			},
 			"extensions": [
 				"ms-python.python",
 				"golang.go",
 				"jetpack-io.devbox",
-				"mkhl.direnv"
+				"mkhl.direnv",
+				"42Crunch.vscode-openapi",
+				"redhat.vscode-yaml",
+				"stoplight.spectral"
 			]
 		}
 	},
 	"remoteUser": "vscode",
-	"postCreateCommand": ".devcontainer/post-create.sh"
+	"postCreateCommand": ".devcontainer/post-create.sh",
+	"forwardPorts": [
+		5432 // postgres
+	]
 }

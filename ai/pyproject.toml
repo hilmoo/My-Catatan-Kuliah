@@ -1,13 +1,26 @@
 [project]
 name = "ai"
 version = "0.1.0"
-description = "Add your description here"
+description = "AI inference service for RAG chat — hybrid search + LLM streaming"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "sentence-transformers>=3.4.0",
+    "asyncpg>=0.30.0",
+    "openai>=1.60.0",
+    "pydantic-settings>=2.7.0",
+]
 
 [dependency-groups]
-dev = ["pyright>=1.1.408", "ruff==0.15.6", "taskipy>=1.14.1"]
+dev = [
+    "pytest>=8.0.0",
+    "httpx>=0.28.0",
+    "pyright>=1.1.408",
+    "ruff==0.15.6",
+    "taskipy>=1.14.1",
+]
 
 [tool.ruff.lint]
 select = ["ALL"]

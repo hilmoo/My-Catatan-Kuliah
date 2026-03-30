@@ -10,7 +10,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint && eslint",
-    "lint:fix": "oxlint --fix && eslint --fix"
+    "lint:fix": "oxlint --fix && eslint --fix",
+    "orval": "orval"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.19",
@@ -61,6 +62,7 @@
     "eslint-plugin-oxlint": "^1.55.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "orval": "^8.5.3",
     "oxfmt": "^0.40.0",
     "oxlint": "^1.55.0",
     "sass-embedded": "^1.98.0",
