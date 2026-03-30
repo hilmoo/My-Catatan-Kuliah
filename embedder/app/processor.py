@@ -28,7 +28,7 @@ class ContentProcessor:
 
         logger.info("Processing page_id: %s", page_id)
 
-        parsed_chunks = self.embedder.process_html(markdown)
+        parsed_chunks = self.embedder.process_content(markdown)
 
         existing_hashes = await self.db.get_existing_hashes(page_id)
 

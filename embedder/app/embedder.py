@@ -23,7 +23,7 @@ class EmbedderService:
     def _compute_hash(self, text: str) -> str:
         return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
-    def process_html(self, markdown: str) -> list[dict]:
+    def process_content(self, markdown: str) -> list[dict]:
         headers_to_split_on = [("#", "H1"), ("##", "H2"), ("###", "H3")]
         markdown_splitter = MarkdownHeaderTextSplitter(
             headers_to_split_on=headers_to_split_on
