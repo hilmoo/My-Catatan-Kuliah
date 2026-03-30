@@ -25,6 +25,7 @@ async def main() -> None:
 
     db_repo = DatabaseRepository(pool)
     embedder_svc = EmbedderService()
+    embedder_svc.get_model()  # Preload the model
     processor = ContentProcessor(db=db_repo, embedder=embedder_svc)
 
     worker = NatsWorker(subject="embedder.v1.newcontent.>", processor=processor)

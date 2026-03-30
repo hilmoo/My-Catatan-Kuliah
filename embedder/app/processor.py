@@ -32,7 +32,7 @@ class ContentProcessor:
 
         existing_hashes = await self.db.get_existing_hashes(page_id)
 
-        hashes_to_delete, chunks_to_insert = self.embedder.prepare_sync_data(
+        hashes_to_delete, chunks_to_insert = await self.embedder.prepare_sync_data(
             page_id, parsed_chunks, existing_hashes, workspace_id
         )
 

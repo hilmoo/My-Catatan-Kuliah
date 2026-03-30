@@ -40,8 +40,10 @@ class NatsWorker:
         self.sub = await self.js.subscribe(
             self.subject,
             cb=self._message_handler,
+            # TODO: Consider using a more specific durable name or consumer group strategy in production
             durable="embedder-1",
             manual_ack=True,
+            pending_msgs_limit=1
         )
         logger.info("Subscribed to %s via JetStream", self.subject)
 

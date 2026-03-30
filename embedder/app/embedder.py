@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 
 from langchain_text_splitters import (
@@ -54,7 +55,7 @@ class EmbedderService:
 
         return chunks_data
 
-    def prepare_sync_data(
+    async def prepare_sync_data(
         self,
         page_id: int,
         parsed_chunks: list[dict],
@@ -71,11 +72,11 @@ class EmbedderService:
         chunks_to_insert = []
         if hashes_to_add:
             texts_to_embed = [new_chunk_map[h]["text"] for h in hashes_to_add]
-            embeddings = (
-                self.get_model()
-                .encode(texts_to_embed, show_progress_bar=False)
-                .tolist()
+            model = self.get_model()
+            embeddings = await asyncio.to_thread(
+                model.encode, texts_to_embed, show_progress_bar=False
             )
+            embeddings = embeddings.tolist()
 
             for hash_val, embedding in zip(hashes_to_add, embeddings, strict=False):
                 chunk_data = new_chunk_map[hash_val]
