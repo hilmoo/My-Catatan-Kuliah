@@ -103,6 +103,7 @@ type DocumentChunk struct {
 	PageID      int32
 	WorkspaceID int32
 	ChunkIndex  int32
+	ChunkHash   string
 	Content     string
 	Embedding   *pgvector.Vector
 	FtsVector   interface{}
@@ -124,10 +125,10 @@ type Page struct {
 }
 
 type PagesContent struct {
-	ID          int32
-	PageID      int32
-	ContentHtml *string
-	ContentBlob []byte
+	ID              int32
+	PageID          int32
+	ContentMarkdown *string
+	ContentBlob     []byte
 }
 
 type Session struct {

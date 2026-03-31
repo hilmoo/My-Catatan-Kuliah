@@ -451,3 +451,23 @@ func (q *Queries) UpdatePage(ctx context.Context, arg UpdatePageParams) (UpdateP
 	)
 	return i, err
 }
+
+const validatePageIidAndUser = `-- name: ValidatePageIidAndUser :one
+SELECT EXISTS (
+        SELECT 1
+        FROM pages
+        WHERE iid = $1
+            AND "created_by" = $2)
+`
+
+type ValidatePageIidAndUserParams struct {
+	Iid       uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) ValidatePageIidAndUser(ctx context.Context, arg ValidatePageIidAndUserParams) (bool, error) {
+	row := q.db.QueryRow(ctx, validatePageIidAndUser, arg.Iid, arg.CreatedBy)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}

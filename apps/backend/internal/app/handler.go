@@ -7,6 +7,7 @@ import (
 	"backend/internal/feature/health"
 	"backend/internal/feature/page"
 	"backend/internal/feature/session"
+	"backend/internal/feature/swagger"
 	"backend/internal/feature/workspace"
 	db "backend/internal/gen/sqlc"
 	"backend/internal/store/config"
@@ -47,6 +48,7 @@ func initHandler(args initHandlerParams) *echo.Echo {
 
 	api := e.Group("/api")
 	health.NewHttpHandler().RegisterRoutes(api)
+	swagger.NewHttpHandler().RegisterRoutes(api)
 
 	noAuth := e.Group("/api")
 	noAuth.Use(msession.RequireNoAuth)

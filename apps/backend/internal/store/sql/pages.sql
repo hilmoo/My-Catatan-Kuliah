@@ -38,6 +38,13 @@ FROM pages
 WHERE iid = $1
     AND "created_by" = $2;
 
+-- name: ValidatePageIidAndUser :one
+SELECT EXISTS (
+        SELECT 1
+        FROM pages
+        WHERE iid = $1
+            AND "created_by" = $2);
+
 -- name: ListPagesByWorkspaceIdAndType :many
 SELECT p.*,
     u.iid AS user_iid,

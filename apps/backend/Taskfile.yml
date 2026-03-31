@@ -3,14 +3,42 @@
 version: '3'
 
 vars:
-  GREETING: Hello, world!
+  MIGRATION_DIR: ../migration
 
 tasks:
   default:
-    desc: Print a greeting message
+    desc: Run 
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - go run cmd/main.go serve
+      
+  migrate-up:
+    desc: Run database migrations
+    cmds:
+      - go run cmd/main.go migrate up {{.MIGRATION_DIR}}
+  
+  migrate-up-to:*:
+    desc: Run database migrations up to a specific version
+    vars:
+      VERSION: '{{index .MATCH 0}}'
+    cmds:
+      - go run cmd/main.go migrate up-to {{.MIGRATION_DIR}} {{.VERSION}}
+
+  migrate-down:
+    desc: Rollback database migrations
+    cmds:
+      - go run cmd/main.go migrate down {{.MIGRATION_DIR}}
+  
+  migrate-down-to:*:
+    desc: Rollback database migrations down to a specific version
+    vars:
+      VERSION: '{{index .MATCH 0}}'
+    cmds:
+      - go run cmd/main.go migrate down-to {{.MIGRATION_DIR}} {{.VERSION}}
+  
+  migrate-status:
+    desc: Show database migration status
+    cmds:
+      - go run cmd/main.go migrate status {{.MIGRATION_DIR}}
 
   gen-api:
     desc: Generate API code using oapi-codegen

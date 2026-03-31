@@ -3,6 +3,7 @@ rules:
   info-license: false
   license-url: false
   info-contact: false
+  operation-success-response: false
 
   api-health:
     message: "APIs MUST have a health path (`/health`) defined."

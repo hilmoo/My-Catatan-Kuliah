@@ -3,7 +3,7 @@ package page
 import (
 	"backend/internal/gen/models"
 	db "backend/internal/gen/sqlc"
-	"backend/utils/uuidx"
+	"backend/internal/utils/uuidx"
 	"time"
 
 	"github.com/google/uuid"

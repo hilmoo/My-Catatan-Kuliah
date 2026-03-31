@@ -53,7 +53,7 @@ func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {
 }
 
 func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
-	stateCookie, err := c.Cookie("state")
+	stateCookie, err := getStateFromCookie(c)
 	if err != nil {
 		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("state cookie not found").WithDebug(err.Error()))
 	}
@@ -63,7 +63,7 @@ func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
 		return errort.HttpError(c, errH)
 	}
 
-	if params.State != stateCookie.Value {
+	if params.State != stateCookie {
 		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("invalid state parameter"))
 	}
 
