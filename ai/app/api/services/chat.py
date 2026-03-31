@@ -1,8 +1,11 @@
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
+from typing import Annotated
 
+from fastapi import Depends
 from openai import AsyncOpenAI
 
+from app.api.dependencies import AppState, get_container
 from app.store.db import DbRepository
 from app.store.redis import RedisRepository
 from app.utils.retriever import Retriever
@@ -16,11 +19,6 @@ Jika tidak ada informasi yang relevan dalam konteks, katakan bahwa kamu tidak me
 Konteks:
 {context}
 """
-
-
-def build_system_prompt(chunks: list[dict[str, object]]) -> str:
-    context = "\n\n---\n\n".join(str(chunk["content"]) for chunk in chunks)
-    return SYSTEM_PROMPT_TEMPLATE.format(context=context)
 
 
 @dataclass(slots=True)
@@ -47,6 +45,10 @@ class ChatService:
         self.retriever = retriever
         self.llm_client = llm_client
         self.llm_model = llm_model
+
+    def _build_system_prompt(self, chunks: list[dict[str, object]]) -> str:
+        context = "\n\n---\n\n".join(str(chunk["content"]) for chunk in chunks)
+        return SYSTEM_PROMPT_TEMPLATE.format(context=context)
 
     async def stream_chat(self, request: ChatServiceRequest) -> AsyncIterator[str]:
         embedding = self.retriever.embed_query(request.message)
@@ -83,7 +85,7 @@ class ChatService:
             await self.db_repo.clear_active_stream(request.id)
             return
 
-        system_prompt = build_system_prompt(chunks)
+        system_prompt = self._build_system_prompt(chunks)
 
         async for event in stream_data(
             client=self.llm_client,
@@ -95,3 +97,15 @@ class ChatService:
             yield event
 
         await self.db_repo.clear_active_stream(request.id)
+
+
+def get_chat_service(
+    container: Annotated[AppState, Depends(get_container)],
+) -> ChatService:
+    return ChatService(
+        db_repo=container.db_repo,
+        redis_repo=container.redis_repo,
+        retriever=container.retriever,
+        llm_client=container.llm_client,
+        llm_model=container.config.llm_model,
+    )

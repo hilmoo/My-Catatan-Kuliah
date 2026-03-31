@@ -5,11 +5,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Response
 from fastapi.responses import StreamingResponse
 
-from app.api.dependencies import get_chat_service, get_db_repo, get_redis_repo
+from app.api.dependencies import AppState, get_container
 from app.api.schema import ChatRequest
-from app.services.chat import ChatService, ChatServiceRequest
-from app.store.db import DbRepository
-from app.store.redis import RedisRepository
+from app.api.services.chat import ChatService, ChatServiceRequest, get_chat_service
 from app.utils.stream import format_sse
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -52,16 +50,15 @@ async def chat(
 @router.get("/{chat_id}/stream", response_model=None)
 async def resume_stream(
     chat_id: str,
-    db_repo: Annotated[DbRepository, Depends(get_db_repo)],
-    redis_repo: Annotated[RedisRepository, Depends(get_redis_repo)],
+    container: Annotated[AppState, Depends(get_container)],
 ) -> StreamingResponse | Response:
-    stream_id = await db_repo.get_active_stream(chat_id)
+    stream_id = await container.db_repo.get_active_stream(chat_id)
     if not stream_id:
         return Response(status_code=204)
 
     async def replay() -> AsyncIterator[str]:
         try:
-            async for event in redis_repo.replay_stream(stream_id):
+            async for event in container.redis_repo.replay_stream(stream_id):
                 yield event
         except Exception as e:
             logger.exception(

@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from openai import AsyncOpenAI
 from pgvector.asyncpg import register_vector
 
+from app.api.dependencies import AppState
 from app.config import Config
 from app.store.db import DbRepository
 from app.store.redis import RedisRepository
@@ -32,11 +33,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     retriever = Retriever(app_config.embedding_model)
 
-    app.state.config = app_config
-    app.state.db_repo = DbRepository(pool)
-    app.state.redis_repo = RedisRepository(redis_client)
-    app.state.retriever = retriever
-    app.state.llm_client = llm_client
+    app.state.container = AppState(
+        config=app_config,
+        db_repo=DbRepository(pool),
+        redis_repo=RedisRepository(redis_client),
+        retriever=retriever,
+        llm_client=llm_client,
+    )
 
     logger.info("Application startup complete.")
     yield
