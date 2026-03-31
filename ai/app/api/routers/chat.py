@@ -2,7 +2,6 @@ import logging
 from collections.abc import AsyncIterator
 from typing import Annotated
 
-from ai.app.utils.stream import format_sse
 from fastapi import APIRouter, Depends, Response
 from fastapi.responses import StreamingResponse
 
@@ -11,6 +10,7 @@ from app.api.schema import ChatRequest
 from app.services.chat import ChatService, ChatServiceRequest
 from app.store.db import DbRepository
 from app.store.redis import RedisRepository
+from app.utils.stream import format_sse
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 

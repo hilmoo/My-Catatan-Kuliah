@@ -1,6 +1,5 @@
 from typing import Annotated
 
-from ai.app.utils.retriever import Retriever
 from fastapi import Depends, Request
 from openai import AsyncOpenAI
 
@@ -8,6 +7,7 @@ from app.config import Config
 from app.services.chat import ChatService
 from app.store.db import DbRepository
 from app.store.redis import RedisRepository
+from app.utils.retriever import Retriever
 
 
 def get_db_repo(request: Request) -> DbRepository:

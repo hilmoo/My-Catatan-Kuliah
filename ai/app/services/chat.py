@@ -1,11 +1,11 @@
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 
-from ai.app.utils.retriever import Retriever
 from openai import AsyncOpenAI
 
 from app.store.db import DbRepository
 from app.store.redis import RedisRepository
+from app.utils.retriever import Retriever
 from app.utils.stream import format_sse, stream_data
 
 SYSTEM_PROMPT_TEMPLATE = """\

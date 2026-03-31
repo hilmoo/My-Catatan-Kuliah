@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.types import Lifespan
 
-from app.api import lifespan
+from app.api.lifespan import lifespan
 from app.api.router import api_router
 
 

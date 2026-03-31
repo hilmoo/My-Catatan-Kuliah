@@ -4,7 +4,6 @@ from contextlib import asynccontextmanager
 
 import asyncpg
 import redis.asyncio as aioredis
-from ai.app.utils.retriever import Retriever
 from fastapi import FastAPI
 from openai import AsyncOpenAI
 from pgvector.asyncpg import register_vector
@@ -12,6 +11,7 @@ from pgvector.asyncpg import register_vector
 from app.config import Config
 from app.store.db import DbRepository
 from app.store.redis import RedisRepository
+from app.utils.retriever import Retriever
 
 logger = logging.getLogger(__name__)
 
