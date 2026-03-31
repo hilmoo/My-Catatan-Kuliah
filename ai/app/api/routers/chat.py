@@ -1,0 +1,79 @@
+import logging
+from collections.abc import AsyncIterator
+from typing import Annotated
+
+from ai.app.utils.stream import format_sse
+from fastapi import APIRouter, Depends, Response
+from fastapi.responses import StreamingResponse
+
+from app.api.dependencies import get_chat_service, get_db_repo, get_redis_repo
+from app.api.schema import ChatRequest
+from app.services.chat import ChatService, ChatServiceRequest
+from app.store.db import DbRepository
+from app.store.redis import RedisRepository
+
+router = APIRouter(prefix="/chat", tags=["chat"])
+
+logger = logging.getLogger(__name__)
+
+
+@router.post("")
+async def chat(
+    request: ChatRequest,
+    chat_service: Annotated[ChatService, Depends(get_chat_service)],
+) -> StreamingResponse:
+    service_request = ChatServiceRequest(
+        id=request.id,
+        user_id=request.user_id,
+        message=request.message,
+        workspace_id=request.workspace_id,
+    )
+
+    async def event_stream() -> AsyncIterator[str]:
+        try:
+            async for event in chat_service.stream_chat(service_request):
+                yield event
+        except Exception as e:
+            logger.exception(
+                "Error during chat streaming",
+                exc_info=e,
+                extra={"request": service_request},
+            )
+            yield format_sse(
+                {
+                    "type": "error",
+                    "message": "Terjadi kesalahan saat memproses percakapan.",
+                }
+            )
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+@router.get("/{chat_id}/stream", response_model=None)
+async def resume_stream(
+    chat_id: str,
+    db_repo: Annotated[DbRepository, Depends(get_db_repo)],
+    redis_repo: Annotated[RedisRepository, Depends(get_redis_repo)],
+) -> StreamingResponse | Response:
+    stream_id = await db_repo.get_active_stream(chat_id)
+    if not stream_id:
+        return Response(status_code=204)
+
+    async def replay() -> AsyncIterator[str]:
+        try:
+            async for event in redis_repo.replay_stream(stream_id):
+                yield event
+        except Exception as e:
+            logger.exception(
+                "Error during stream replay",
+                exc_info=e,
+                extra={"chat_id": chat_id, "stream_id": stream_id},
+            )
+            yield format_sse(
+                {
+                    "type": "error",
+                    "message": "Terjadi kesalahan saat memuat ulang percakapan.",
+                }
+            )
+
+    return StreamingResponse(replay(), media_type="text/event-stream")

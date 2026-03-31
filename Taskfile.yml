@@ -18,6 +18,9 @@ includes:
   proto:
     taskfile: ./proto/Taskfile.yml
     dir: ./proto
+  ai:
+    taskfile: ./ai/Taskfile.yml
+    dir: ./ai
 
 tasks:
   migrate-add:*:
