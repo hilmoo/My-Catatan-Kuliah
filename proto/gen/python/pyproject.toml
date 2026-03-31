@@ -1,0 +1,15 @@
+[project]
+name = "proto"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "protobuf>=7.34.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["proto/"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

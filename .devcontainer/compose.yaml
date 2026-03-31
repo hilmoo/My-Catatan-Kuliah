@@ -5,7 +5,7 @@ services:
       - ../..:/workspaces:cached
     command: sleep infinity
   db:
-    image: postgres:18
+    image: pgvector/pgvector:pg18-trixie
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -13,6 +13,13 @@ services:
     volumes:
       - my-catatan-kuliah-postgres:/var/lib/postgresql/18/docker
     network_mode: service:workspace
+  nats:
+    image: nats:2.12-alpine
+    network_mode: service:workspace
+    volumes:
+      - my-catatan-kuliah-nats:/data
+    command: -js -sd /data
 
 volumes:
   my-catatan-kuliah-postgres:
+  my-catatan-kuliah-nats:

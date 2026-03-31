@@ -1,0 +1,14 @@
+[project]
+name = "my-catatan-kuliah"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "proto/gen/python",
+    "ai",
+    "embedder",
+    "scripts",
+]

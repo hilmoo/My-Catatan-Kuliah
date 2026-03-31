@@ -46,3 +46,12 @@ func clearStateCookie(c *echo.Context, isProd bool) {
 	cookie.Expires = time.Now().Add(-1 * time.Hour)
 	c.SetCookie(cookie)
 }
+
+func getStateFromCookie(c *echo.Context) (string, error) {
+	cookie, err := c.Cookie(stateCookieName)
+	if err != nil {
+		return "", err
+	}
+
+	return cookie.Value, nil
+}
