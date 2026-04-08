@@ -7,9 +7,9 @@ Simplified: text streaming only (no tool calls).
 import json
 import uuid
 from collections.abc import AsyncIterator
-from typing import Any
 
 from openai import AsyncOpenAI
+from openai.types import CompletionUsage
 
 
 def format_sse(payload: dict[str, object]) -> str:
@@ -19,7 +19,7 @@ def format_sse(payload: dict[str, object]) -> str:
 
 def _build_finish_metadata(
     finish_reason: str | None,
-    usage_data: Any,  # noqa: ANN401
+    usage_data: CompletionUsage | None,
 ) -> dict[str, object]:
     """Build the finish event metadata from completion state."""
     metadata: dict[str, object] = {}
@@ -44,6 +44,7 @@ async def stream_data(
     client: AsyncOpenAI,
     model: str,
     system_prompt: str,
+    history_messages: list[dict[str, str]],
     user_message: str,
 ) -> AsyncIterator[str]:
     """Yield SSE events for a streaming chat completion (Data Stream Protocol).
@@ -64,6 +65,7 @@ async def stream_data(
         model=model,
         messages=[
             {"role": "system", "content": system_prompt},
+            *history_messages,
             {"role": "user", "content": user_message},
         ],
         stream=True,

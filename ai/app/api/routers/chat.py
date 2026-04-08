@@ -58,7 +58,8 @@ async def resume_stream(
 
     async def replay() -> AsyncIterator[str]:
         try:
-            async for event in container.redis_repo.replay_stream(stream_id):
+            replayed_events = await container.redis_repo.replay_stream(stream_id)
+            for event in replayed_events:
                 yield event
         except Exception as e:
             logger.exception(
