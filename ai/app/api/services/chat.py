@@ -86,7 +86,9 @@ class ChatService:
             for event in events:
                 await self.redis_repo.append_chunk(stream_id, event)
                 yield event
-            await self.db_repo.save_message(chat_id, role="assistant", text=assistant_text)
+            await self.db_repo.save_message(
+                chat_id, role="assistant", text=assistant_text
+            )
             await self.db_repo.clear_active_stream(request.id)
             await self.redis_repo.expire_stream(stream_id)
             return

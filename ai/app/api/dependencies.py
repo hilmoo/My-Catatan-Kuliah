@@ -25,5 +25,3 @@ class AppState:
 
 def get_container(request: Request) -> AppState:
     return request.app.state.container
-
-
