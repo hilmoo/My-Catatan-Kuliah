@@ -12,7 +12,7 @@ class DbRepository:
 
     async def create_stream(
         self,
-        chat_iid: str,
+        chat_iid: uuid.UUID,
         user_id: int,
         workspace_id: int,
     ) -> tuple[int, str]:
@@ -25,9 +25,9 @@ class DbRepository:
                 INSERT INTO llm_chats (iid, user_id, workspace_id, active_stream_id)
                 VALUES ($1::uuid, $2, $3, $4)
                 ON CONFLICT (iid) DO UPDATE
-                    SET user_id = EXCLUDED.user_id,
-                        workspace_id = EXCLUDED.workspace_id,
-                        active_stream_id = EXCLUDED.active_stream_id
+                    SET active_stream_id = EXCLUDED.active_stream_id
+                    WHERE llm_chats.user_id = EXCLUDED.user_id
+                      AND llm_chats.workspace_id = EXCLUDED.workspace_id
                 RETURNING id
                 """,
                 chat_iid,
@@ -126,10 +126,19 @@ class DbRepository:
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 "SELECT * FROM hybrid_search($1::vector, $2, $3, $4)",
-                str(embedding),
+                embedding,
                 query,
                 workspace_id,
                 match_count,
             )
 
         return [dict(r) for r in rows]
+
+    async def is_stream_active(self, chat_iid: uuid.UUID) -> bool:
+        """Check if the stream is still active in Postgres."""
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT active_stream_id FROM llm_chats WHERE iid = $1::uuid",
+                chat_iid,
+            )
+            return row is not None and row["active_stream_id"] is not None

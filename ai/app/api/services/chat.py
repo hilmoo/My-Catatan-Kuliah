@@ -1,4 +1,7 @@
+import asyncio
 import json
+import logging
+import uuid
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Annotated
@@ -12,6 +15,8 @@ from app.store.redis import RedisRepository
 from app.utils.retriever import Retriever
 from app.utils.stream import format_sse, stream_data
 
+logger = logging.getLogger(__name__)
+
 SYSTEM_PROMPT_TEMPLATE = """\
 Kamu adalah asisten belajar untuk catatan kuliah.
 Jawab pertanyaan berdasarkan konteks berikut. \
@@ -24,7 +29,7 @@ Konteks:
 
 @dataclass(slots=True)
 class ChatServiceRequest:
-    id: str
+    chat_iid: uuid.UUID
     user_id: int
     message: str
     workspace_id: int
@@ -46,13 +51,62 @@ class ChatService:
         self.retriever = retriever
         self.llm_client = llm_client
         self.llm_model = llm_model
+        self._background_tasks: set[asyncio.Task[None]] = set()
 
     def _build_system_prompt(self, chunks: list[dict[str, object]]) -> str:
         context = "\n\n---\n\n".join(str(chunk["content"]) for chunk in chunks)
         return SYSTEM_PROMPT_TEMPLATE.format(context=context)
 
+    async def _generate_and_buffer_llm_response(
+        self,
+        chat_iid: uuid.UUID,
+        chat_id: int,
+        stream_id: str,
+        system_prompt: str,
+        history_messages: list,
+        user_message: str,
+    ) -> None:
+        """Runs independently of the client connection to guarantee completion."""
+        assistant_parts: list[str] = []
+
+        try:
+            async for event in stream_data(
+                client=self.llm_client,
+                model=self.llm_model,
+                system_prompt=system_prompt,
+                history_messages=history_messages,
+                user_message=user_message,
+            ):
+                if event.startswith("data: {"):
+                    payload = json.loads(event[6:])
+                    if payload.get("type") == "text-delta":
+                        delta = payload.get("delta")
+                        if isinstance(delta, str) and delta:
+                            assistant_parts.append(delta)
+
+                # Keep writing to Redis even if the client is gone
+                await self.redis_repo.append_chunk(stream_id, event)
+
+            # Save the complete message to Postgres once finished
+            assistant_text = "".join(assistant_parts).strip()
+            if assistant_text:
+                await self.db_repo.save_message(
+                    chat_id,
+                    role="assistant",
+                    text=assistant_text,
+                )
+        except Exception as e:
+            logger.exception(
+                "Error during LLM response generation",
+                exc_info=e,
+                extra={"chat_iid": str(chat_iid), "stream_id": stream_id},
+            )
+        finally:
+            await self.db_repo.clear_active_stream(chat_iid)
+            await self.redis_repo.expire_stream(stream_id)
+
     async def stream_chat(self, request: ChatServiceRequest) -> AsyncIterator[str]:
-        embedding = self.retriever.embed_query(request.message)
+        embedding = await self.retriever.embed_query(request.message)
         chunks = await self.db_repo.hybrid_search(
             request.message,
             embedding,
@@ -60,7 +114,7 @@ class ChatService:
         )
 
         chat_id, stream_id = await self.db_repo.create_stream(
-            request.id,
+            request.chat_iid,
             request.user_id,
             request.workspace_id,
         )
@@ -89,41 +143,43 @@ class ChatService:
             await self.db_repo.save_message(
                 chat_id, role="assistant", text=assistant_text
             )
-            await self.db_repo.clear_active_stream(request.id)
+            await self.db_repo.clear_active_stream(request.chat_iid)
             await self.redis_repo.expire_stream(stream_id)
             return
 
         system_prompt = self._build_system_prompt(chunks)
-        assistant_parts: list[str] = []
 
-        try:
-            async for event in stream_data(
-                client=self.llm_client,
-                model=self.llm_model,
+        task = asyncio.create_task(
+            self._generate_and_buffer_llm_response(
+                chat_iid=request.chat_iid,
+                chat_id=chat_id,
+                stream_id=stream_id,
                 system_prompt=system_prompt,
                 history_messages=history_messages,
                 user_message=request.message,
-            ):
-                if event.startswith("data: {"):
-                    payload = json.loads(event[6:])
-                    if payload.get("type") == "text-delta":
-                        delta = payload.get("delta")
-                        if isinstance(delta, str) and delta:
-                            assistant_parts.append(delta)
+            )
+        )
+        self._background_tasks.add(task)
+        task.add_done_callback(self._background_tasks.discard)
 
-                await self.redis_repo.append_chunk(stream_id, event)
-                yield event
+        last_id = "-"
+        while True:
+            events = await self.redis_repo.read_stream_blocking(
+                stream_id, last_id, block_ms=2000
+            )
 
-            assistant_text = "".join(assistant_parts).strip()
-            if assistant_text:
-                await self.db_repo.save_message(
-                    chat_id,
-                    role="assistant",
-                    text=assistant_text,
-                )
-        finally:
-            await self.db_repo.clear_active_stream(request.id)
-            await self.redis_repo.expire_stream(stream_id)
+            if not events:
+                is_active = await self.db_repo.is_stream_active(request.chat_iid)
+                if not is_active:
+                    break
+                continue
+
+            for event_id, event_data in events:
+                yield event_data
+                last_id = event_id
+
+                if "data: [DONE]" in event_data:
+                    return
 
 
 def get_chat_service(

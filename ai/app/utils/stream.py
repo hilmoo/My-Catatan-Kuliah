@@ -69,26 +69,32 @@ async def stream_data(
             {"role": "user", "content": user_message},
         ],
         stream=True,
+        stream_options={"include_usage": True},
     )
 
     finish_reason = None
     usage_data = None
 
     async for chunk in stream:
-        for choice in chunk.choices:
-            if choice.finish_reason is not None:
-                finish_reason = choice.finish_reason
+        if chunk.choices:
+            for choice in chunk.choices:
+                if choice.finish_reason is not None:
+                    finish_reason = choice.finish_reason
 
-            delta = choice.delta
-            if delta is None:
-                continue
+                delta = choice.delta
+                if delta is None:
+                    continue
 
-            if delta.content is not None:
-                yield format_sse(
-                    {"type": "text-delta", "id": text_stream_id, "delta": delta.content}
-                )
+                if delta.content is not None:
+                    yield format_sse(
+                        {
+                            "type": "text-delta",
+                            "id": text_stream_id,
+                            "delta": delta.content,
+                        }
+                    )
 
-        if not chunk.choices and chunk.usage is not None:
+        if chunk.usage is not None:
             usage_data = chunk.usage
 
     # 4. End text part

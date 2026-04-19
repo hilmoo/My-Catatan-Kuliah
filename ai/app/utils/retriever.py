@@ -1,3 +1,4 @@
+import anyio
 from sentence_transformers import SentenceTransformer
 
 
@@ -9,7 +10,11 @@ class Retriever:
         self.chunk_size = chunk_size
         self._model = SentenceTransformer(self.model_name)
 
-    def embed_query(self, text: str) -> list[float]:
-        """Embed a single query text into a vector."""
+    def _embed_query_sync(self, text: str) -> list[float]:
+        """Synchronous method to embed text (CPU-bound)."""
         embedding = self._model.encode(text, show_progress_bar=False)
         return embedding.tolist()
+
+    async def embed_query(self, text: str) -> list[float]:
+        """Asynchronously embed query by offloading to a worker thread."""
+        return await anyio.to_thread.run_sync(self._embed_query_sync, text)

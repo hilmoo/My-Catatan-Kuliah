@@ -9,6 +9,7 @@ from app.api.dependencies import AppState, get_container
 from app.api.schema import ChatRequest
 from app.api.services.chat import ChatService, ChatServiceRequest, get_chat_service
 from app.utils.stream import format_sse
+from app.utils.uuid import is_valid_uuidv7
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -52,15 +53,30 @@ async def resume_stream(
     chat_id: str,
     container: Annotated[AppState, Depends(get_container)],
 ) -> StreamingResponse | Response:
+    if not is_valid_uuidv7(chat_id):
+        return Response(status_code=400, content="Invalid chat id")
+
     stream_id = await container.db_repo.get_active_stream(chat_id)
     if not stream_id:
         return Response(status_code=204)
 
     async def replay() -> AsyncIterator[str]:
         try:
-            replayed_events = await container.redis_repo.replay_stream(stream_id)
-            for event in replayed_events:
-                yield event
+            last_id = "-"
+            chunk_size = 50
+
+            while True:
+                chunk = await container.redis_repo.replay_stream_paginated(
+                    stream_id, start=last_id, count=chunk_size
+                )
+
+                if not chunk:
+                    break
+
+                for event_id, event_data in chunk:
+                    yield event_data
+                    last_id = f"({event_id}"
+
         except Exception as e:
             logger.exception(
                 "Error during stream replay",
