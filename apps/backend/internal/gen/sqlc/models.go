@@ -110,6 +110,15 @@ type DocumentChunk struct {
 	CreatedAt   time.Time
 }
 
+type File struct {
+	ID        uuid.UUID
+	S3Key     string
+	MimeType  string
+	Size      int64
+	CreatedBy int32
+	CreatedAt time.Time
+}
+
 type Page struct {
 	ID          int32
 	Iid         uuid.UUID

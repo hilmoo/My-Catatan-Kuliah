@@ -24,6 +24,13 @@ type Config struct {
 	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET,required"`
 	GoogleOauthConfig  *oauth2.Config
 
+	// S3 Storage
+	S3Endpoint        string `env:"S3_ENDPOINT,required"`
+	S3AccessKeyID     string `env:"S3_ACCESS_KEY_ID,required"`
+	S3SecretAccessKey string `env:"S3_SECRET_ACCESS_KEY,required"`
+	S3Region          string `env:"S3_REGION,required"`
+	S3Bucket          string `env:"S3_BUCKET,required"`
+
 	DatabaseUrl         string `env:"DATABASE_URL,required"`
 	NatsUrl             string `env:"NATS_URL,required"`
 	HocuspocusUrl       string `env:"HOCUSPOCUS_URL,required"`

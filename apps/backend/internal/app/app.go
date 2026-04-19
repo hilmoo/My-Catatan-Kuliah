@@ -30,6 +30,8 @@ func Main(cfg config.Config) error {
 	}
 	defer nc.Close()
 
+	s3 := initS3(cfg)
+
 	logger := initLogger(cfg.LogLevel)
 	vld := validation.InitValidation()
 
@@ -38,6 +40,7 @@ func Main(cfg config.Config) error {
 		vld:    vld,
 		dbPool: db,
 		cfg:    cfg,
+		s3:     s3,
 	})
 	sc := echo.StartConfig{
 		Address:         fmt.Sprintf("%s:%d", cfg.ListenAddr, cfg.ListenPort),
