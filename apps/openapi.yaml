@@ -2,243 +2,241 @@ openapi: 3.0.3
 info:
   title: Workspace Management API
   version: 1.0.0
-  description: 'API specification for managing users, workspaces, and pages.'
+  description: "API specification for managing users, workspaces, and pages."
 servers:
-- url: /api
-  description: Base URL for API endpoints
+  - url: /api
+    description: Base URL for API endpoints
 paths:
   /auth/oauth/google:
     get:
       operationId: redirectToGoogleOAuth
       summary: Redirect to Google OAuth
-      description: Initiates OAuth flow by redirecting to Google authorization 
-        endpoint
+      description: Initiates OAuth flow by redirecting to Google authorization endpoint
       responses:
-        '302':
+        "302":
           description: Redirect to Google OAuth authorization URL
       security: []
       tags:
-      - Auth
+        - Auth
   /auth/oauth/callback/google:
     get:
       operationId: handleGoogleOAuthCallback
       summary: Handle Google OAuth callback
-      description: 'Handles the callback from Google OAuth, exchanges code for session
-        token, and redirects to frontend with session token'
+      description: "Handles the callback from Google OAuth, exchanges code for session
+        token, and redirects to frontend with session token"
       parameters:
-      - name: code
-        in: query
-        description: Authorization code returned by Google
-        required: true
-        schema:
-          type: string
-      - name: state
-        in: query
-        description: State parameter for CSRF protection
-        required: true
-        schema:
-          type: string
+        - name: code
+          in: query
+          description: Authorization code returned by Google
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: State parameter for CSRF protection
+          required: true
+          schema:
+            type: string
       responses:
-        '307':
+        "307":
           description: Redirect to frontend with session token
           headers:
             Location:
-              description: 'URL to redirect the user to, including session token'
+              description: "URL to redirect the user to, including session token"
               schema:
                 type: string
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
       security: []
       tags:
-      - Auth
+        - Auth
   /health:
     get:
       operationId: healthCheck
       summary: Health check endpoint
-      description: Returns a simple status message to indicate the API is 
-        running.
+      description: Returns a simple status message to indicate the API is running.
       responses:
-        '204':
+        "204":
           description: API is healthy
       security: []
       tags:
-      - Health
+        - Health
   /pages:
     get:
       operationId: listPages
       summary: List pages
-      description: 'List all pages for the current user, with optional filtering by
-        workspace, parent page, and type'
+      description: "List all pages for the current user, with optional filtering by
+        workspace, parent page, and type"
       parameters:
-      - $ref: '#/components/parameters/CursorParam'
-      - $ref: '#/components/parameters/LimitParam'
-      - $ref: '#/components/parameters/WorkspaceIdParam'
-      - $ref: '#/components/parameters/ParentIdParam'
-      - name: type
-        in: query
-        description: Filter by page type
-        required: true
-        schema:
-          type: string
-          default: folder
-          enum:
-          - course
-          - assignment
-          - folder
-          - note
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/WorkspaceIdParam"
+        - $ref: "#/components/parameters/ParentIdParam"
+        - name: type
+          in: query
+          description: Filter by page type
+          required: true
+          schema:
+            type: string
+            default: folder
+            enum:
+              - course
+              - assignment
+              - folder
+              - note
       responses:
-        '200':
-          $ref: '#/components/responses/PageListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/PageListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Pages
+        - Pages
     post:
       operationId: createPage
       summary: Create a page
-      description: 'Create a new page (course, assignment, folder, or note)'
+      description: "Create a new page (course, assignment, folder, or note)"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PageCreate'
+              $ref: "#/components/schemas/PageCreate"
       responses:
-        '201':
-          $ref: '#/components/responses/PageDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "201":
+          $ref: "#/components/responses/PageDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Pages
-  '/pages/{id}':
+        - Pages
+  "/pages/{id}":
     parameters:
-    - $ref: '#/components/parameters/ResourceId'
+      - $ref: "#/components/parameters/ResourceId"
     get:
       operationId: getPage
       summary: Get page details
       description: Get details of a specific page
       responses:
-        '200':
-          $ref: '#/components/responses/PageDetailResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/PageDetailResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Pages
+        - Pages
     patch:
       operationId: updatePage
       summary: Update page
-      description: 'Update an existing page (course, assignment, folder, or note)'
+      description: "Update an existing page (course, assignment, folder, or note)"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PageUpdate'
+              $ref: "#/components/schemas/PageUpdate"
       responses:
-        '200':
-          $ref: '#/components/responses/PageDetailResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/PageDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Pages
+        - Pages
     delete:
       operationId: deletePage
       summary: Delete page
-      description: 'Delete a page (course, assignment, folder, or note)'
+      description: "Delete a page (course, assignment, folder, or note)"
       responses:
-        '204':
+        "204":
           description: Page deleted
       tags:
-      - Pages
+        - Pages
   /pages/ws/{id}:
     parameters:
-      - $ref: '#/components/parameters/ResourceId'
+      - $ref: "#/components/parameters/ResourceId"
     get:
       operationId: subscribePageUpdates
       description: Websocket endpoint for real-time page content
       responses:
-        '101':
+        "101":
           description: Upgrade to WebSocket protocol
       tags:
-      - Pages
+        - Pages
   /sessions:
     get:
       operationId: listSessions
       summary: List sessions
       description: List all sessions for the current user
       parameters:
-      - $ref: '#/components/parameters/CursorParam'
-      - $ref: '#/components/parameters/LimitParam'
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/LimitParam"
       responses:
-        '200':
-          $ref: '#/components/responses/SessionListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/SessionListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Sessions
-  '/sessions/{id}':
+        - Sessions
+  "/sessions/{id}":
     parameters:
-    - name: id
-      in: path
-      description: Session token (used as identifier)
-      required: true
-      schema:
-        type: string
+      - name: id
+        in: path
+        description: Session token (used as identifier)
+        required: true
+        schema:
+          type: string
     get:
       operationId: getSession
       summary: Get session details
       description: Get details of a specific session
       responses:
-        '200':
-          $ref: '#/components/responses/SessionDetailResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/SessionDetailResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Sessions
+        - Sessions
     delete:
       operationId: deleteSession
       summary: Delete a session
       description: Delete a session
       responses:
-        '204':
+        "204":
           description: Session deleted
       tags:
-      - Sessions
+        - Sessions
   /workspaces:
     get:
       operationId: listWorkspaces
       summary: List workspaces
       description: List all workspaces for the current user
       parameters:
-      - $ref: '#/components/parameters/CursorParam'
-      - $ref: '#/components/parameters/LimitParam'
-      - name: owner_id
-        in: query
-        description: Filter by owner ID
-        schema:
-          type: string
+        - $ref: "#/components/parameters/CursorParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: owner_id
+          in: query
+          description: Filter by owner ID
+          schema:
+            type: string
       responses:
-        '200':
-          $ref: '#/components/responses/WorkspaceListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/WorkspaceListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Workspaces
+        - Workspaces
     post:
       operationId: createWorkspace
       summary: Create a workspace
@@ -248,32 +246,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkspaceCreate'
+              $ref: "#/components/schemas/WorkspaceCreate"
       responses:
-        '201':
-          $ref: '#/components/responses/WorkspaceCreateResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "201":
+          $ref: "#/components/responses/WorkspaceCreateResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Workspaces
-  '/workspaces/{id}':
+        - Workspaces
+  "/workspaces/{id}":
     parameters:
-    - $ref: '#/components/parameters/ResourceId'
+      - $ref: "#/components/parameters/ResourceId"
     get:
       operationId: getWorkspace
       summary: Get workspace details
       description: Get details of a specific workspace
       responses:
-        '200':
-          $ref: '#/components/responses/WorkspaceDetailResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/WorkspaceDetailResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Workspaces
+        - Workspaces
     patch:
       operationId: updateWorkspace
       summary: Update workspace
@@ -282,27 +280,82 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkspaceUpdate'
+              $ref: "#/components/schemas/WorkspaceUpdate"
       responses:
-        '200':
-          $ref: '#/components/responses/WorkspaceUpdateResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "200":
+          $ref: "#/components/responses/WorkspaceUpdateResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       tags:
-      - Workspaces
+        - Workspaces
     delete:
       operationId: deleteWorkspace
       summary: Delete workspace
       description: Delete a workspace
       responses:
-        '204':
+        "204":
           description: Workspace deleted
       tags:
-      - Workspaces
+        - Workspaces
+  /files/{file_id}:
+    parameters:
+      - name: file_id
+        in: path
+        description: Unique identifier of the file
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getFilePresignedUrl
+      summary: Get presigned URL for file download
+      description: Returns a time-limited presigned S3 GET URL to download or view the file.
+      responses:
+        "200":
+          $ref: "#/components/responses/FileGetResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      tags:
+        - Files
+    delete:
+      operationId: deleteFile
+      summary: Delete a file
+      description: Deletes the file from storage and removes its metadata from the system.
+      responses:
+        "204":
+          description: File deleted successfully
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      tags:
+        - Files
+  /files:
+    post:
+      operationId: getFileUploadPresignedUrl
+      summary: Get presigned URL for file upload
+      description: "Returns a time-limited presigned S3 PUT URL to upload a file,
+        along with any required fields for the upload"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileUpload"
+      responses:
+        "200":
+          $ref: "#/components/responses/FileUploadResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      tags:
+        - Files
 components:
   parameters:
     CursorParam:
@@ -352,7 +405,7 @@ components:
           type: string
           example: Resource Not Found
         status:
-          description: 'Status string (e.g., ''error'').'
+          description: "Status string (e.g., 'error')."
           type: string
           example: Not Found
         message:
@@ -369,17 +422,17 @@ components:
           example:
             missingResource: assignment with ID 123 not found
       required:
-      - id
-      - reason
-      - status
-      - error
-      - code
+        - id
+        - reason
+        - status
+        - error
+        - code
     PageAllProperties:
       oneOf:
-      - $ref: '#/components/schemas/PagePropertiesCourse'
-      - $ref: '#/components/schemas/PagePropertiesAssignment'
-      - $ref: '#/components/schemas/PagePropertiesFolder'
-      - $ref: '#/components/schemas/PagePropertiesNote'
+        - $ref: "#/components/schemas/PagePropertiesCourse"
+        - $ref: "#/components/schemas/PagePropertiesAssignment"
+        - $ref: "#/components/schemas/PagePropertiesFolder"
+        - $ref: "#/components/schemas/PagePropertiesNote"
     PageBase:
       type: object
       properties:
@@ -392,7 +445,7 @@ components:
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         parent_id:
-          description: 'ID of the parent page, null if it''s a top-level page.'
+          description: "ID of the parent page, null if it's a top-level page."
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         title:
@@ -400,58 +453,54 @@ components:
           type: string
           example: My Page
         icon:
-          description: 'Icon representing the page, can be an emoji or a URL to an
-            image.'
+          description: "Icon representing the page, can be an emoji or a URL to an image."
           type: string
           example: "📄"
         created_by:
-          description: ID of the user who created the page. authenticated 
-            session.
+          description: ID of the user who created the page. authenticated session.
           type: string
           example: CZM6ZsUwNuqZinoRDsMek
         created_at:
           description: Timestamp when the page was created.
           type: string
           format: date-time
-          example: '2024-01-01T12:00:00Z'
+          example: "2024-01-01T12:00:00Z"
         updated_at:
           description: Timestamp when the page was last updated.
           type: string
           format: date-time
-          example: '2024-01-02T12:00:00Z'
+          example: "2024-01-02T12:00:00Z"
     PageBaseCreate:
       type: object
       properties:
         workspace_id:
           type: string
         parent_id:
-          description: 'Folders can be nested under another folder. Courses can only
-            be nested under folders. Assignments can only be nested under courses.
-            Notes can be nested under folders, courses, or other notes. Only Assignments
-            cannot be top-level pages.'
+          description: "Folders can be nested under another folder. Courses can only be
+            nested under folders. Assignments can only be nested under courses.
+            Notes can be nested under folders, courses, or other notes. Only
+            Assignments cannot be top-level pages."
           type: string
         title:
-          description: 'For folders, it''s the folder name. For courses, it''s the
-            course name. For assignments, it''s the assignment name. For notes, it''s
-            the note title.'
+          description: "For folders, it's the folder name. For courses, it's the course
+            name. For assignments, it's the assignment name. For notes, it's the
+            note title."
           type: string
         icon:
-          description: 'Icon representing the page, can be an emoji or a URL to an
-            image.'
+          description: "Icon representing the page, can be an emoji or a URL to an image."
           type: string
         type:
-          description: 'The type of the page, which determines its properties and
-            behavior.'
+          description: "The type of the page, which determines its properties and behavior."
           type: string
           enum:
-          - course
-          - assignment
-          - folder
-          - note
+            - course
+            - assignment
+            - folder
+            - note
       required:
-      - workspace_id
-      - title
-      - type
+        - workspace_id
+        - title
+        - type
     PageBaseUpdate:
       type: object
       properties:
@@ -463,18 +512,18 @@ components:
           type: string
     PageCreate:
       allOf:
-      - $ref: '#/components/schemas/PageBaseCreate'
-      - type: object
-        properties:
+        - $ref: "#/components/schemas/PageBaseCreate"
+        - type: object
           properties:
-            $ref: '#/components/schemas/PageAllProperties'
+            properties:
+              $ref: "#/components/schemas/PageAllProperties"
     PageDetail:
       allOf:
-      - $ref: '#/components/schemas/PageBase'
-      - type: object
-        properties:
+        - $ref: "#/components/schemas/PageBase"
+        - type: object
           properties:
-            $ref: '#/components/schemas/PageAllProperties'
+            properties:
+              $ref: "#/components/schemas/PageAllProperties"
     PagePropertiesAssignment:
       type: object
       properties:
@@ -485,9 +534,9 @@ components:
           type: string
           default: todo
           enum:
-          - todo
-          - in_progress
-          - done
+            - todo
+            - in_progress
+            - done
     PagePropertiesCourse:
       type: object
       properties:
@@ -514,7 +563,7 @@ components:
       properties:
         color:
           type: string
-          example: '#3B82F6'
+          example: "#3B82F6"
         sort_by:
           type: string
           example: title_asc
@@ -526,19 +575,19 @@ components:
           items:
             type: string
           example:
-          - meeting-notes
-          - q1-planning
+            - meeting-notes
+            - q1-planning
         cover_image:
           type: string
           format: uri
-          example: 'https://example.com/images/abstract-header.png'
+          example: "https://example.com/images/abstract-header.png"
     PageUpdate:
       allOf:
-      - $ref: '#/components/schemas/PageBaseUpdate'
-      - type: object
-        properties:
+        - $ref: "#/components/schemas/PageBaseUpdate"
+        - type: object
           properties:
-            $ref: '#/components/schemas/PageAllProperties'
+            properties:
+              $ref: "#/components/schemas/PageAllProperties"
     Pagination:
       type: object
       properties:
@@ -569,10 +618,10 @@ components:
           type: string
           format: date-time
       required:
-      - id
-      - user_id
-      - expires_at
-      - created_at
+        - id
+        - user_id
+        - expires_at
+        - created_at
     Workspace:
       type: object
       properties:
@@ -583,42 +632,67 @@ components:
           description: Name of the workspace.
           type: string
         owner_id:
-          description: ID of the user who owns the workspace authenticated 
-            session.
+          description: ID of the user who owns the workspace authenticated session.
           type: string
         created_at:
           type: string
           format: date-time
       required:
-      - id
-      - name
-      - owner_id
-      - created_at
+        - id
+        - name
+        - owner_id
+        - created_at
     WorkspaceCreate:
       type: object
       properties:
         name:
           type: string
       required:
-      - name
+        - name
     WorkspaceUpdate:
       type: object
       properties:
         name:
           type: string
+    FileUpload:
+      type: object
+      properties:
+        size:
+          maximum: 5
+          type: integer
+          description: Size of the file in megabytes (MB). Maximum allowed size is 5 MB.
+        mime_type:
+          type: string
+          description: The MIME type of the uploaded file.
+      required:
+        - size
+        - mime_type
+    File:
+      type: object
+      properties:
+        file_id:
+          type: string
+          description: Unique identifier of the file.
+        url:
+          type: string
+          format: uri
+          description: The URL where the file can be uploaded.
+      required:
+        - file_id
+        - url
   responses:
     ErrorResponse:
       description: Generic error response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     PageDetailResponse:
       description: Page details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PageDetail'
+            $ref: "#/components/schemas/PageDetail"
     PageListResponse:
       description: List of pages
       content:
@@ -629,15 +703,15 @@ components:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PageDetail'
+                  $ref: "#/components/schemas/PageDetail"
               pagination:
-                $ref: '#/components/schemas/Pagination'
+                $ref: "#/components/schemas/Pagination"
     SessionDetailResponse:
       description: Session details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Session'
+            $ref: "#/components/schemas/Session"
     SessionListResponse:
       description: List of sessions
       content:
@@ -648,21 +722,21 @@ components:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Session'
+                  $ref: "#/components/schemas/Session"
               pagination:
-                $ref: '#/components/schemas/Pagination'
+                $ref: "#/components/schemas/Pagination"
     WorkspaceCreateResponse:
       description: Workspace created
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Workspace'
+            $ref: "#/components/schemas/Workspace"
     WorkspaceDetailResponse:
       description: Workspace details
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Workspace'
+            $ref: "#/components/schemas/Workspace"
     WorkspaceListResponse:
       description: List of workspaces
       content:
@@ -673,30 +747,44 @@ components:
               data:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Workspace'
+                  $ref: "#/components/schemas/Workspace"
               pagination:
-                $ref: '#/components/schemas/Pagination'
+                $ref: "#/components/schemas/Pagination"
     WorkspaceUpdateResponse:
       description: Workspace updated
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Workspace'
+            $ref: "#/components/schemas/Workspace"
+    FileUploadResponse:
+      description: Presigned URL for file upload
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/File"
+    FileGetResponse:
+      description: Presigned URL for file download
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/File"
   securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
       name: session
 tags:
-- name: Auth
-  description: Authentication operations
-- name: Health
-  description: API health check endpoint
-- name: Pages
-  description: Page management operations
-- name: Sessions
-  description: Session management operations
-- name: Workspaces
-  description: Workspace operations
+  - name: Auth
+    description: Authentication operations
+  - name: Files
+    description: File upload and management operations
+  - name: Health
+    description: API health check endpoint
+  - name: Pages
+    description: Page management operations
+  - name: Sessions
+    description: Session management operations
+  - name: Workspaces
+    description: Workspace operations
 security:
-- cookieAuth: []
+  - cookieAuth: []

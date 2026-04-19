@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"backend/internal/feature/auth"
+	"backend/internal/feature/files"
 	"backend/internal/feature/health"
 	"backend/internal/feature/page"
 	"backend/internal/feature/session"
@@ -19,12 +20,14 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
+	"github.com/rhnvrm/simples3"
 )
 
 type initHandlerParams struct {
 	logger *slog.Logger
 	vld    *validation.Vld
 	dbPool *pgxpool.Pool
+	s3     *simples3.S3
 	cfg    config.Config
 }
 
@@ -59,6 +62,7 @@ func initHandler(args initHandlerParams) *echo.Echo {
 	session.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 	page.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	files.NewHttpHandler(httpHandlerParams, args.s3).RegisterRoutes(protected)
 
 	return e
 }

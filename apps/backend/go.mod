@@ -10,10 +10,12 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/labstack/echo/v5 v5.0.4
+	github.com/nats-io/nats.go v1.50.0
 	github.com/oapi-codegen/runtime v1.3.0
 	github.com/ory/herodot v0.10.8
 	github.com/pgvector/pgvector-go v0.3.0
 	github.com/pressly/goose/v3 v3.27.0
+	github.com/rhnvrm/simples3 v0.11.1
 	github.com/urfave/cli/v3 v3.7.0
 	golang.org/x/oauth2 v0.34.0
 )
@@ -36,7 +38,6 @@ require (
 	github.com/mailru/easyjson v0.9.1 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
-	github.com/nats-io/nats.go v1.50.0 // indirect
 	github.com/nats-io/nkeys v0.4.15 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/oapi-codegen/oapi-codegen/v2 v2.6.1-0.20260318123712-00a90b7a03f4 // indirect

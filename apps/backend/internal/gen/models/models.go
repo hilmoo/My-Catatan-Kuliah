@@ -128,6 +128,24 @@ type Error struct {
 	Status string `json:"status" validate:"required"`
 }
 
+// File defines model for File.
+type File struct {
+	// FileId Unique identifier of the file.
+	FileId string `json:"file_id" validate:"required"`
+
+	// Url The URL where the file can be uploaded.
+	Url string `json:"url" validate:"required,uri"`
+}
+
+// FileUpload defines model for FileUpload.
+type FileUpload struct {
+	// MimeType The MIME type of the uploaded file.
+	MimeType string `json:"mime_type" validate:"required"`
+
+	// Size Size of the file in megabytes (MB). Maximum allowed size is 5 MB.
+	Size int `json:"size" validate:"required,lte=5"`
+}
+
 // PageAllProperties defines model for PageAllProperties.
 type PageAllProperties struct {
 	union json.RawMessage
@@ -336,6 +354,12 @@ type WorkspaceIdParam = string
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse = Error
 
+// FileGetResponse defines model for FileGetResponse.
+type FileGetResponse = File
+
+// FileUploadResponse defines model for FileUploadResponse.
+type FileUploadResponse = File
+
 // PageDetailResponse defines model for PageDetailResponse.
 type PageDetailResponse = PageDetail
 
@@ -422,6 +446,9 @@ type ListWorkspacesParams struct {
 	// OwnerId Filter by owner ID
 	OwnerId *string `query:"owner_id,omitempty" json:"owner_id,omitempty" validate:"omitempty"`
 }
+
+// GetFileUploadPresignedUrlJSONRequestBody defines body for GetFileUploadPresignedUrl for application/json ContentType.
+type GetFileUploadPresignedUrlJSONRequestBody = FileUpload
 
 // CreatePageJSONRequestBody defines body for CreatePage for application/json ContentType.
 type CreatePageJSONRequestBody = PageCreate
