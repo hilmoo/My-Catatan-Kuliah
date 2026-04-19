@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS files (
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS files;
 -- +goose StatementEnd

@@ -130,6 +130,9 @@ type Error struct {
 
 // File defines model for File.
 type File struct {
+	// FileId Unique identifier of the file.
+	FileId string `json:"file_id" validate:"required"`
+
 	// Url The URL where the file can be uploaded.
 	Url string `json:"url" validate:"required,uri"`
 }
@@ -140,7 +143,7 @@ type FileUpload struct {
 	MimeType string `json:"mime_type" validate:"required"`
 
 	// Size Size of the file in megabytes (MB). Maximum allowed size is 5 MB.
-	Size *int `json:"size,omitempty" validate:"omitempty,lte=5"`
+	Size int `json:"size" validate:"required,lte=5"`
 }
 
 // PageAllProperties defines model for PageAllProperties.

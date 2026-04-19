@@ -30,13 +30,13 @@ func NewHttpHandler(args helpert.HttpHandlerParams, s3 *simples3.S3) *httpHandle
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/files")
 
-	group.GET("/:id", h.getFile)
+	group.GET("/:file_id", h.getFile)
 	group.POST("", h.uploadFile)
-	group.DELETE("/:id", h.deleteFile)
+	group.DELETE("/:file_id", h.deleteFile)
 }
 
 func (h *httpHandler) getFile(c *echo.Context) error {
-	fileId := c.Param("id")
+	fileId := c.Param("file_id")
 
 	resp, err := getFileService(c.Request().Context(), getFileServiceArgs{
 		FileId:  fileId,
@@ -71,7 +71,7 @@ func (h *httpHandler) uploadFile(c *echo.Context) error {
 }
 
 func (h *httpHandler) deleteFile(c *echo.Context) error {
-	fileId := c.Param("id")
+	fileId := c.Param("file_id")
 
 	err := deleteFileService(c.Request().Context(), deleteFileServiceArgs{
 		FileId:  fileId,

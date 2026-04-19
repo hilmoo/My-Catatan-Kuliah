@@ -11,9 +11,9 @@ import (
 	"github.com/google/uuid"
 )
 
-const createFile = `-- name: CreateFile :exec
+const createFile = `-- name: CreateFile :one
 INSERT INTO files (s3_key, mime_type, size, created_by)
-VALUES ($1, $2, $3, $4)
+VALUES ($1, $2, $3, $4) RETURNING id
 `
 
 type CreateFileParams struct {
@@ -23,20 +23,21 @@ type CreateFileParams struct {
 	CreatedBy int32
 }
 
-func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) error {
-	_, err := q.db.Exec(ctx, createFile,
+func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, createFile,
 		arg.S3Key,
 		arg.MimeType,
 		arg.Size,
 		arg.CreatedBy,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
-const deleteFileByID = `-- name: DeleteFileByID :one
+const deleteFileByID = `-- name: DeleteFileByID :exec
 DELETE FROM files
 WHERE id = $1 AND created_by = $2
-RETURNING s3_key
 `
 
 type DeleteFileByIDParams struct {
@@ -44,11 +45,9 @@ type DeleteFileByIDParams struct {
 	CreatedBy int32
 }
 
-func (q *Queries) DeleteFileByID(ctx context.Context, arg DeleteFileByIDParams) (string, error) {
-	row := q.db.QueryRow(ctx, deleteFileByID, arg.ID, arg.CreatedBy)
-	var s3_key string
-	err := row.Scan(&s3_key)
-	return s3_key, err
+func (q *Queries) DeleteFileByID(ctx context.Context, arg DeleteFileByIDParams) error {
+	_, err := q.db.Exec(ctx, deleteFileByID, arg.ID, arg.CreatedBy)
+	return err
 }
 
 const getFileByID = `-- name: GetFileByID :one
@@ -74,4 +73,22 @@ func (q *Queries) GetFileByID(ctx context.Context, arg GetFileByIDParams) (File,
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getS3KeyByID = `-- name: GetS3KeyByID :one
+SELECT s3_key
+FROM files
+WHERE id = $1 AND created_by = $2
+`
+
+type GetS3KeyByIDParams struct {
+	ID        uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) GetS3KeyByID(ctx context.Context, arg GetS3KeyByIDParams) (string, error) {
+	row := q.db.QueryRow(ctx, getS3KeyByID, arg.ID, arg.CreatedBy)
+	var s3_key string
+	err := row.Scan(&s3_key)
+	return s3_key, err
 }

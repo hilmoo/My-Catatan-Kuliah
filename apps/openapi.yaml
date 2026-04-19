@@ -339,7 +339,7 @@ paths:
     post:
       operationId: getFileUploadPresignedUrl
       summary: Get presigned URL for file upload
-      description: "Returns a time-limited presigned S3 POST URL to upload a file,
+      description: "Returns a time-limited presigned S3 PUT URL to upload a file,
         along with any required fields for the upload"
       requestBody:
         required: true
@@ -665,16 +665,20 @@ components:
           type: string
           description: The MIME type of the uploaded file.
       required:
-        - original_filename
+        - size
         - mime_type
     File:
       type: object
       properties:
+        file_id:
+          type: string
+          description: Unique identifier of the file.
         url:
           type: string
           format: uri
           description: The URL where the file can be uploaded.
       required:
+        - file_id
         - url
   responses:
     ErrorResponse:
