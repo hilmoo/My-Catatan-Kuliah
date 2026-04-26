@@ -16,7 +16,6 @@ import Tiptap from "~/Tiptap";
 const API_FETCH_OPTIONS: RequestInit = {
     credentials: "include",
 };
-
 type PageType = keyof typeof ListPagesType;
 
 const pageTypeOrder: PageType[] = ["folder", "course", "assignment", "note"];

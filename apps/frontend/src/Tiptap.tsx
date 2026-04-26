@@ -11,7 +11,6 @@ type TiptapProps = {
     collaborative?: boolean;
     pageId?: string | null;
 };
-
 function CollaborativeEditor({ pageId }: { pageId: string }) {
     const ydoc = useMemo(() => new Y.Doc(), [pageId]);
 
