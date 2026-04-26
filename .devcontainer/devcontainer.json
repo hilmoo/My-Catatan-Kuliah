@@ -24,7 +24,12 @@
 				"mkhl.direnv",
 				"42Crunch.vscode-openapi",
 				"redhat.vscode-yaml",
-				"stoplight.spectral"
+				"stoplight.spectral",
+				"oxc.oxc-vscode",
+				"bufbuild.vscode-buf",
+				"tamasfe.even-better-toml",
+				"task.vscode-task",
+				"charliermarsh.ruff"
 			]
 		}
 	},

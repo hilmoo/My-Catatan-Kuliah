@@ -49,6 +49,54 @@
         }
       }
     },
+    "buf@1.66.1": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#buf",
+      "source": "devbox-search",
+      "version": "1.66.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bm69n9skfxbhn75pprgfll7nvh34z6gc-buf-1.66.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/bm69n9skfxbhn75pprgfll7nvh34z6gc-buf-1.66.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5r2k25hnm9dfr1p380gkwqxb9bn5k1gf-buf-1.66.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5r2k25hnm9dfr1p380gkwqxb9bn5k1gf-buf-1.66.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/sp576l5v46pkzmqfz56ys98nhka3jxkf-buf-1.66.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/sp576l5v46pkzmqfz56ys98nhka3jxkf-buf-1.66.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1m5xl1yc605bvxvs8yr68rbza9q33bsc-buf-1.66.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1m5xl1yc605bvxvs8yr68rbza9q33bsc-buf-1.66.1"
+        }
+      }
+    },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
       "last_modified": "2026-02-04T01:49:30Z",
       "resolved": "github:NixOS/nixpkgs/aa290c9891fa4ebe88f8889e59633d20cc06a5f2?lastModified=1770169770"
@@ -194,6 +242,54 @@
             }
           ],
           "store_path": "/nix/store/2fmwklf2chxcrr4kbb7wslvv8a70n2mc-goose-3.26.0"
+        }
+      }
+    },
+    "natscli@0.3.1": {
+      "last_modified": "2026-03-21T07:29:51Z",
+      "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#natscli",
+      "source": "devbox-search",
+      "version": "0.3.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/0crwkqf0wzyq2n3wx1sg8agn3wixzpxv-natscli-0.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/0crwkqf0wzyq2n3wx1sg8agn3wixzpxv-natscli-0.3.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/x407awd275wqxa1bq5f8s99l29b6grv8-natscli-0.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/x407awd275wqxa1bq5f8s99l29b6grv8-natscli-0.3.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4qqkz4hbg55sllf962m22nfqih3i12zz-natscli-0.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4qqkz4hbg55sllf962m22nfqih3i12zz-natscli-0.3.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/b57vkrv7vrgjihh6xm97jyalks1hw0s3-natscli-0.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/b57vkrv7vrgjihh6xm97jyalks1hw0s3-natscli-0.3.1"
         }
       }
     },

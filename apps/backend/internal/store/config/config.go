@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/caarlos0/env/v11"
 	"golang.org/x/oauth2"
@@ -15,7 +16,7 @@ type Config struct {
 	LogLevel   string `env:"LOG_LEVEL" envDefault:"INFO"`
 	Domain     string `env:"DOMAIN,required"`
 	Secret     string `env:"SECRET,required"`
-	AppEnv     string `env:"APP_ENV,required"`
+	AppEnv     string `env:"APP_ENV"`
 	IsProd     bool
 
 	// Google OAuth
@@ -23,7 +24,17 @@ type Config struct {
 	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET,required"`
 	GoogleOauthConfig  *oauth2.Config
 
-	DatabaseUrl string `env:"DATABASE_URL,required"`
+	// S3 Storage
+	S3Endpoint        string `env:"S3_ENDPOINT,required"`
+	S3AccessKeyID     string `env:"S3_ACCESS_KEY_ID,required"`
+	S3SecretAccessKey string `env:"S3_SECRET_ACCESS_KEY,required"`
+	S3Region          string `env:"S3_REGION,required"`
+	S3Bucket          string `env:"S3_BUCKET,required"`
+
+	DatabaseUrl         string `env:"DATABASE_URL,required"`
+	NatsUrl             string `env:"NATS_URL,required"`
+	HocuspocusUrl       string `env:"HOCUSPOCUS_URL,required"`
+	HocuspocusUrlParsed *url.URL
 }
 
 func LoadConfig() (Config, error) {
@@ -35,6 +46,12 @@ func LoadConfig() (Config, error) {
 	c.IsProd = c.AppEnv == "production"
 
 	c.GoogleOauthConfig = loadAuthProvider(c)
+
+	hocuspocusParsedUrl, err := url.Parse(c.HocuspocusUrl)
+	if err != nil {
+		return c, fmt.Errorf("invalid Hocuspocus URL: %w", err)
+	}
+	c.HocuspocusUrlParsed = hocuspocusParsedUrl
 
 	return c, nil
 }

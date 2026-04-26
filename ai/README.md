@@ -1,9 +1,9 @@
 # ai
 
-this implementation using text-stream, so it just send response text token by token. (for enhancement) if wanna add custom data like reference source, etc., change into data-stream instead. (edit also hybrid_search, retriever, and main.py)
+this implementation uses AI SDK Data Stream Protocol (SSE) with resumable streams via Redis. each response is streamed as SSE events (`data: {...}`) and buffered to Redis for resume support if client disconnects.
 
 https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol
 
 # running dev
 
-cd ai && uv run uvicorn main:app --port 8002 --reload
+cd ai && uv run uvicorn app.main:app --reload --port 8002

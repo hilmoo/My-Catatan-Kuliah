@@ -4,8 +4,8 @@ import (
 	"backend/internal/gen/models"
 	db "backend/internal/gen/sqlc"
 	msession "backend/internal/transport/middleware/session"
-	"backend/utils/pagination"
-	"backend/utils/uuidx"
+	"backend/internal/utils/pagination"
+	"backend/internal/utils/uuidx"
 	"context"
 
 	"github.com/ory/herodot"

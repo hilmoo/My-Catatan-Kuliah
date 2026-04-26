@@ -3,7 +3,7 @@
 CREATE TABLE "pages_content"(
     "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     "page_id" integer NOT NULL,
-    "content_html" text,
+    "content_markdown" text,
     "content_blob" bytea
 );
 
