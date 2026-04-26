@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 
-class Settings(BaseSettings):
+class Config(BaseSettings):
     database_url: str
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model: str = "gpt-4o-mini"
 
-    model_config = {"env_file": "../.env"}
+    # Redis
+    redis_url: str = "redis://localhost:6379"
 
-
-settings = Settings()  # type: ignore[reportCallIssue]  # loaded from .env
+    model_config = {"env_file": ".env"}
