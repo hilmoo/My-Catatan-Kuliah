@@ -6,6 +6,16 @@ import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      "^/(auth|health|pages|sessions|workspaces|files)": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => `/api${path}`,
+      },
+    },
+  },
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./src", import.meta.url)),

@@ -20,34 +20,31 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <>
-      <div className="p-2 flex gap-2 text-lg">
+      <header className="app-topbar">
+        <div className="brand">
+          <span className="brand-dot" />
+          <strong>My Catatan Kuliah</strong>
+        </div>
+        <nav className="top-links">
         <Link
           to="/"
           activeProps={{
-            className: "font-bold",
+            className: "is-active",
           }}
           activeOptions={{ exact: true }}
         >
-          Home
+          Dashboard
         </Link>{" "}
         <Link
-          to="/posts"
+          to="/tiptap"
           activeProps={{
-            className: "font-bold",
+            className: "is-active",
           }}
         >
-          Posts
+          Editor Lab
         </Link>{" "}
-        <Link
-          to="/route-a"
-          activeProps={{
-            className: "font-bold",
-          }}
-        >
-          Pathless Layout
-        </Link>
-      </div>
-      <hr />
+        </nav>
+      </header>
       <Outlet />
       <ReactQueryDevtools buttonPosition="top-right" />
       <TanStackRouterDevtools position="bottom-right" />

@@ -4,7 +4,6 @@
     "target": "ESNext",
     "jsx": "react-jsx",
     "module": "ESNext",
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     },
@@ -12,6 +11,7 @@
     "types": ["vite/client"],
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "ignoreDeprecations": "5.0",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
