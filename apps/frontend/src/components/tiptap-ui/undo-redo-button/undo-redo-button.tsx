@@ -1,49 +1,42 @@
-"use client"
+"use client";
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from "react";
 
 // --- Lib ---
-import { parseShortcutKeys } from "~/lib/tiptap-utils"
+import { parseShortcutKeys } from "~/lib/tiptap-utils";
 
 // --- Hooks ---
-import { useTiptapEditor } from "~/hooks/use-tiptap-editor"
+import { useTiptapEditor } from "~/hooks/use-tiptap-editor";
 
 // --- Tiptap UI ---
-import type {
-  UndoRedoAction,
-  UseUndoRedoConfig,
-} from "~/components/tiptap-ui/undo-redo-button"
-import {
-  UNDO_REDO_SHORTCUT_KEYS,
-  useUndoRedo,
-} from "~/components/tiptap-ui/undo-redo-button"
+import type { UndoRedoAction, UseUndoRedoConfig } from "~/components/tiptap-ui/undo-redo-button";
+import { UNDO_REDO_SHORTCUT_KEYS, useUndoRedo } from "~/components/tiptap-ui/undo-redo-button";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "~/components/tiptap-ui-primitive/button"
-import { Button } from "~/components/tiptap-ui-primitive/button"
-import { Badge } from "~/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from "~/components/tiptap-ui-primitive/button";
+import { Button } from "~/components/tiptap-ui-primitive/button";
+import { Badge } from "~/components/tiptap-ui-primitive/badge";
 
-export interface UndoRedoButtonProps
-  extends Omit<ButtonProps, "type">, UseUndoRedoConfig {
+export interface UndoRedoButtonProps extends Omit<ButtonProps, "type">, UseUndoRedoConfig {
   /**
    * Optional text to display alongside the icon.
    */
-  text?: string
+  text?: string;
   /**
    * Optional show shortcut keys in the button.
    * @default false
    */
-  showShortcut?: boolean
+  showShortcut?: boolean;
 }
 
 export function HistoryShortcutBadge({
   action,
   shortcutKeys = UNDO_REDO_SHORTCUT_KEYS[action],
 }: {
-  action: UndoRedoAction
-  shortcutKeys?: string
+  action: UndoRedoAction;
+  shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -51,10 +44,7 @@ export function HistoryShortcutBadge({
  *
  * For custom button implementations, use the `useHistory` hook instead.
  */
-export const UndoRedoButton = forwardRef<
-  HTMLButtonElement,
-  UndoRedoButtonProps
->(
+export const UndoRedoButton = forwardRef<HTMLButtonElement, UndoRedoButtonProps>(
   (
     {
       editor: providedEditor,
@@ -67,28 +57,27 @@ export const UndoRedoButton = forwardRef<
       children,
       ...buttonProps
     },
-    ref
+    ref,
   ) => {
-    const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleAction, label, canExecute, Icon, shortcutKeys } =
-      useUndoRedo({
-        editor,
-        action,
-        hideWhenUnavailable,
-        onExecuted,
-      })
+    const { editor } = useTiptapEditor(providedEditor);
+    const { isVisible, handleAction, label, canExecute, Icon, shortcutKeys } = useUndoRedo({
+      editor,
+      action,
+      hideWhenUnavailable,
+      onExecuted,
+    });
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleAction()
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        handleAction();
       },
-      [handleAction, onClick]
-    )
+      [handleAction, onClick],
+    );
 
     if (!isVisible) {
-      return null
+      return null;
     }
 
     return (
@@ -109,17 +98,12 @@ export const UndoRedoButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <HistoryShortcutBadge
-                action={action}
-                shortcutKeys={shortcutKeys}
-              />
-            )}
+            {showShortcut && <HistoryShortcutBadge action={action} shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
-    )
-  }
-)
+    );
+  },
+);
 
-UndoRedoButton.displayName = "UndoRedoButton"
+UndoRedoButton.displayName = "UndoRedoButton";

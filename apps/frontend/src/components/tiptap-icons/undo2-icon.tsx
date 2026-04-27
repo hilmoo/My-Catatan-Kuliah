@@ -1,6 +1,6 @@
-import { memo } from "react"
+import { memo } from "react";
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<"svg">;
 
 export const Undo2Icon = memo(({ className, ...props }: SvgProps) => {
   return (
@@ -20,7 +20,7 @@ export const Undo2Icon = memo(({ className, ...props }: SvgProps) => {
         fill="currentColor"
       />
     </svg>
-  )
-})
+  );
+});
 
-Undo2Icon.displayName = "Undo2Icon"
+Undo2Icon.displayName = "Undo2Icon";

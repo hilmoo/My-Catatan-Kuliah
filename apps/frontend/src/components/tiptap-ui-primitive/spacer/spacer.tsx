@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-export type SpacerOrientation = "horizontal" | "vertical"
+export type SpacerOrientation = "horizontal" | "vertical";
 
 export function Spacer({
   orientation = "horizontal",
@@ -8,8 +8,8 @@ export function Spacer({
   style = {},
   ...props
 }: React.ComponentProps<"div"> & {
-  orientation?: SpacerOrientation
-  size?: string | number
+  orientation?: SpacerOrientation;
+  size?: string | number;
 }) {
   const computedStyle = {
     ...style,
@@ -18,7 +18,7 @@ export function Spacer({
       width: orientation === "vertical" ? "1px" : size,
       height: orientation === "horizontal" ? "1px" : size,
     }),
-  }
+  };
 
-  return <div {...props} style={computedStyle} />
+  return <div {...props} style={computedStyle} />;
 }

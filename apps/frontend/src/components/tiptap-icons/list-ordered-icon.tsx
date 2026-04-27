@@ -1,6 +1,6 @@
-import { memo } from "react"
+import { memo } from "react";
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<"svg">;
 
 export const ListOrderedIcon = memo(({ className, ...props }: SvgProps) => {
   return (
@@ -50,7 +50,7 @@ export const ListOrderedIcon = memo(({ className, ...props }: SvgProps) => {
         fill="currentColor"
       />
     </svg>
-  )
-})
+  );
+});
 
-ListOrderedIcon.displayName = "ListOrderedIcon"
+ListOrderedIcon.displayName = "ListOrderedIcon";

@@ -47,8 +47,7 @@
   }
 
   /* select trigger last of type when followed by hidden select */
-  &:has(select[aria-hidden="true"]:last-child)
-    > [data-slot="select-trigger"]:last-of-type {
+  &:has(select[aria-hidden="true"]:last-child) > [data-slot="select-trigger"]:last-of-type {
     border-top-right-radius: var(--tt-radius-lg);
     border-bottom-right-radius: var(--tt-radius-lg);
   }

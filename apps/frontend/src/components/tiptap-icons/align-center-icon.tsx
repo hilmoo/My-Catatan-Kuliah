@@ -1,6 +1,6 @@
-import { memo } from "react"
+import { memo } from "react";
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<"svg">;
 
 export const AlignCenterIcon = memo(({ className, ...props }: SvgProps) => {
   return (
@@ -32,7 +32,7 @@ export const AlignCenterIcon = memo(({ className, ...props }: SvgProps) => {
         fill="currentColor"
       />
     </svg>
-  )
-})
+  );
+});
 
-AlignCenterIcon.displayName = "AlignCenterIcon"
+AlignCenterIcon.displayName = "AlignCenterIcon";

@@ -11,7 +11,7 @@ export const Route = createRootRouteWithContext<{
     return (
       <div>
         <p>This is the notFoundComponent configured on root route</p>
-        
+
         <Link to="/">Start Over</Link>
       </div>
     );
@@ -27,23 +27,23 @@ function RootComponent() {
           <strong>My Catatan Kuliah</strong>
         </div>
         <nav className="top-links">
-        <Link
-          to="/"
-          activeProps={{
-            className: "is-active",
-          }}
-          activeOptions={{ exact: true }}
-        >
-          Dashboard
-        </Link>{" "}
-        <Link
-          to="/tiptap"
-          activeProps={{
-            className: "is-active",
-          }}
-        >
-          Editor Lab
-        </Link>{" "}
+          <Link
+            to="/"
+            activeProps={{
+              className: "is-active",
+            }}
+            activeOptions={{ exact: true }}
+          >
+            Dashboard
+          </Link>{" "}
+          <Link
+            to="/tiptap"
+            activeProps={{
+              className: "is-active",
+            }}
+          >
+            Editor Lab
+          </Link>{" "}
         </nav>
       </header>
       <Outlet />

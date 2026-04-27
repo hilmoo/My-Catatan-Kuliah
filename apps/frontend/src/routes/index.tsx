@@ -7,4 +7,3 @@ export const Route = createFileRoute("/")({
 function Home() {
   return <StudyHub />;
 }
-

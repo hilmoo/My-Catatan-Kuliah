@@ -1,50 +1,50 @@
-import { useCallback, useState } from "react"
-import { type Editor } from "@tiptap/react"
+import { useCallback, useState } from "react";
+import { type Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "~/hooks/use-tiptap-editor"
+import { useTiptapEditor } from "~/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { ChevronDownIcon } from "~/components/tiptap-icons/chevron-down-icon"
+import { ChevronDownIcon } from "~/components/tiptap-icons/chevron-down-icon";
 
 // --- Tiptap UI ---
-import { ListButton, type ListType } from "~/components/tiptap-ui/list-button"
+import { ListButton, type ListType } from "~/components/tiptap-ui/list-button";
 
-import { useListDropdownMenu } from "~/components/tiptap-ui/list-dropdown-menu/use-list-dropdown-menu"
+import { useListDropdownMenu } from "~/components/tiptap-ui/list-dropdown-menu/use-list-dropdown-menu";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "~/components/tiptap-ui-primitive/button"
-import { Button } from "~/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from "~/components/tiptap-ui-primitive/button";
+import { Button } from "~/components/tiptap-ui-primitive/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuGroup,
-} from "~/components/tiptap-ui-primitive/dropdown-menu"
+} from "~/components/tiptap-ui-primitive/dropdown-menu";
 
 export interface ListDropdownMenuProps extends Omit<ButtonProps, "type"> {
   /**
    * The Tiptap editor instance.
    */
-  editor?: Editor
+  editor?: Editor;
   /**
    * The list types to display in the dropdown.
    */
-  types?: ListType[]
+  types?: ListType[];
   /**
    * Whether the dropdown should be hidden when no list types are available
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  hideWhenUnavailable?: boolean;
   /**
    * Callback for when the dropdown opens or closes
    */
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void;
   /**
    * Whether the dropdown should use a modal
    */
-  modal?: boolean
+  modal?: boolean;
 }
 
 export function ListDropdownMenu({
@@ -55,26 +55,25 @@ export function ListDropdownMenu({
   modal = true,
   ...props
 }: ListDropdownMenuProps) {
-  const { editor } = useTiptapEditor(providedEditor)
-  const [isOpen, setIsOpen] = useState(false)
+  const { editor } = useTiptapEditor(providedEditor);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { filteredLists, canToggle, isActive, isVisible, Icon } =
-    useListDropdownMenu({
-      editor,
-      types,
-      hideWhenUnavailable,
-    })
+  const { filteredLists, canToggle, isActive, isVisible, Icon } = useListDropdownMenu({
+    editor,
+    types,
+    hideWhenUnavailable,
+  });
 
   const handleOnOpenChange = useCallback(
     (open: boolean) => {
-      setIsOpen(open)
-      onOpenChange?.(open)
+      setIsOpen(open);
+      onOpenChange?.(open);
     },
-    [onOpenChange]
-  )
+    [onOpenChange],
+  );
 
   if (!isVisible) {
-    return null
+    return null;
   }
 
   return (
@@ -112,7 +111,7 @@ export function ListDropdownMenu({
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
-export default ListDropdownMenu
+export default ListDropdownMenu;

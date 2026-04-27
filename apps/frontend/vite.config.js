@@ -21,6 +21,6 @@ export default defineConfig({
       "~": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  
+
   plugins: [tailwindcss(), tanstackRouter({ target: "react", autoCodeSplitting: true }), react()],
 });

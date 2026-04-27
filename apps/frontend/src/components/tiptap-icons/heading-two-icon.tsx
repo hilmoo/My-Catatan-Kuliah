@@ -1,6 +1,6 @@
-import { memo } from "react"
+import { memo } from "react";
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<"svg">;
 
 export const HeadingTwoIcon = memo(({ className, ...props }: SvgProps) => {
   return (
@@ -22,7 +22,7 @@ export const HeadingTwoIcon = memo(({ className, ...props }: SvgProps) => {
         fill="currentColor"
       />
     </svg>
-  )
-})
+  );
+});
 
-HeadingTwoIcon.displayName = "HeadingTwoIcon"
+HeadingTwoIcon.displayName = "HeadingTwoIcon";
