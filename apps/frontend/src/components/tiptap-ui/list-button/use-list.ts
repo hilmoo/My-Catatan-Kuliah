@@ -68,11 +68,7 @@ export const LIST_SHORTCUT_KEYS: Record<ListType, string> = {
 /**
  * Checks if a list can be toggled in the current editor state
  */
-export function canToggleList(
-  editor: Editor | null,
-  type: ListType,
-  turnInto = true,
-): boolean {
+export function canToggleList(editor: Editor | null, type: ListType, turnInto = true): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!isNodeInSchema(type, editor) || isNodeTypeSelected(editor, ["image"])) return false;
 

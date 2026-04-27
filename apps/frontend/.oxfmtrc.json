@@ -1,4 +1,10 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["**/node_modules/**", "**/dist/**", "src/api/**", "postcss.config.cjs"]
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "src/api/**",
+    "postcss.config.cjs",
+    "routeTree.gen.ts"
+  ]
 }
