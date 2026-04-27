@@ -4,14 +4,15 @@
     "target": "ESNext",
     "jsx": "react-jsx",
     "module": "ESNext",
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     },
+
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "ignoreDeprecations": "5.0",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,

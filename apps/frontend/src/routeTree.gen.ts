@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root";
+import { Route as TiptapRouteImport } from "./routes/tiptap";
 import { Route as PathlessLayoutRouteImport } from "./routes/_pathlessLayout";
 import { Route as PostsRouteRouteImport } from "./routes/posts.route";
 import { Route as IndexRouteImport } from "./routes/index";
@@ -18,6 +19,11 @@ import { Route as PathlessLayoutNestedLayoutRouteImport } from "./routes/_pathle
 import { Route as PathlessLayoutNestedLayoutRouteBRouteImport } from "./routes/_pathlessLayout/_nested-layout/route-b";
 import { Route as PathlessLayoutNestedLayoutRouteARouteImport } from "./routes/_pathlessLayout/_nested-layout/route-a";
 
+const TiptapRoute = TiptapRouteImport.update({
+  id: "/tiptap",
+  path: "/tiptap",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const PathlessLayoutRoute = PathlessLayoutRouteImport.update({
   id: "/_pathlessLayout",
   getParentRoute: () => rootRouteImport,
@@ -60,6 +66,7 @@ const PathlessLayoutNestedLayoutRouteARoute = PathlessLayoutNestedLayoutRouteARo
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
   "/posts": typeof PostsRouteRouteWithChildren;
+  "/tiptap": typeof TiptapRoute;
   "/posts/$postId": typeof PostsPostIdRoute;
   "/posts/": typeof PostsIndexRoute;
   "/route-a": typeof PathlessLayoutNestedLayoutRouteARoute;
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
+  "/tiptap": typeof TiptapRoute;
   "/posts/$postId": typeof PostsPostIdRoute;
   "/posts": typeof PostsIndexRoute;
   "/route-a": typeof PathlessLayoutNestedLayoutRouteARoute;
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   "/": typeof IndexRoute;
   "/posts": typeof PostsRouteRouteWithChildren;
   "/_pathlessLayout": typeof PathlessLayoutRouteWithChildren;
+  "/tiptap": typeof TiptapRoute;
   "/_pathlessLayout/_nested-layout": typeof PathlessLayoutNestedLayoutRouteWithChildren;
   "/posts/$postId": typeof PostsPostIdRoute;
   "/posts/": typeof PostsIndexRoute;
@@ -85,14 +94,15 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/posts" | "/posts/$postId" | "/posts/" | "/route-a" | "/route-b";
+  fullPaths: "/" | "/posts" | "/tiptap" | "/posts/$postId" | "/posts/" | "/route-a" | "/route-b";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/posts/$postId" | "/posts" | "/route-a" | "/route-b";
+  to: "/" | "/tiptap" | "/posts/$postId" | "/posts" | "/route-a" | "/route-b";
   id:
     | "__root__"
     | "/"
     | "/posts"
     | "/_pathlessLayout"
+    | "/tiptap"
     | "/_pathlessLayout/_nested-layout"
     | "/posts/$postId"
     | "/posts/"
@@ -104,14 +114,22 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   PostsRouteRoute: typeof PostsRouteRouteWithChildren;
   PathlessLayoutRoute: typeof PathlessLayoutRouteWithChildren;
+  TiptapRoute: typeof TiptapRoute;
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/tiptap": {
+      id: "/tiptap";
+      path: "/tiptap";
+      fullPath: "/tiptap";
+      preLoaderRoute: typeof TiptapRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/_pathlessLayout": {
       id: "/_pathlessLayout";
       path: "";
-      fullPath: "";
+      fullPath: "/";
       preLoaderRoute: typeof PathlessLayoutRouteImport;
       parentRoute: typeof rootRouteImport;
     };
@@ -146,7 +164,7 @@ declare module "@tanstack/react-router" {
     "/_pathlessLayout/_nested-layout": {
       id: "/_pathlessLayout/_nested-layout";
       path: "";
-      fullPath: "";
+      fullPath: "/";
       preLoaderRoute: typeof PathlessLayoutNestedLayoutRouteImport;
       parentRoute: typeof PathlessLayoutRoute;
     };
@@ -208,6 +226,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PostsRouteRoute: PostsRouteRouteWithChildren,
   PathlessLayoutRoute: PathlessLayoutRouteWithChildren,
+  TiptapRoute: TiptapRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
