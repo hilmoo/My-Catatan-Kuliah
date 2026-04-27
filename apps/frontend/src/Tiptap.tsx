@@ -12,8 +12,10 @@ interface TiptapProps {
   pageId?: string | null;
 }
 function CollaborativeEditor({ pageId }: { pageId: string }) {
-  // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
-  const ydoc = useMemo(() => new Y.Doc(), [pageId]);
+  const ydoc = useMemo(() => {
+    void pageId;
+    return new Y.Doc();
+  }, [pageId]);
 
   const wsUrl = useMemo(() => {
     if (typeof window === "undefined") {

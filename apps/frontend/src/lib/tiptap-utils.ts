@@ -242,11 +242,10 @@ export function findNodePosition(props: {
 
   // If we have a valid position, use findNodeAtPosition
   if (hasValidPos) {
-    // oxlint-disable-next-line typescript/no-non-null-assertion
-    const nodeAtPos = findNodeAtPosition(editor, nodePos!);
+    const validNodePos = nodePos as number;
+    const nodeAtPos = findNodeAtPosition(editor, validNodePos);
     if (nodeAtPos) {
-      // oxlint-disable-next-line typescript/no-non-null-assertion
-      return { pos: nodePos!, node: nodeAtPos };
+      return { pos: validNodePos, node: nodeAtPos };
     }
   }
 
