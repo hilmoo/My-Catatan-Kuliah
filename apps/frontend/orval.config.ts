@@ -6,6 +6,7 @@ export default defineConfig({
       target: "../openapi.yaml",
     },
     output: {
+      baseUrl: "/api",
       mode: "tags-split",
       target: "src/api/",
       schemas: "src/api/model",

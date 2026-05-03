@@ -11,3 +11,8 @@ tasks:
       - rm -rf gen/go/pkg
       - buf generate
       - cd gen/typescript && pnpm run build
+  
+  build-typescript:
+    desc: build typescript code
+    cmds:
+      - cd gen/typescript && pnpm run build

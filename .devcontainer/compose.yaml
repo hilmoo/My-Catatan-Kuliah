@@ -20,6 +20,14 @@ services:
       - my-catatan-kuliah-nats:/data
     command: -js -sd /data
 
+  ports:
+    image: pgsty/minio
+    command: server /data --console-address ":9001"
+    network_mode: service:workspace
+    volumes:
+      - my-catatan-kuliah-minio:/data
+
 volumes:
   my-catatan-kuliah-postgres:
   my-catatan-kuliah-nats:
+  my-catatan-kuliah-minio:

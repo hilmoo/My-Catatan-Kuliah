@@ -5,12 +5,9 @@
  * API specification for managing users, workspaces, and pages.
  * OpenAPI spec version: 1.0.0
  */
+import type { File } from './file';
 
-export interface PagePropertiesCourse {
-  subject?: string;
-  instructor?: string;
-  semester?: string;
-  credits?: number;
-  start_date?: string;
-  end_date?: string;
-}
+/**
+ * Presigned URL for file upload
+ */
+export type FileUploadResponseResponse = File;
