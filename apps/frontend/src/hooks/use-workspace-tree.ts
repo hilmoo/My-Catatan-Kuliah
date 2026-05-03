@@ -68,8 +68,7 @@ export function useWorkspaceTree(workspaceId: string | null) {
       }
     }
 
-    const sortByTitle = (a: TreeNode, b: TreeNode) =>
-      (a.title ?? "").localeCompare(b.title ?? "");
+    const sortByTitle = (a: TreeNode, b: TreeNode) => (a.title ?? "").localeCompare(b.title ?? "");
 
     const sortRecursive = (nodes: TreeNode[]) => {
       nodes.sort(sortByTitle);

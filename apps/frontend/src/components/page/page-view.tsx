@@ -36,7 +36,9 @@ export function PageView({ pageId }: Props) {
   return (
     <article className="page-view">
       <header className="page-view-header">
-        <div className="page-view-icon">{page.icon || (type ? defaultIconForType(type) : "📄")}</div>
+        <div className="page-view-icon">
+          {page.icon || (type ? defaultIconForType(type) : "📄")}
+        </div>
         <div>
           {type && <p className="study-kicker">{PAGE_TYPE_LABEL[type]}</p>}
           <h1>{page.title || "Untitled"}</h1>

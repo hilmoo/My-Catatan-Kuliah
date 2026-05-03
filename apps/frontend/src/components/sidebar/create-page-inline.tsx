@@ -62,11 +62,7 @@ export function CreatePageInline({ workspaceId, parentId, parentType, onDone, de
   if (allowed.length === 0) return null;
 
   return (
-    <form
-      onSubmit={submit}
-      className="tree-create"
-      style={{ paddingLeft: 6 + depth * 14 }}
-    >
+    <form onSubmit={submit} className="tree-create" style={{ paddingLeft: 6 + depth * 14 }}>
       <select
         value={type}
         onChange={(e) => setType(e.target.value as PageType)}

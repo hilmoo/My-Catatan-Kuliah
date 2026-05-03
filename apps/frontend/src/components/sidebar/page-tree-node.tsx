@@ -76,12 +76,7 @@ export function PageTreeNode({ node, depth, workspaceId }: Props) {
             </li>
           )}
           {node.children.map((child) => (
-            <PageTreeNode
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              workspaceId={workspaceId}
-            />
+            <PageTreeNode key={child.id} node={child} depth={depth + 1} workspaceId={workspaceId} />
           ))}
         </ul>
       )}

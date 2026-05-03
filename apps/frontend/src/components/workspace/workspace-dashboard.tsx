@@ -50,9 +50,7 @@ export function WorkspaceDashboard({ workspaceId }: Props) {
                   </Link>
                 </li>
               ))}
-              {grouped[type].length === 0 && (
-                <li className="helper-text">None yet.</li>
-              )}
+              {grouped[type].length === 0 && <li className="helper-text">None yet.</li>}
             </ul>
           </div>
         ))}
