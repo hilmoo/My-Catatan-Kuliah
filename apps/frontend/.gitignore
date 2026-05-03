@@ -9,3 +9,4 @@ dist-ssr
 /blob-report/
 /playwright/.cache/
 .tanstack/
+src/routeTree.gen.ts
