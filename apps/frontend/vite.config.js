@@ -7,12 +7,20 @@ import { fileURLToPath, URL } from "node:url";
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
+    port: 3000,
+    strictPort: true,
+    host: true,
+    hmr: {
+      host: "localhost",
+      protocol: "wss",
+      clientPort: 443,
+    },
     proxy: {
-      "^/(auth|health|pages|sessions|workspaces|files)": {
+      "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
+        secure: false,
         ws: true,
-        rewrite: (path) => `/api${path}`,
       },
     },
   },

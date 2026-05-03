@@ -6,11 +6,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface PagePropertiesCourse {
-  subject?: string;
-  instructor?: string;
-  semester?: string;
-  credits?: number;
-  start_date?: string;
-  end_date?: string;
+export interface File {
+  /** Unique identifier of the file. */
+  file_id: string;
+  /** The URL where the file can be uploaded. */
+  url: string;
 }
