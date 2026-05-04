@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION hybrid_search(
 )
     RETURNS TABLE(
             id bigint,
-            page_id integer,
+            entity_type entity_type,
+            entity_id integer,
             chunk_index integer,
             content text,
             rrf_score float
@@ -18,7 +19,8 @@ CREATE OR REPLACE FUNCTION hybrid_search(
     AS $$
     WITH semantic_search AS(
         SELECT dc.id,
-            dc.page_id,
+            dc.entity_type,
+            dc.entity_id,
             dc.chunk_index,
             dc.content,
             ROW_NUMBER() OVER(ORDER BY dc.embedding <=> query_embedding) AS rank
@@ -29,7 +31,8 @@ CREATE OR REPLACE FUNCTION hybrid_search(
 ),
 keyword_search AS(
     SELECT dc.id,
-        dc.page_id,
+        dc.entity_type,
+        dc.entity_id,
         dc.chunk_index,
         dc.content,
         ROW_NUMBER() OVER(ORDER BY ts_rank_cd(dc.fts_vector, websearch_to_tsquery('indonesian', query_text)) DESC) AS rank
@@ -39,7 +42,8 @@ keyword_search AS(
     LIMIT match_count * 2
 )
 SELECT COALESCE(s.id, k.id) AS id,
-    COALESCE(s.page_id, k.page_id) AS page_id,
+    COALESCE(s.entity_type, k.entity_type) AS entity_type,
+    COALESCE(s.entity_id, k.entity_id) AS entity_id,
     COALESCE(s.chunk_index, k.chunk_index) AS chunk_index,
     COALESCE(s.content, k.content) AS content,
 (COALESCE(0.5 /(60 + s.rank), 0.0) + COALESCE(0.5 /(60 + k.rank), 0.0))::float AS rrf_score

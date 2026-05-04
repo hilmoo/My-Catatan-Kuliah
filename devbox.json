@@ -19,11 +19,13 @@
     "init_hook": [
       "export \"GOROOT=$(go env GOROOT)\"",
       "export PATH=$PATH:$(go env GOPATH)/bin",
-      "uv python install 3.12"
+      "uv python install 3.12",
+      "export PATH=$PATH:$HOME/.local/share/pnpm"
     ]
   },
   "env": {
-    "VACUUM": "apps/openapi.yaml"
+    "VACUUM": "apps/openapi.yaml",
+    "PNPM_HOME": "$HOME/.local/share/pnpm"
   },
   "env_from": ".env"
 }
