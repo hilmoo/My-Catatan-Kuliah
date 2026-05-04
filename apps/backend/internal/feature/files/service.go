@@ -22,7 +22,7 @@ type getFileServiceArgs struct {
 	Bucket  string
 }
 
-func getFileService(ctx context.Context, args getFileServiceArgs) (*models.FileGetResponse, *herodot.DefaultError) {
+func getFileService(ctx context.Context, args getFileServiceArgs) (*models.FilesResponse, *herodot.DefaultError) {
 	user, err := msession.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
@@ -51,9 +51,11 @@ func getFileService(ctx context.Context, args getFileServiceArgs) (*models.FileG
 		ExpirySeconds: 3600,
 	})
 
-	return &models.FileGetResponse{
-		FileId: args.FileId,
-		Url:    url,
+	return &models.FilesResponse{
+		Id:        args.FileId,
+		MimeType:  file.MimeType,
+		SizeBytes: int(file.Size),
+		Url:       url,
 	}, nil
 }
 
@@ -61,17 +63,17 @@ type uploadFileServiceArgs struct {
 	Queries *db.Queries
 	S3      *simples3.S3
 	Bucket  string
-	Param   *models.GetFileUploadPresignedUrlJSONRequestBody
+	Param   *models.FilesServiceCreateFileJSONRequestBody
 }
 
-func uploadFileService(ctx context.Context, args uploadFileServiceArgs) (*models.FileUploadResponse, *herodot.DefaultError) {
+func uploadFileService(ctx context.Context, args uploadFileServiceArgs) (*models.FilesCreateResponse, *herodot.DefaultError) {
 	user, err := msession.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
 	}
 
 	s3Key := fmt.Sprintf("%s/%s", user.Iid, uuid.New().String())
-	sizeBytes := int64(args.Param.Size) * 1024 * 1024
+	sizeBytes := int64(args.Param.SizeBytes)
 
 	fileId, err := args.Queries.CreateFile(ctx, db.CreateFileParams{
 		S3Key:     s3Key,
@@ -97,9 +99,11 @@ func uploadFileService(ctx context.Context, args uploadFileServiceArgs) (*models
 
 	fileIdBase58, _ := uuidx.HttpToBase58(fileId, "file ID")
 
-	return &models.FileUploadResponse{
-		FileId: fileIdBase58,
-		Url:    url,
+	return &models.FilesCreateResponse{
+		Id:        fileIdBase58,
+		MimeType:  args.Param.MimeType,
+		SizeBytes: int(sizeBytes),
+		Url:       url,
 	}, nil
 }
 

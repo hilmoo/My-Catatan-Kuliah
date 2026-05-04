@@ -99,20 +99,11 @@ const listWorkspacesByUserId = `-- name: ListWorkspacesByUserId :many
 SELECT id, iid, name, owner_id, created_at
 FROM workspaces
 WHERE "owner_id" = $1
-    AND ($3::uuid IS NULL
-        OR iid < $3::uuid)
 ORDER BY "iid" DESC
-LIMIT $2
 `
 
-type ListWorkspacesByUserIdParams struct {
-	OwnerID int32
-	Limit   int32
-	Cursor  *uuid.UUID
-}
-
-func (q *Queries) ListWorkspacesByUserId(ctx context.Context, arg ListWorkspacesByUserIdParams) ([]Workspace, error) {
-	rows, err := q.db.Query(ctx, listWorkspacesByUserId, arg.OwnerID, arg.Limit, arg.Cursor)
+func (q *Queries) ListWorkspacesByUserId(ctx context.Context, ownerID int32) ([]Workspace, error) {
+	rows, err := q.db.Query(ctx, listWorkspacesByUserId, ownerID)
 	if err != nil {
 		return nil, err
 	}

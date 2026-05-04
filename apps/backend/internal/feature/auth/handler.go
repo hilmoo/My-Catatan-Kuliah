@@ -58,7 +58,7 @@ func (h *httpHandler) oauthGoogleCallback(c *echo.Context) error {
 		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("state cookie not found").WithDebug(err.Error()))
 	}
 
-	params, errH := validation.BindValidatePayload[models.HandleGoogleOAuthCallbackParams](c, h.validate)
+	params, errH := validation.BindValidatePayload[models.AuthGoogleCallbackParams](c, h.validate)
 	if errH != nil {
 		return errort.HttpError(c, errH)
 	}

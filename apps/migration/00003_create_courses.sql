@@ -4,9 +4,9 @@ CREATE TABLE "courses"(
     "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     "iid" uuid DEFAULT uuidv7() NOT NULL UNIQUE,
     "workspace_id" integer NOT NULL,
-    "subject_name" text NOT NULL,
-    "instructor" text,
-    "credits" integer,
+    "title" text NOT NULL,
+    "instructor" text NOT NULL,
+    "credits" integer NOT NULL,
     "created_by" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW(),
     "updated_at" timestamptz NOT NULL DEFAULT NOW()

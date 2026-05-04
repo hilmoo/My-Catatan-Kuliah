@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+tasks:
+  default:
+    desc: "Format OpenAPI YAML and transform to JSON"
+    cmds:
+      - task: tsp-compile
+      - task: format
+      - task: inject
+
+  format:
+    desc: "Format OpenAPI JSON"
+    cmds:
+      - pnpx openapi-format --configFile oaf-config.yaml -o openapi.json openapi.json
+
+  inject:
+    vars:
+      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/38ce4724ed45e20ad82e2eac8805462f3fa0b1ba/transform_openapi.py
+      OPENAPI_JSON: openapi.json
+    desc: "Inject oapi-codegen annotations into OpenAPI JSON"
+    cmds:
+      - uv run {{.SCRIPT}} {{.OPENAPI_JSON}} {{.OPENAPI_JSON}}
+
+  tsp-format:
+    desc: "Format TypeSpec files"
+    cmds:
+      - tsp format "./src/**/*.tsp"
+  
+  tsp-compile:
+    desc: "Compile TypeSpec files to OpenAPI JSON"
+    cmds:
+      - rm -r @typespec || true
+      - tsp compile ./src
+      - cp ./@typespec/openapi3/openapi.json ./openapi.json

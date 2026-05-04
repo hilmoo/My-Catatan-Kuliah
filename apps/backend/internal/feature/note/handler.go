@@ -1,4 +1,4 @@
-package workspace
+package note
 
 import (
 	"backend/internal/gen/models"
@@ -23,17 +23,17 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 }
 
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
-	group := e.Group("/workspaces")
+	group := e.Group("/notes")
 
-	group.GET("", h.listWorkspaces)
-	group.POST("", h.createWorkspace)
-	group.GET("/:id", h.getWorkspaceDetails)
-	group.PATCH("/:id", h.updateWorkspace)
-	group.DELETE("/:id", h.deleteWorkspace)
+	group.GET("", h.listnotes)
+	group.POST("", h.createnote)
+	group.GET("/:id", h.getnoteDetails)
+	group.PATCH("/:id", h.updatenote)
+	group.DELETE("/:id", h.deletenote)
 }
 
-func (h *httpHandler) listWorkspaces(c *echo.Context) error {
-	resp, err := listWorkspacesService(c.Request().Context(), listWorkspacesServiceParams{
+func (h *httpHandler) listnotes(c *echo.Context) error {
+	resp, err := listNotesService(c.Request().Context(), listNotesServiceParams{
 		queries: h.queries,
 	})
 	if err != nil {
@@ -43,13 +43,13 @@ func (h *httpHandler) listWorkspaces(c *echo.Context) error {
 	return c.JSON(200, resp)
 }
 
-func (h *httpHandler) createWorkspace(c *echo.Context) error {
-	body, err := validation.BindValidatePayload[models.WorkspacesServiceCreateWorkspaceJSONRequestBody](c, h.validate)
+func (h *httpHandler) createnote(c *echo.Context) error {
+	body, err := validation.BindValidatePayload[models.NotesServiceCreateNoteJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := createWorkspaceService(c.Request().Context(), createWorkspaceServiceParams{
+	resp, err := createNoteService(c.Request().Context(), createNoteServiceParams{
 		queries: h.queries,
 		body:    body,
 	})
@@ -60,10 +60,10 @@ func (h *httpHandler) createWorkspace(c *echo.Context) error {
 	return c.JSON(201, resp)
 }
 
-func (h *httpHandler) deleteWorkspace(c *echo.Context) error {
+func (h *httpHandler) deletenote(c *echo.Context) error {
 	id := c.Param("id")
 
-	err := deleteWorkspaceService(c.Request().Context(), deleteWorkspaceServiceParams{
+	err := deleteNoteService(c.Request().Context(), deleteNoteServiceParams{
 		queries: h.queries,
 		id:      id,
 	})
@@ -74,10 +74,10 @@ func (h *httpHandler) deleteWorkspace(c *echo.Context) error {
 	return c.NoContent(204)
 }
 
-func (h *httpHandler) getWorkspaceDetails(c *echo.Context) error {
+func (h *httpHandler) getnoteDetails(c *echo.Context) error {
 	id := c.Param("id")
 
-	resp, err := getWorkspaceDetailsService(c.Request().Context(), getWorkspaceDetailsServiceParams{
+	resp, err := getNoteDetailsService(c.Request().Context(), getNoteDetailsServiceParams{
 		queries: h.queries,
 		id:      id,
 	})
@@ -88,15 +88,15 @@ func (h *httpHandler) getWorkspaceDetails(c *echo.Context) error {
 	return c.JSON(200, resp)
 }
 
-func (h *httpHandler) updateWorkspace(c *echo.Context) error {
+func (h *httpHandler) updatenote(c *echo.Context) error {
 	id := c.Param("id")
 
-	body, err := validation.BindValidatePayload[models.WorkspacesServiceUpdateWorkspaceJSONRequestBody](c, h.validate)
+	body, err := validation.BindValidatePayload[models.NotesServiceUpdateNoteJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := updateWorkspaceService(c.Request().Context(), updateWorkspaceServiceParams{
+	resp, err := updateNoteService(c.Request().Context(), updateNoteServiceParams{
 		queries: h.queries,
 		id:      id,
 		body:    body,

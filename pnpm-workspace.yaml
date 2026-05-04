@@ -1,6 +1,7 @@
 packages:
   - hocuspocus
   - apps/frontend
+  - apps/openapi
   - proto/gen/typescript
 
 onlyBuiltDependencies:

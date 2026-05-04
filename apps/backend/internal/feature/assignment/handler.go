@@ -1,4 +1,4 @@
-package workspace
+package assignment
 
 import (
 	"backend/internal/gen/models"
@@ -23,17 +23,17 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 }
 
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
-	group := e.Group("/workspaces")
+	group := e.Group("/assignments")
 
-	group.GET("", h.listWorkspaces)
-	group.POST("", h.createWorkspace)
-	group.GET("/:id", h.getWorkspaceDetails)
-	group.PATCH("/:id", h.updateWorkspace)
-	group.DELETE("/:id", h.deleteWorkspace)
+	group.GET("", h.listassignments)
+	group.POST("", h.createassignment)
+	group.GET("/:id", h.getassignmentDetails)
+	group.PATCH("/:id", h.updateassignment)
+	group.DELETE("/:id", h.deleteassignment)
 }
 
-func (h *httpHandler) listWorkspaces(c *echo.Context) error {
-	resp, err := listWorkspacesService(c.Request().Context(), listWorkspacesServiceParams{
+func (h *httpHandler) listassignments(c *echo.Context) error {
+	resp, err := listAssignmentsService(c.Request().Context(), listAssignmentsServiceParams{
 		queries: h.queries,
 	})
 	if err != nil {
@@ -43,13 +43,13 @@ func (h *httpHandler) listWorkspaces(c *echo.Context) error {
 	return c.JSON(200, resp)
 }
 
-func (h *httpHandler) createWorkspace(c *echo.Context) error {
-	body, err := validation.BindValidatePayload[models.WorkspacesServiceCreateWorkspaceJSONRequestBody](c, h.validate)
+func (h *httpHandler) createassignment(c *echo.Context) error {
+	body, err := validation.BindValidatePayload[models.AssignmentsServiceCreateAssignmentJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := createWorkspaceService(c.Request().Context(), createWorkspaceServiceParams{
+	resp, err := createAssignmentService(c.Request().Context(), createAssignmentServiceParams{
 		queries: h.queries,
 		body:    body,
 	})
@@ -60,10 +60,10 @@ func (h *httpHandler) createWorkspace(c *echo.Context) error {
 	return c.JSON(201, resp)
 }
 
-func (h *httpHandler) deleteWorkspace(c *echo.Context) error {
+func (h *httpHandler) deleteassignment(c *echo.Context) error {
 	id := c.Param("id")
 
-	err := deleteWorkspaceService(c.Request().Context(), deleteWorkspaceServiceParams{
+	err := deleteAssignmentService(c.Request().Context(), deleteAssignmentServiceParams{
 		queries: h.queries,
 		id:      id,
 	})
@@ -74,10 +74,10 @@ func (h *httpHandler) deleteWorkspace(c *echo.Context) error {
 	return c.NoContent(204)
 }
 
-func (h *httpHandler) getWorkspaceDetails(c *echo.Context) error {
+func (h *httpHandler) getassignmentDetails(c *echo.Context) error {
 	id := c.Param("id")
 
-	resp, err := getWorkspaceDetailsService(c.Request().Context(), getWorkspaceDetailsServiceParams{
+	resp, err := getAssignmentDetailsService(c.Request().Context(), getAssignmentDetailsServiceParams{
 		queries: h.queries,
 		id:      id,
 	})
@@ -88,15 +88,15 @@ func (h *httpHandler) getWorkspaceDetails(c *echo.Context) error {
 	return c.JSON(200, resp)
 }
 
-func (h *httpHandler) updateWorkspace(c *echo.Context) error {
+func (h *httpHandler) updateassignment(c *echo.Context) error {
 	id := c.Param("id")
 
-	body, err := validation.BindValidatePayload[models.WorkspacesServiceUpdateWorkspaceJSONRequestBody](c, h.validate)
+	body, err := validation.BindValidatePayload[models.AssignmentsServiceUpdateAssignmentJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
 
-	resp, err := updateWorkspaceService(c.Request().Context(), updateWorkspaceServiceParams{
+	resp, err := updateAssignmentService(c.Request().Context(), updateAssignmentServiceParams{
 		queries: h.queries,
 		id:      id,
 		body:    body,

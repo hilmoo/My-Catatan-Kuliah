@@ -21,6 +21,9 @@ includes:
   ai:
     taskfile: ./ai/Taskfile.yml
     dir: ./ai
+  openapi:
+    taskfile: ./apps/openapi/Taskfile.yml
+    dir: ./apps/openapi
 
 tasks:
   default:
@@ -82,9 +85,10 @@ tasks:
     dir: ./apps/backend/internal/store/sql
     cmds:
       - for f in *.sql; do pg_format "$f" -o "$f" -t -W 1 --no-space-function; done
-  
-  format-openapi:
-    desc: OpenApi spec
+
+  gen-all:
+    desc: "Generate all code"
     cmds:
-      - npx -y openapi-format apps/openapi.yaml --configFile apps/oaf-config.yaml -o apps/openapi.yaml
-      - cd scripts && uv run ./sort-openapi.py ../apps/openapi.yaml ../apps/openapi.yaml
+      - task: openapi
+      - task: backend:gen-api
+      - task: backend:gen-sql

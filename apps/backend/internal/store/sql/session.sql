@@ -17,10 +17,7 @@ SELECT *
 FROM sessions
 WHERE "user_id" = $1
     AND "expires_at" > NOW()
-    AND (sqlc.narg(CURSOR)::uuid IS NULL
-        OR id < sqlc.narg(CURSOR)::uuid)
-ORDER BY "id" DESC
-LIMIT $2;
+ORDER BY "id" DESC;
 
 -- name: GetSessionById :one
 SELECT *

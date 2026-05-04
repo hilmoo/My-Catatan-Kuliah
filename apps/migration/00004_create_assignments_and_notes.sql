@@ -1,9 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TYPE assignment_status AS ENUM(
-    'todo',
-    'in-progress',
-    'done'
+    'Todo',
+    'InProgress',
+    'Done'
 );
 
 CREATE TABLE "assignments"(
@@ -14,8 +14,8 @@ CREATE TABLE "assignments"(
     "content" text,
     "contentb" bytea,
     "status" assignment_status NOT NULL DEFAULT 'todo',
-    "position" double precision NOT NULL DEFAULT 0,
-    "due_date" timestamptz,
+    "position" integer NOT NULL DEFAULT 0,
+    "due_date" timestamptz NOT NULL,
     "created_by" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW(),
     "updated_at" timestamptz NOT NULL DEFAULT NOW()
