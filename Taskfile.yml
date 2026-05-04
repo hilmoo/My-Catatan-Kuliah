@@ -92,3 +92,4 @@ tasks:
       - task: openapi
       - task: backend:gen-api
       - task: backend:gen-sql
+      - task: frontend:gen-api
