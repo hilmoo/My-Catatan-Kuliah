@@ -71,7 +71,7 @@ func uploadFileService(ctx context.Context, args uploadFileServiceArgs) (*models
 	}
 
 	s3Key := fmt.Sprintf("%s/%s", user.Iid, uuid.New().String())
-	sizeBytes := int64(args.Param.Size) * 1024 * 1024
+	sizeBytes := int64(args.Param.SizeBytes)
 
 	fileId, err := args.Queries.CreateFile(ctx, db.CreateFileParams{
 		S3Key:     s3Key,

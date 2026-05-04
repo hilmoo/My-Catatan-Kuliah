@@ -90,7 +90,7 @@ func listPagesService(ctx context.Context, args listPagesServiceParams) (*models
 		Pages = Pages[:limit]
 	}
 
-	pageModels := make([]models.PageDetail, 0, len(Pages))
+	pageModels := make([]models.PageSummary, 0, len(Pages))
 	for _, a := range Pages {
 		pg, err := mapDbListToModel(a)
 		if err != nil {

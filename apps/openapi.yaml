@@ -446,13 +446,6 @@ components:
         - $ref: "#/components/schemas/PagePropertiesAssignment"
         - $ref: "#/components/schemas/PagePropertiesFolder"
         - $ref: "#/components/schemas/PagePropertiesNote"
-      discriminator:
-        propertyName: type
-        mapping:
-          course: "#/components/schemas/PagePropertiesCourse"
-          assignment: "#/components/schemas/PagePropertiesAssignment"
-          folder: "#/components/schemas/PagePropertiesFolder"
-          note: "#/components/schemas/PagePropertiesNote"
     PageSummary:
       type: object
       properties:
@@ -469,9 +462,6 @@ components:
           type: string
         workspace_id:
           type: string
-        children_count:
-          type: integer
-          description: Number of child pages (for folders and courses)
         updated_at:
           type: string
           format: date-time
@@ -712,7 +702,7 @@ components:
         size_bytes:
           type: integer
           minimum: 1
-          maximum: 5242880  # 5 MB in bytes
+          maximum: 5242880 # 5 MB in bytes
         mime_type:
           type: string
       required:

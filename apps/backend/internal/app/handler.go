@@ -52,10 +52,10 @@ func initHandler(args initHandlerParams) *echo.Echo {
 	api := e.Group("/api")
 	health.NewHttpHandler().RegisterRoutes(api)
 	swagger.NewHttpHandler().RegisterRoutes(api)
+	auth.NewHttpHandler(httpHandlerParams).RegisterRoutes(api)
 
 	noAuth := e.Group("/api")
 	noAuth.Use(msession.RequireNoAuth)
-	auth.NewHttpHandler(httpHandlerParams).RegisterRoutes(noAuth)
 
 	protected := e.Group("/api")
 	protected.Use(msession.RequireAuth)

@@ -66,20 +66,31 @@ func buildAssignmentModel(data pageData) (*models.PageDetail, *herodot.DefaultEr
 	}, nil
 }
 
-func mapDbListToModel(a db.ListPagesByWorkspaceIdAndTypeRow) (*models.PageDetail, *herodot.DefaultError) {
-	return buildAssignmentModel(pageData{
-		Iid:          a.Iid,
-		Title:        a.Title,
-		Icon:         a.Icon,
-		Type:         a.Type,
-		Properties:   a.Properties,
-		CreatedBy:    a.CreatedBy,
-		CreatedAt:    a.CreatedAt,
-		UpdatedAt:    a.UpdatedAt,
-		UserIid:      a.UserIid,
-		ParentIid:    a.ParentIid,
-		WorkspaceIid: a.WorkspaceIid,
-	})
+func mapDbListToModel(a db.ListPagesByWorkspaceIdAndTypeRow) (*models.PageSummary, *herodot.DefaultError) {
+	id, err := uuidx.HttpToBase58(a.Iid, "page ID")
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceId, err := uuidx.HttpToBase58(a.WorkspaceIid, "workspace ID")
+	if err != nil {
+		return nil, err
+	}
+
+	parentIid, errs := uuidx.PToBase58(a.ParentIid)
+	if errs != nil {
+		return nil, herodot.ErrInternalServerError.WithReasonf("failed to encode parent ID: %v", errs)
+	}
+
+	return &models.PageSummary{
+		Id:          &id,
+		Title:       &a.Title,
+		Icon:        a.Icon,
+		Type:        (*models.PageSummaryType)(&a.Type),
+		UpdatedAt:   &a.UpdatedAt,
+		WorkspaceId: &workspaceId,
+		ParentId:    parentIid,
+	}, nil
 }
 
 func mapDbDetailsToModel(a db.GetPageByIidRow) (*models.PageDetailResponse, *herodot.DefaultError) {

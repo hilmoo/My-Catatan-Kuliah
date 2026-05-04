@@ -7,9 +7,11 @@ import (
 	helpert "backend/internal/transport/helper"
 	msession "backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
+	"backend/internal/utils/uuidx"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/ory/herodot"
 	"golang.org/x/oauth2"
 )
@@ -35,9 +37,32 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/auth")
 
+	group.GET("/me", h.getCurrentUser)
 	group.GET("/oauth/google", h.oauthGoogleLogin)
 	group.GET("/oauth/callback/google", h.oauthGoogleCallback)
 	group.POST("/logout", h.logout)
+}
+
+func (h *httpHandler) getCurrentUser(c *echo.Context) error {
+	user, err := msession.GetUserFromContext(c.Request().Context())
+	if err != nil {
+		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(err.Error()))
+	}
+
+	userId, err := uuidx.ToBase58(user.Iid)
+	if err != nil {
+		return errort.HttpError(c, herodot.ErrInternalServerError.WithReason("invalid user id").WithDebug(err.Error()))
+	}
+
+	userResp := models.AuthMeResponse{
+		AvatarUrl: user.AvatarUrl,
+		CreatedAt: &user.CreatedAt,
+		Email:     types.Email(user.Email),
+		Id:        userId,
+		Name:      user.Name,
+	}
+
+	return c.JSON(http.StatusOK, userResp)
 }
 
 func (h *httpHandler) oauthGoogleLogin(c *echo.Context) error {

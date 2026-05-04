@@ -11,11 +11,6 @@ const config = defineConfig({
     port: 3000,
     strictPort: true,
     host: true,
-    hmr: {
-      host: "localhost",
-      protocol: "wss",
-      clientPort: 443,
-    },
     proxy: {
       "/api": {
         target: "http://localhost:8080",

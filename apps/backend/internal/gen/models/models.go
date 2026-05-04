@@ -5,7 +5,6 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/oapi-codegen/runtime"
@@ -370,15 +369,13 @@ type PagePropertiesNote struct {
 
 // PageSummary defines model for PageSummary.
 type PageSummary struct {
-	// ChildrenCount Number of child pages (for folders and courses)
-	ChildrenCount *int             `json:"children_count,omitempty" validate:"omitempty"`
-	Icon          *string          `json:"icon,omitempty" validate:"omitempty"`
-	Id            *string          `json:"id,omitempty" validate:"omitempty"`
-	ParentId      *string          `json:"parent_id,omitempty" validate:"omitempty"`
-	Title         *string          `json:"title,omitempty" validate:"omitempty"`
-	Type          *PageSummaryType `json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
-	UpdatedAt     *time.Time       `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	WorkspaceId   *string          `json:"workspace_id,omitempty" validate:"omitempty"`
+	Icon        *string          `json:"icon,omitempty" validate:"omitempty"`
+	Id          *string          `json:"id,omitempty" validate:"omitempty"`
+	ParentId    *string          `json:"parent_id,omitempty" validate:"omitempty"`
+	Title       *string          `json:"title,omitempty" validate:"omitempty"`
+	Type        *PageSummaryType `json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
+	UpdatedAt   *time.Time       `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	WorkspaceId *string          `json:"workspace_id,omitempty" validate:"omitempty"`
 }
 
 // PageSummaryType defines model for PageSummary.Type.
@@ -584,7 +581,6 @@ func (t PageAllProperties) AsPagePropertiesCourse() (PagePropertiesCourse, error
 
 // FromPagePropertiesCourse overwrites any union data inside the PageAllProperties as the provided PagePropertiesCourse
 func (t *PageAllProperties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
-	v.Type = "course"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -592,7 +588,6 @@ func (t *PageAllProperties) FromPagePropertiesCourse(v PagePropertiesCourse) err
 
 // MergePagePropertiesCourse performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesCourse
 func (t *PageAllProperties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
-	v.Type = "course"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -612,7 +607,6 @@ func (t PageAllProperties) AsPagePropertiesAssignment() (PagePropertiesAssignmen
 
 // FromPagePropertiesAssignment overwrites any union data inside the PageAllProperties as the provided PagePropertiesAssignment
 func (t *PageAllProperties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
-	v.Type = "assignment"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -620,7 +614,6 @@ func (t *PageAllProperties) FromPagePropertiesAssignment(v PagePropertiesAssignm
 
 // MergePagePropertiesAssignment performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesAssignment
 func (t *PageAllProperties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
-	v.Type = "assignment"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -640,7 +633,6 @@ func (t PageAllProperties) AsPagePropertiesFolder() (PagePropertiesFolder, error
 
 // FromPagePropertiesFolder overwrites any union data inside the PageAllProperties as the provided PagePropertiesFolder
 func (t *PageAllProperties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
-	v.Type = "folder"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -648,7 +640,6 @@ func (t *PageAllProperties) FromPagePropertiesFolder(v PagePropertiesFolder) err
 
 // MergePagePropertiesFolder performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesFolder
 func (t *PageAllProperties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
-	v.Type = "folder"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -668,7 +659,6 @@ func (t PageAllProperties) AsPagePropertiesNote() (PagePropertiesNote, error) {
 
 // FromPagePropertiesNote overwrites any union data inside the PageAllProperties as the provided PagePropertiesNote
 func (t *PageAllProperties) FromPagePropertiesNote(v PagePropertiesNote) error {
-	v.Type = "note"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -676,7 +666,6 @@ func (t *PageAllProperties) FromPagePropertiesNote(v PagePropertiesNote) error {
 
 // MergePagePropertiesNote performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesNote
 func (t *PageAllProperties) MergePagePropertiesNote(v PagePropertiesNote) error {
-	v.Type = "note"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -685,33 +674,6 @@ func (t *PageAllProperties) MergePagePropertiesNote(v PagePropertiesNote) error 
 	merged, err := runtime.JSONMerge(t.union, b)
 	t.union = merged
 	return err
-}
-
-func (t PageAllProperties) Discriminator() (string, error) {
-	var discriminator struct {
-		Discriminator string `json:"type"`
-	}
-	err := json.Unmarshal(t.union, &discriminator)
-	return discriminator.Discriminator, err
-}
-
-func (t PageAllProperties) ValueByDiscriminator() (interface{}, error) {
-	discriminator, err := t.Discriminator()
-	if err != nil {
-		return nil, err
-	}
-	switch discriminator {
-	case "assignment":
-		return t.AsPagePropertiesAssignment()
-	case "course":
-		return t.AsPagePropertiesCourse()
-	case "folder":
-		return t.AsPagePropertiesFolder()
-	case "note":
-		return t.AsPagePropertiesNote()
-	default:
-		return nil, errors.New("unknown discriminator value: " + discriminator)
-	}
 }
 
 func (t PageAllProperties) MarshalJSON() ([]byte, error) {

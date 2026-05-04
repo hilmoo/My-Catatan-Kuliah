@@ -4,6 +4,7 @@ import YooptaEditor, {
   type RenderBlockProps,
   type SlateElement,
   type YooptaContentValue,
+  type YooptaOnChangeOptions,
   YooptaPlugin,
 } from "@yoopta/editor";
 
@@ -30,9 +31,14 @@ const EDITOR_STYLES = {
 type FullSetupEditorProps = {
   initialValue?: YooptaContentValue;
   containerBoxRef?: React.RefObject<HTMLDivElement>;
+  onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
 };
 
-const FullSetupEditor = ({ initialValue, containerBoxRef: externalRef }: FullSetupEditorProps) => {
+const FullSetupEditor = ({
+  initialValue,
+  containerBoxRef: externalRef,
+  onChange,
+}: FullSetupEditorProps) => {
   const internalRef = useRef<HTMLDivElement>(null);
   const containerBoxRef = externalRef ?? internalRef;
 
@@ -52,7 +58,7 @@ const FullSetupEditor = ({ initialValue, containerBoxRef: externalRef }: FullSet
 
   useEffect(() => {
     const localStorageValue = localStorage.getItem("yoopta-full-setup-editor-value");
-    const data = localStorageValue ? JSON.parse(localStorageValue) : initialValue;
+    const data = initialValue ?? (localStorageValue ? JSON.parse(localStorageValue) : undefined);
 
     if (data) {
       editor.withoutSavingHistory(() => {
@@ -78,6 +84,7 @@ const FullSetupEditor = ({ initialValue, containerBoxRef: externalRef }: FullSet
           style={EDITOR_STYLES}
           renderBlock={renderBlock}
           placeholder="Type / to open menu, or start typing..."
+          onChange={onChange}
         >
           <YooptaToolbar />
           <YooptaFloatingBlockActions />
