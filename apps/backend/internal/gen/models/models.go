@@ -5,14 +5,40 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 const (
 	CookieAuthScopes cookieAuthContextKey = "cookieAuth.Scopes"
 )
+
+// Defines values for PageBaseType.
+const (
+	PageBaseTypeAssignment PageBaseType = "assignment"
+	PageBaseTypeCourse     PageBaseType = "course"
+	PageBaseTypeFolder     PageBaseType = "folder"
+	PageBaseTypeNote       PageBaseType = "note"
+)
+
+// Valid indicates whether the value is a known member of the PageBaseType enum.
+func (e PageBaseType) Valid() bool {
+	switch e {
+	case PageBaseTypeAssignment:
+		return true
+	case PageBaseTypeCourse:
+		return true
+	case PageBaseTypeFolder:
+		return true
+	case PageBaseTypeNote:
+		return true
+	default:
+		return false
+	}
+}
 
 // Defines values for PageBaseCreateType.
 const (
@@ -62,6 +88,30 @@ func (e PageCreateType) Valid() bool {
 	}
 }
 
+// Defines values for PageDetailType.
+const (
+	PageDetailTypeAssignment PageDetailType = "assignment"
+	PageDetailTypeCourse     PageDetailType = "course"
+	PageDetailTypeFolder     PageDetailType = "folder"
+	PageDetailTypeNote       PageDetailType = "note"
+)
+
+// Valid indicates whether the value is a known member of the PageDetailType enum.
+func (e PageDetailType) Valid() bool {
+	switch e {
+	case PageDetailTypeAssignment:
+		return true
+	case PageDetailTypeCourse:
+		return true
+	case PageDetailTypeFolder:
+		return true
+	case PageDetailTypeNote:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PagePropertiesAssignmentStatus.
 const (
 	Done       PagePropertiesAssignmentStatus = "done"
@@ -83,24 +133,48 @@ func (e PagePropertiesAssignmentStatus) Valid() bool {
 	}
 }
 
+// Defines values for PageSummaryType.
+const (
+	PageSummaryTypeAssignment PageSummaryType = "assignment"
+	PageSummaryTypeCourse     PageSummaryType = "course"
+	PageSummaryTypeFolder     PageSummaryType = "folder"
+	PageSummaryTypeNote       PageSummaryType = "note"
+)
+
+// Valid indicates whether the value is a known member of the PageSummaryType enum.
+func (e PageSummaryType) Valid() bool {
+	switch e {
+	case PageSummaryTypeAssignment:
+		return true
+	case PageSummaryTypeCourse:
+		return true
+	case PageSummaryTypeFolder:
+		return true
+	case PageSummaryTypeNote:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ListPagesParamsType.
 const (
-	Assignment ListPagesParamsType = "assignment"
-	Course     ListPagesParamsType = "course"
-	Folder     ListPagesParamsType = "folder"
-	Note       ListPagesParamsType = "note"
+	ListPagesParamsTypeAssignment ListPagesParamsType = "assignment"
+	ListPagesParamsTypeCourse     ListPagesParamsType = "course"
+	ListPagesParamsTypeFolder     ListPagesParamsType = "folder"
+	ListPagesParamsTypeNote       ListPagesParamsType = "note"
 )
 
 // Valid indicates whether the value is a known member of the ListPagesParamsType enum.
 func (e ListPagesParamsType) Valid() bool {
 	switch e {
-	case Assignment:
+	case ListPagesParamsTypeAssignment:
 		return true
-	case Course:
+	case ListPagesParamsTypeCourse:
 		return true
-	case Folder:
+	case ListPagesParamsTypeFolder:
 		return true
-	case Note:
+	case ListPagesParamsTypeNote:
 		return true
 	default:
 		return false
@@ -119,7 +193,7 @@ type Error struct {
 	Id string `json:"id" validate:"required"`
 
 	// Message Error type.
-	Message *string `json:"message,omitempty" validate:"omitempty"`
+	Message string `json:"message" validate:"required"`
 
 	// Reason Human-readable reason.
 	Reason string `json:"reason" validate:"required"`
@@ -130,20 +204,19 @@ type Error struct {
 
 // File defines model for File.
 type File struct {
-	// FileId Unique identifier of the file.
-	FileId string `json:"file_id" validate:"required"`
-
-	// Url The URL where the file can be uploaded.
-	Url string `json:"url" validate:"required,uri"`
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	FileId    string     `json:"file_id" validate:"required"`
+	FileName  string     `json:"file_name" validate:"required"`
+	MimeType  string     `json:"mime_type" validate:"required"`
+	SizeBytes *int       `json:"size_bytes,omitempty" validate:"omitempty"`
+	Url       string     `json:"url" validate:"required,uri"`
 }
 
 // FileUpload defines model for FileUpload.
 type FileUpload struct {
-	// MimeType The MIME type of the uploaded file.
-	MimeType string `json:"mime_type" validate:"required"`
-
-	// Size Size of the file in megabytes (MB). Maximum allowed size is 5 MB.
-	Size int `json:"size" validate:"required,lte=5"`
+	FileName  string `json:"file_name" validate:"required"`
+	MimeType  string `json:"mime_type" validate:"required"`
+	SizeBytes int    `json:"size_bytes" validate:"required,gte=1,lte=5242880"`
 }
 
 // PageAllProperties defines model for PageAllProperties.
@@ -171,12 +244,18 @@ type PageBase struct {
 	// Title Title of the page.
 	Title *string `json:"title,omitempty" validate:"omitempty"`
 
+	// Type The type of the page, which determines its properties and behavior.
+	Type *PageBaseType `json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
+
 	// UpdatedAt Timestamp when the page was last updated.
 	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
 
 	// WorkspaceId ID of the workspace this page belongs to.
 	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
 }
+
+// PageBaseType The type of the page, which determines its properties and behavior.
+type PageBaseType string
 
 // PageBaseCreate defines model for PageBaseCreate.
 type PageBaseCreate struct {
@@ -245,12 +324,18 @@ type PageDetail struct {
 	// Title Title of the page.
 	Title *string `json:"title,omitempty" validate:"omitempty"`
 
+	// Type The type of the page, which determines its properties and behavior.
+	Type *PageDetailType `json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
+
 	// UpdatedAt Timestamp when the page was last updated.
 	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
 
 	// WorkspaceId ID of the workspace this page belongs to.
 	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
 }
+
+// PageDetailType The type of the page, which determines its properties and behavior.
+type PageDetailType string
 
 // PagePropertiesAssignment defines model for PagePropertiesAssignment.
 type PagePropertiesAssignment struct {
@@ -283,6 +368,22 @@ type PagePropertiesNote struct {
 	Tags       *[]string `json:"tags,omitempty" validate:"omitempty"`
 }
 
+// PageSummary defines model for PageSummary.
+type PageSummary struct {
+	// ChildrenCount Number of child pages (for folders and courses)
+	ChildrenCount *int             `json:"children_count,omitempty" validate:"omitempty"`
+	Icon          *string          `json:"icon,omitempty" validate:"omitempty"`
+	Id            *string          `json:"id,omitempty" validate:"omitempty"`
+	ParentId      *string          `json:"parent_id,omitempty" validate:"omitempty"`
+	Title         *string          `json:"title,omitempty" validate:"omitempty"`
+	Type          *PageSummaryType `json:"type,omitempty" validate:"omitempty,oneof=course assignment folder note"`
+	UpdatedAt     *time.Time       `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	WorkspaceId   *string          `json:"workspace_id,omitempty" validate:"omitempty"`
+}
+
+// PageSummaryType defines model for PageSummary.Type.
+type PageSummaryType string
+
 // PageUpdate defines model for PageUpdate.
 type PageUpdate struct {
 	Icon       *string            `json:"icon,omitempty" validate:"omitempty"`
@@ -310,6 +411,15 @@ type Session struct {
 
 	// UserId User ID.
 	UserId string `json:"user_id" validate:"required"`
+}
+
+// User defines model for User.
+type User struct {
+	AvatarUrl *string             `json:"avatar_url,omitempty" validate:"omitempty,uri"`
+	CreatedAt *time.Time          `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Email     openapi_types.Email `json:"email" validate:"required,email"`
+	Id        string              `json:"id" validate:"required"`
+	Name      string              `json:"name" validate:"required"`
 }
 
 // Workspace defines model for Workspace.
@@ -351,6 +461,9 @@ type ResourceId = string
 // WorkspaceIdParam defines model for WorkspaceIdParam.
 type WorkspaceIdParam = string
 
+// AuthMeResponse defines model for AuthMeResponse.
+type AuthMeResponse = User
+
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse = Error
 
@@ -365,8 +478,8 @@ type PageDetailResponse = PageDetail
 
 // PageListResponse defines model for PageListResponse.
 type PageListResponse struct {
-	Data       *[]PageDetail `json:"data,omitempty"`
-	Pagination *Pagination   `json:"pagination,omitempty"`
+	Data       *[]PageSummary `json:"data,omitempty"`
+	Pagination *Pagination    `json:"pagination,omitempty"`
 }
 
 // SessionDetailResponse User session
@@ -471,6 +584,7 @@ func (t PageAllProperties) AsPagePropertiesCourse() (PagePropertiesCourse, error
 
 // FromPagePropertiesCourse overwrites any union data inside the PageAllProperties as the provided PagePropertiesCourse
 func (t *PageAllProperties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
+	v.Type = "course"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -478,6 +592,7 @@ func (t *PageAllProperties) FromPagePropertiesCourse(v PagePropertiesCourse) err
 
 // MergePagePropertiesCourse performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesCourse
 func (t *PageAllProperties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
+	v.Type = "course"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -497,6 +612,7 @@ func (t PageAllProperties) AsPagePropertiesAssignment() (PagePropertiesAssignmen
 
 // FromPagePropertiesAssignment overwrites any union data inside the PageAllProperties as the provided PagePropertiesAssignment
 func (t *PageAllProperties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
+	v.Type = "assignment"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -504,6 +620,7 @@ func (t *PageAllProperties) FromPagePropertiesAssignment(v PagePropertiesAssignm
 
 // MergePagePropertiesAssignment performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesAssignment
 func (t *PageAllProperties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
+	v.Type = "assignment"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -523,6 +640,7 @@ func (t PageAllProperties) AsPagePropertiesFolder() (PagePropertiesFolder, error
 
 // FromPagePropertiesFolder overwrites any union data inside the PageAllProperties as the provided PagePropertiesFolder
 func (t *PageAllProperties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
+	v.Type = "folder"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -530,6 +648,7 @@ func (t *PageAllProperties) FromPagePropertiesFolder(v PagePropertiesFolder) err
 
 // MergePagePropertiesFolder performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesFolder
 func (t *PageAllProperties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
+	v.Type = "folder"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -549,6 +668,7 @@ func (t PageAllProperties) AsPagePropertiesNote() (PagePropertiesNote, error) {
 
 // FromPagePropertiesNote overwrites any union data inside the PageAllProperties as the provided PagePropertiesNote
 func (t *PageAllProperties) FromPagePropertiesNote(v PagePropertiesNote) error {
+	v.Type = "note"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -556,6 +676,7 @@ func (t *PageAllProperties) FromPagePropertiesNote(v PagePropertiesNote) error {
 
 // MergePagePropertiesNote performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesNote
 func (t *PageAllProperties) MergePagePropertiesNote(v PagePropertiesNote) error {
+	v.Type = "note"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -564,6 +685,33 @@ func (t *PageAllProperties) MergePagePropertiesNote(v PagePropertiesNote) error 
 	merged, err := runtime.JSONMerge(t.union, b)
 	t.union = merged
 	return err
+}
+
+func (t PageAllProperties) Discriminator() (string, error) {
+	var discriminator struct {
+		Discriminator string `json:"type"`
+	}
+	err := json.Unmarshal(t.union, &discriminator)
+	return discriminator.Discriminator, err
+}
+
+func (t PageAllProperties) ValueByDiscriminator() (interface{}, error) {
+	discriminator, err := t.Discriminator()
+	if err != nil {
+		return nil, err
+	}
+	switch discriminator {
+	case "assignment":
+		return t.AsPagePropertiesAssignment()
+	case "course":
+		return t.AsPagePropertiesCourse()
+	case "folder":
+		return t.AsPagePropertiesFolder()
+	case "note":
+		return t.AsPagePropertiesNote()
+	default:
+		return nil, errors.New("unknown discriminator value: " + discriminator)
+	}
 }
 
 func (t PageAllProperties) MarshalJSON() ([]byte, error) {

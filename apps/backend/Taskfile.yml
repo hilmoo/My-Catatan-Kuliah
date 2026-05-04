@@ -2,8 +2,6 @@
 
 version: '3'
 
-dotenv: ['../../.env']
-
 vars:
   MIGRATION_DIR: ../migration
 
