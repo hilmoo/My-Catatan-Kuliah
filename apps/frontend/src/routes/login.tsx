@@ -1,11 +1,11 @@
-import { getGetCurrentUserQueryOptions } from "@/api/auth/auth";
+import { getAuthGetMeQueryOptions } from "@/api/auth/auth";
 import { LoginForm } from "@/components/login-form";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({
   component: RouteComponent,
   loader: async ({ context: { queryClient } }) => {
-    const user = await queryClient.ensureQueryData(getGetCurrentUserQueryOptions());
+    const user = await queryClient.ensureQueryData(getAuthGetMeQueryOptions());
     if (user.status === 200) {
       throw Route.redirect({ to: "/" });
     }
