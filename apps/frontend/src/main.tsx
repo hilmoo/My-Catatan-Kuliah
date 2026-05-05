@@ -25,8 +25,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
-// oxlint-disable-next-line typescript/no-non-null-assertion
-const rootElement = document.getElementById("app")!;
+// eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+const rootElement = document.getElementById("app")!; 
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
