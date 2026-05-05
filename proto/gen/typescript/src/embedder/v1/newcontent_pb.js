@@ -2,13 +2,13 @@
 // @generated from file embedder/v1/newcontent.proto (package embedder.v1, syntax proto3)
 /* eslint-disable */
 
-import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, tsEnum } from "@bufbuild/protobuf/codegenv2";
 
 /**
  * Describes the file embedder/v1/newcontent.proto.
  */
 export const file_embedder_v1_newcontent = /*@__PURE__*/
-  fileDesc("ChxlbWJlZGRlci92MS9uZXdjb250ZW50LnByb3RvEgtlbWJlZGRlci52MSIYCgpOZXdDb250ZW50EgoKAmlkGAEgASgFQh5aHHByb3RvL2VtYmVkZGVyL3YxO2VtYmVkZGVydjFiBnByb3RvMw");
+  fileDesc("ChxlbWJlZGRlci92MS9uZXdjb250ZW50LnByb3RvEgtlbWJlZGRlci52MSJGCgpOZXdDb250ZW50EgoKAmlkGAEgASgFEiwKC2VudGl0eV90eXBlGAIgASgOMhcuZW1iZWRkZXIudjEuRW50aXR5VHlwZSpbCgpFbnRpdHlUeXBlEhsKF0VOVElUWV9UWVBFX1VOU1BFQ0lGSUVEEAASGgoWRU5USVRZX1RZUEVfQVNTSUdOTUVOVBABEhQKEEVOVElUWV9UWVBFX05PVEUQAkIeWhxwcm90by9lbWJlZGRlci92MTtlbWJlZGRlcnYxYgZwcm90bzM");
 
 /**
  * Describes the message embedder.v1.NewContent.
@@ -16,4 +16,16 @@ export const file_embedder_v1_newcontent = /*@__PURE__*/
  */
 export const NewContentSchema = /*@__PURE__*/
   messageDesc(file_embedder_v1_newcontent, 0);
+
+/**
+ * Describes the enum embedder.v1.EntityType.
+ */
+export const EntityTypeSchema = /*@__PURE__*/
+  enumDesc(file_embedder_v1_newcontent, 0);
+
+/**
+ * @generated from enum embedder.v1.EntityType
+ */
+export const EntityType = /*@__PURE__*/
+  tsEnum(EntityTypeSchema);
 

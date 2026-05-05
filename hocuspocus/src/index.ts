@@ -6,8 +6,7 @@ import { createNodeWebSocket } from "@hono/node-ws";
 import { CONFIG } from "./config.js";
 import { PostgresService } from "./services/postgres.js";
 import { NatsService } from "./services/nats.js";
-import { CourseNotesStore } from "./store.js";
-
+import { ContentStore } from "./store.js";
 
 async function bootstrap() {
   const pgService = new PostgresService(CONFIG.postgres.connectionString);
@@ -15,48 +14,57 @@ async function bootstrap() {
 
   try {
     await pgService.ping();
-
     await natsService.connect();
   } catch (error) {
     console.error("Failed to connect to backing services:", error);
     process.exit(1);
   }
 
-  const storeExtension = new CourseNotesStore(pgService, natsService);
-  const hocuspocus = new Hocuspocus({
-    extensions: [storeExtension],
-  });
+  const createHocuspocusInstance = (entityType: 'assignment' | 'note') => {
+    return new Hocuspocus({
+      extensions: [new ContentStore(pgService, natsService, entityType)],
+      onConnect: async (data) => {
+        const url = new URL(data.request.url!, `http://${data.request.headers.host || 'localhost'}`);
+        const parts = url.pathname.split('/');
+        // The documentName is the ID part of the URL (the last part)
+        data.documentName = parts[parts.length - 1];
+      },
+    });
+  };
+
+  const assignmentHocuspocus = createHocuspocusInstance('assignment');
+  const noteHocuspocus = createHocuspocusInstance('note');
 
   const app = new Hono();
   const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
-  app.get(
-    "/",
-    upgradeWebSocket((c) => {
-      let clientConnection: {
-        handleMessage: (arg0: Uint8Array<ArrayBuffer>) => void;
-        handleClose: () => void;
-      };
+  const handleWebSocket = (hocuspocusInstance: Hocuspocus) => upgradeWebSocket((c) => {
+    let clientConnection: {
+      handleMessage: (arg0: Uint8Array<ArrayBuffer>) => void;
+      handleClose: () => void;
+    };
 
-      return {
-        onOpen(_evt, ws) {
-          ws.raw.binaryType = "arraybuffer";
-          // @ts-ignore: Raw websocket typing mismatch between Hono and Hocuspocus
-          clientConnection = hocuspocus.handleConnection(ws.raw, c.req.raw, {});
-        },
-        onMessage(evt) {
-          if (clientConnection) {
-            clientConnection.handleMessage(new Uint8Array(evt.data as ArrayBuffer));
-          }
-        },
-        onClose(_evt, _ws) {
-          if (clientConnection) {
-            clientConnection.handleClose();
-          }
-        },
-      };
-    }),
-  );
+    return {
+      onOpen(_evt, ws) {
+        ws.raw.binaryType = "arraybuffer";
+        // @ts-ignore: Raw websocket typing mismatch between Hono and Hocuspocus
+        clientConnection = hocuspocusInstance.handleConnection(ws.raw, c.req.raw, {});
+      },
+      onMessage(evt) {
+        if (clientConnection) {
+          clientConnection.handleMessage(new Uint8Array(evt.data as ArrayBuffer));
+        }
+      },
+      onClose(_evt, _ws) {
+        if (clientConnection) {
+          clientConnection.handleClose();
+        }
+      },
+    };
+  });
+
+  app.get("/assignments/:id", handleWebSocket(assignmentHocuspocus));
+  app.get("/notes/:id", handleWebSocket(noteHocuspocus));
 
   const server = serve(
     {
@@ -64,11 +72,6 @@ async function bootstrap() {
       port: CONFIG.server.port,
     },
     (info) => {
-      hocuspocus.hooks("onListen", {
-        instance: hocuspocus,
-        configuration: hocuspocus.configuration,
-        port: info.port,
-      });
       console.log(`Server is listening on port ${info.port}`);
     },
   );

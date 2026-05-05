@@ -21,9 +21,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type EntityType int32
+
+const (
+	EntityType_ENTITY_TYPE_UNSPECIFIED EntityType = 0
+	EntityType_ENTITY_TYPE_ASSIGNMENT  EntityType = 1
+	EntityType_ENTITY_TYPE_NOTE        EntityType = 2
+)
+
+// Enum value maps for EntityType.
+var (
+	EntityType_name = map[int32]string{
+		0: "ENTITY_TYPE_UNSPECIFIED",
+		1: "ENTITY_TYPE_ASSIGNMENT",
+		2: "ENTITY_TYPE_NOTE",
+	}
+	EntityType_value = map[string]int32{
+		"ENTITY_TYPE_UNSPECIFIED": 0,
+		"ENTITY_TYPE_ASSIGNMENT":  1,
+		"ENTITY_TYPE_NOTE":        2,
+	}
+)
+
+func (x EntityType) Enum() *EntityType {
+	p := new(EntityType)
+	*p = x
+	return p
+}
+
+func (x EntityType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EntityType) Descriptor() protoreflect.EnumDescriptor {
+	return file_embedder_v1_newcontent_proto_enumTypes[0].Descriptor()
+}
+
+func (EntityType) Type() protoreflect.EnumType {
+	return &file_embedder_v1_newcontent_proto_enumTypes[0]
+}
+
+func (x EntityType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EntityType.Descriptor instead.
+func (EntityType) EnumDescriptor() ([]byte, []int) {
+	return file_embedder_v1_newcontent_proto_rawDescGZIP(), []int{0}
+}
+
 type NewContent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	EntityType    EntityType             `protobuf:"varint,2,opt,name=entity_type,json=entityType,proto3,enum=embedder.v1.EntityType" json:"entity_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -65,14 +115,28 @@ func (x *NewContent) GetId() int32 {
 	return 0
 }
 
+func (x *NewContent) GetEntityType() EntityType {
+	if x != nil {
+		return x.EntityType
+	}
+	return EntityType_ENTITY_TYPE_UNSPECIFIED
+}
+
 var File_embedder_v1_newcontent_proto protoreflect.FileDescriptor
 
 const file_embedder_v1_newcontent_proto_rawDesc = "" +
 	"\n" +
-	"\x1cembedder/v1/newcontent.proto\x12\vembedder.v1\"\x1c\n" +
+	"\x1cembedder/v1/newcontent.proto\x12\vembedder.v1\"V\n" +
 	"\n" +
 	"NewContent\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02idB\x1eZ\x1cproto/embedder/v1;embedderv1b\x06proto3"
+	"\x02id\x18\x01 \x01(\x05R\x02id\x128\n" +
+	"\ventity_type\x18\x02 \x01(\x0e2\x17.embedder.v1.EntityTypeR\n" +
+	"entityType*[\n" +
+	"\n" +
+	"EntityType\x12\x1b\n" +
+	"\x17ENTITY_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16ENTITY_TYPE_ASSIGNMENT\x10\x01\x12\x14\n" +
+	"\x10ENTITY_TYPE_NOTE\x10\x02B\x1eZ\x1cproto/embedder/v1;embedderv1b\x06proto3"
 
 var (
 	file_embedder_v1_newcontent_proto_rawDescOnce sync.Once
@@ -86,16 +150,19 @@ func file_embedder_v1_newcontent_proto_rawDescGZIP() []byte {
 	return file_embedder_v1_newcontent_proto_rawDescData
 }
 
+var file_embedder_v1_newcontent_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_embedder_v1_newcontent_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_embedder_v1_newcontent_proto_goTypes = []any{
-	(*NewContent)(nil), // 0: embedder.v1.NewContent
+	(EntityType)(0),    // 0: embedder.v1.EntityType
+	(*NewContent)(nil), // 1: embedder.v1.NewContent
 }
 var file_embedder_v1_newcontent_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: embedder.v1.NewContent.entity_type:type_name -> embedder.v1.EntityType
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_embedder_v1_newcontent_proto_init() }
@@ -108,13 +175,14 @@ func file_embedder_v1_newcontent_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_embedder_v1_newcontent_proto_rawDesc), len(file_embedder_v1_newcontent_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_embedder_v1_newcontent_proto_goTypes,
 		DependencyIndexes: file_embedder_v1_newcontent_proto_depIdxs,
+		EnumInfos:         file_embedder_v1_newcontent_proto_enumTypes,
 		MessageInfos:      file_embedder_v1_newcontent_proto_msgTypes,
 	}.Build()
 	File_embedder_v1_newcontent_proto = out.File
