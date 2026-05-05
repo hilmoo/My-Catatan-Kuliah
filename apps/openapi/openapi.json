@@ -76,6 +76,71 @@
         ]
       }
     },
+    "/api/assignments/l/{courseId}": {
+      "get": {
+        "operationId": "assignmentsServiceListAssignments",
+        "description": "List all assignments accessible to the authenticated user.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "The unique identifier of the course to filter assignments",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentsListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
     "/api/assignments/{assignmentId}": {
       "get": {
         "operationId": "assignmentsServiceGetAssignment",
@@ -241,71 +306,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CommonErrorError400"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Access is unauthorized.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonErrorError401"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The server cannot find the requested resource.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonErrorError404"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonErrorError500"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Assignments"
-        ]
-      }
-    },
-    "/api/assignments/{courseId}": {
-      "get": {
-        "operationId": "assignmentsServiceListAssignments",
-        "description": "List all assignments accessible to the authenticated user.",
-        "parameters": [
-          {
-            "name": "courseId",
-            "in": "path",
-            "description": "The unique identifier of the course to filter assignments",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-oapi-codegen-extra-tags": {
-              "validate": "required"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AssignmentsListResponse"
                 }
               }
             }
@@ -541,11 +541,26 @@
         "tags": [
           "Courses"
         ]
-      },
+      }
+    },
+    "/api/courses/l/{workspaceId}": {
       "get": {
         "operationId": "coursesServiceListCourses",
         "description": "List all courses accessible to the authenticated user.",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "The unique identifier of the workspace to filter courses",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "The request has succeeded.",
@@ -1045,7 +1060,7 @@
         ]
       }
     },
-    "/api/notes/{courseId}": {
+    "/api/notes/l/{courseId}": {
       "get": {
         "operationId": "notesServiceListNotes",
         "description": "List all notes accessible to the authenticated user.",
@@ -2053,29 +2068,31 @@
             }
           },
           "title": {
+            "description": "The title of the course",
             "type": "string",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
           },
           "instructor": {
+            "description": "The instructor of the course",
             "type": "string",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
           },
           "credits": {
+            "description": "The number of credits for the course",
             "type": "integer",
             "x-oapi-codegen-extra-tags": {
-              "validate": "required"
+              "validate": "omitempty"
             }
           }
         },
         "required": [
           "workspace_id",
           "title",
-          "instructor",
-          "credits"
+          "instructor"
         ]
       },
       "CoursesCreateResponse": {

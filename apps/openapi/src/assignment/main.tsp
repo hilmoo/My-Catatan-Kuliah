@@ -20,7 +20,7 @@ interface AssignmentsService {
         request: Assignments.CreateRequest,
     ): Assignments.CreateResponse | CommonError.CreateCommonErrorAuth;
 
-    @route("/{courseId}")
+    @route("/l/{courseId}")
     @doc("List all assignments accessible to the authenticated user.")
     @get
     listAssignments(

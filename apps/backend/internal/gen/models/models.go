@@ -140,8 +140,13 @@ type CommonErrorError500 = CommonErrorError
 
 // CoursesCreateRequest defines model for CoursesCreateRequest.
 type CoursesCreateRequest struct {
-	Credits     int    `json:"credits" validate:"required"`
-	Instructor  string `json:"instructor" validate:"required"`
+	// Credits The number of credits for the course
+	Credits *int `json:"credits,omitempty" validate:"omitempty"`
+
+	// Instructor The instructor of the course
+	Instructor string `json:"instructor" validate:"required"`
+
+	// Title The title of the course
 	Title       string `json:"title" validate:"required"`
 	WorkspaceId string `json:"workspace_id" validate:"required"`
 }

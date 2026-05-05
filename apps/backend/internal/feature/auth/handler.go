@@ -11,7 +11,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v5"
-	"github.com/oapi-codegen/runtime/types"
 	"github.com/ory/herodot"
 	"golang.org/x/oauth2"
 )
@@ -38,8 +37,8 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/auth")
 
 	group.GET("/me", h.getCurrentUser)
-	group.GET("/oauth/google", h.oauthGoogleLogin)
-	group.GET("/oauth/callback/google", h.oauthGoogleCallback)
+	group.GET("/google", h.oauthGoogleLogin)
+	group.GET("/google/callback", h.oauthGoogleCallback)
 	group.POST("/logout", h.logout)
 }
 
@@ -55,9 +54,8 @@ func (h *httpHandler) getCurrentUser(c *echo.Context) error {
 	}
 
 	userResp := models.AuthMeResponse{
-		AvatarUrl: user.AvatarUrl,
-		CreatedAt: &user.CreatedAt,
-		Email:     types.Email(user.Email),
+		AvatarUrl: *user.AvatarUrl,
+		Email:     user.Email,
 		Id:        userId,
 		Name:      user.Name,
 	}

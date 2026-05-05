@@ -20,10 +20,14 @@ interface CoursesService {
         request: Courses.CreateRequest,
     ): Courses.CreateResponse | CommonError.CreateCommonErrorAuth;
 
-    @route("")
+    @route("/l/{workspaceId}")
     @doc("List all courses accessible to the authenticated user.")
     @get
-    listCourses(): Courses.ListResponse | CommonError.GetCommonErrorAuth;
+    listCourses(
+        @doc("The unique identifier of the workspace to filter courses")
+        @path
+        workspaceId: string,
+    ): Courses.ListResponse | CommonError.GetCommonErrorAuth;
 
     @route("/{courseId}")
     @doc("Get details of a specific course by its ID.")

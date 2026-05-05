@@ -6,7 +6,7 @@ export default defineConfig({
       target: "../openapi/openapi.json",
     },
     output: {
-      baseUrl: "/api",
+      baseUrl: "/",
       mode: "tags-split",
       target: "src/api/",
       schemas: "src/api/model",

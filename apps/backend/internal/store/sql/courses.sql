@@ -1,10 +1,10 @@
 -- name: ListCoursesByUserId :many
 SELECT 
-courses.*,
-workspaces.iid AS workspace_iid
+courses.*
 FROM courses
 JOIN workspaces ON courses.workspace_id = workspaces.id
 WHERE courses.created_by = $1
+AND workspaces.iid = sqlc.arg('workspaceIid')
 ORDER BY courses.created_at DESC;
 
 -- name: CreateCourse :one

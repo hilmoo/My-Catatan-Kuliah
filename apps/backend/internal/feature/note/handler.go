@@ -25,7 +25,7 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/notes")
 
-	group.GET("/:courseIid", h.listnotes)
+	group.GET("/l/:courseIid", h.listnotes)
 	group.POST("", h.createnote)
 	group.GET("/:id", h.getnoteDetails)
 	group.PATCH("/:id", h.updatenote)
