@@ -25,6 +25,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
+// oxlint-disable-next-line typescript/no-non-null-assertion
 const rootElement = document.getElementById("app")!;
 
 if (!rootElement.innerHTML) {

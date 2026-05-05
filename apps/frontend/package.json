@@ -76,6 +76,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/eslint-plugin-query": "^5.100.9",
+    "@tanstack/eslint-plugin-router": "^1.161.6",
     "@tanstack/router-plugin": "latest",
     "@types/eslint-plugin-jsx-a11y": "^6.10.1",
     "@types/node": "^22.10.2",

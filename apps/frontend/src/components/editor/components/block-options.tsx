@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import { BlockOptions, useBlockActions } from "@yoopta/ui/block-options";
 import { YooptaActionMenuList } from "./action-menu-list";
 
-type YooptaBlockOptionsProps = {
+interface YooptaBlockOptionsProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   blockId: string | null;
   anchor?: HTMLButtonElement | null;
-};
+}
 
 export const YooptaBlockOptions = ({
   open,

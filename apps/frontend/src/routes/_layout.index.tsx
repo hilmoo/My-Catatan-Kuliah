@@ -73,9 +73,12 @@ function RouteComponent() {
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
             <BuildingIcon className="size-6" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">Welcome to Catatan Kuliah</CardTitle>
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Welcome to Catatan Kuliah
+          </CardTitle>
           <CardDescription className="text-base">
-            You do&apos;t have any workspaces yet. Create your first one to start organizing your courses and notes.
+            You do&apos;t have any workspaces yet. Create your first one to start organizing your
+            courses and notes.
           </CardDescription>
         </CardHeader>
         <CardContent>

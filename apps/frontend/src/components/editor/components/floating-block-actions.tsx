@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
-import { GripVertical, PlusIcon } from 'lucide-react';
-import { Blocks, useYooptaEditor } from '@yoopta/editor';
-import { FloatingBlockActions } from '@yoopta/ui/floating-block-actions';
-import { DragHandle } from '@yoopta/ui/block-dnd';
+import { useRef, useState } from "react";
+import { GripVertical, PlusIcon } from "lucide-react";
+import { Blocks, useYooptaEditor } from "@yoopta/editor";
+import { FloatingBlockActions } from "@yoopta/ui/floating-block-actions";
+import { DragHandle } from "@yoopta/ui/block-dnd";
 
-import { YooptaBlockOptions } from './block-options';
+import { YooptaBlockOptions } from "./block-options";
 
 export const YooptaFloatingBlockActions = () => {
   const editor = useYooptaEditor();
@@ -17,7 +17,7 @@ export const YooptaFloatingBlockActions = () => {
     if (!floatingBlock) return;
 
     const nextOrder = floatingBlock.meta.order + 1;
-    editor.insertBlock('Paragraph', { at: nextOrder, focus: true });
+    editor.insertBlock("Paragraph", { at: nextOrder, focus: true });
   };
 
   const onDragClick = (blockId: string | null) => {
@@ -40,7 +40,10 @@ export const YooptaFloatingBlockActions = () => {
             <PlusIcon />
           </FloatingBlockActions.Button>
           <DragHandle blockId={blockId} ref={dragHandleRef} asChild>
-            <FloatingBlockActions.Button onClick={() => onDragClick(blockId)} title="Drag to reorder">
+            <FloatingBlockActions.Button
+              onClick={() => onDragClick(blockId)}
+              title="Drag to reorder"
+            >
               <GripVertical />
             </FloatingBlockActions.Button>
           </DragHandle>

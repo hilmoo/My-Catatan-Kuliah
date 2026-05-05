@@ -28,11 +28,11 @@ const EDITOR_STYLES = {
   paddingBottom: 100,
 };
 
-type FullSetupEditorProps = {
+interface FullSetupEditorProps {
   initialValue?: YooptaContentValue;
   containerBoxRef?: React.RefObject<HTMLDivElement>;
   onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
-};
+}
 
 const FullSetupEditor = ({
   initialValue,

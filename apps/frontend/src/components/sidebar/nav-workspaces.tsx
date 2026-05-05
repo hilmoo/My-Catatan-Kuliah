@@ -61,13 +61,13 @@ interface NavWorkspacesProps {
   workspaceId: string;
 }
 
-type CourseItem = {
+interface CourseItem {
   id: string;
   workspace_id: string;
   title: string;
   instructor: string;
   credits: number;
-};
+}
 
 export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
   const { isMobile } = useSidebar();
@@ -203,7 +203,9 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
   });
 
   const onDeleteWorkspace = () => {
-    if (confirm("Are you sure you want to delete this workspace? All data within it will be lost.")) {
+    if (
+      confirm("Are you sure you want to delete this workspace? All data within it will be lost.")
+    ) {
       deleteWorkspaceMutation.mutate(
         { workspaceId },
         {
