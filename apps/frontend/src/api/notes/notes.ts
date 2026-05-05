@@ -175,17 +175,17 @@ export type notesServiceListNotesResponseError = (notesServiceListNotesResponse4
 
 export type notesServiceListNotesResponse = (notesServiceListNotesResponseSuccess | notesServiceListNotesResponseError)
 
-export const getNotesServiceListNotesUrl = () => {
+export const getNotesServiceListNotesUrl = (courseId: string,) => {
 
 
 
 
-  return `/api/api/notes`
+  return `/api/api/notes/${courseId}`
 }
 
-export const notesServiceListNotes = async ( options?: RequestInit): Promise<notesServiceListNotesResponse> => {
+export const notesServiceListNotes = async (courseId: string, options?: RequestInit): Promise<notesServiceListNotesResponse> => {
 
-  const res = await fetch(getNotesServiceListNotesUrl(),
+  const res = await fetch(getNotesServiceListNotesUrl(courseId),
   {
     ...options,
     method: 'GET'
@@ -204,29 +204,29 @@ export const notesServiceListNotes = async ( options?: RequestInit): Promise<not
 
 
 
-export const getNotesServiceListNotesQueryKey = () => {
+export const getNotesServiceListNotesQueryKey = (courseId: string,) => {
     return [
-    `/api/api/notes`
+    `/api/api/notes/${courseId}`
     ] as const;
     }
 
 
-export const getNotesServiceListNotesQueryOptions = <TData = Awaited<ReturnType<typeof notesServiceListNotes>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>>, fetch?: RequestInit}
+export const getNotesServiceListNotesQueryOptions = <TData = Awaited<ReturnType<typeof notesServiceListNotes>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>>, fetch?: RequestInit}
 ) => {
 
 const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getNotesServiceListNotesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getNotesServiceListNotesQueryKey(courseId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof notesServiceListNotes>>> = ({ signal }) => notesServiceListNotes({ signal, ...fetchOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof notesServiceListNotes>>> = ({ signal }) => notesServiceListNotes(courseId, { signal, ...fetchOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(courseId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type NotesServiceListNotesQueryResult = NonNullable<Awaited<ReturnType<typeof notesServiceListNotes>>>
@@ -234,7 +234,7 @@ export type NotesServiceListNotesQueryError = CommonErrorError401 | CommonErrorE
 
 
 export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notesServiceListNotes>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>> & Pick<
+ courseId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof notesServiceListNotes>>,
           TError,
@@ -244,7 +244,7 @@ export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notes
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notesServiceListNotes>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>> & Pick<
+ courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof notesServiceListNotes>>,
           TError,
@@ -254,16 +254,16 @@ export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notes
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notesServiceListNotes>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>>, fetch?: RequestInit}
+ courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>>, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notesServiceListNotes>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>>, fetch?: RequestInit}
+ courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notesServiceListNotes>>, TError, TData>>, fetch?: RequestInit}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getNotesServiceListNotesQueryOptions(options)
+  const queryOptions = getNotesServiceListNotesQueryOptions(courseId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

@@ -5,6 +5,7 @@ SELECT
 FROM assignments
 JOIN courses ON assignments.course_id = courses.id
 WHERE assignments.created_by = $1
+AND assignments.course_id = (SELECT id FROM courses WHERE courses.iid = sqlc.arg('courseIid'))
 ORDER BY assignments.created_at DESC;
 
 -- name: CreateAssignment :one

@@ -116,8 +116,14 @@ courses.iid AS course_iid
 FROM notes
 JOIN courses ON notes.course_id = courses.id
 WHERE notes.created_by = $1
+AND notes.course_id = (SELECT id FROM courses WHERE courses.iid = $2)
 ORDER BY notes.created_at DESC
 `
+
+type ListNotesByUserIdParams struct {
+	CreatedBy int32
+	CourseIid uuid.UUID
+}
 
 type ListNotesByUserIdRow struct {
 	ID        int32
@@ -132,8 +138,8 @@ type ListNotesByUserIdRow struct {
 	CourseIid uuid.UUID
 }
 
-func (q *Queries) ListNotesByUserId(ctx context.Context, createdBy int32) ([]ListNotesByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, listNotesByUserId, createdBy)
+func (q *Queries) ListNotesByUserId(ctx context.Context, arg ListNotesByUserIdParams) ([]ListNotesByUserIdRow, error) {
+	rows, err := q.db.Query(ctx, listNotesByUserId, arg.CreatedBy, arg.CourseIid)
 	if err != nil {
 		return nil, err
 	}

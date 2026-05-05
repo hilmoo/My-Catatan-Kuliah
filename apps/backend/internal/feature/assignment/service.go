@@ -13,6 +13,7 @@ import (
 
 type listAssignmentsServiceParams struct {
 	queries *db.Queries
+	courseIid string
 }
 
 func listAssignmentsService(ctx context.Context, args listAssignmentsServiceParams) (models.AssignmentsListResponse, *herodot.DefaultError) {
@@ -24,8 +25,15 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
 	}
+	courseIid, err := uuidx.FromBase58(args.courseIid)
+	if err != nil {
+		return nil, herodot.ErrBadRequest.WithReason("invalid course ID").WithDebug(err.Error())
+	}
 
-	assignments, err := args.queries.ListAssignmentsByUserId(ctx, user.ID)
+	assignments, err := args.queries.ListAssignmentsByUserId(ctx, db.ListAssignmentsByUserIdParams{
+		CreatedBy :   user.ID,
+		CourseIid: courseIid,
+	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to list assignments").WithDebug(err.Error())
 	}

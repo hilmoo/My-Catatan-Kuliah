@@ -20,10 +20,14 @@ interface NotesService {
         request: Notes.CreateRequest,
     ): Notes.CreateResponse | CommonError.CreateCommonErrorAuth;
 
-    @route("")
+    @route("/{courseId}")
     @doc("List all notes accessible to the authenticated user.")
     @get
-    listNotes(): Notes.ListResponse | CommonError.GetCommonErrorAuth;
+    listNotes(
+        @doc("The unique identifier of the course to filter notes")
+        @path
+        courseId: string,
+    ): Notes.ListResponse | CommonError.GetCommonErrorAuth;
 
     @route("/{noteId}")
     @doc("Get details of a specific note by its ID.")

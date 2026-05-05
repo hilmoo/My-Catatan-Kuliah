@@ -144,136 +144,6 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
       return useMutation(getAssignmentsServiceCreateAssignmentMutationOptions(options), queryClient);
     }
     /**
- * List all assignments accessible to the authenticated user.
- */
-export type assignmentsServiceListAssignmentsResponse200 = {
-  data: AssignmentsListResponse
-  status: 200
-}
-
-export type assignmentsServiceListAssignmentsResponse401 = {
-  data: CommonErrorError401
-  status: 401
-}
-
-export type assignmentsServiceListAssignmentsResponse404 = {
-  data: CommonErrorError404
-  status: 404
-}
-
-export type assignmentsServiceListAssignmentsResponse500 = {
-  data: CommonErrorError500
-  status: 500
-}
-
-export type assignmentsServiceListAssignmentsResponseSuccess = (assignmentsServiceListAssignmentsResponse200) & {
-  headers: Headers;
-};
-export type assignmentsServiceListAssignmentsResponseError = (assignmentsServiceListAssignmentsResponse401 | assignmentsServiceListAssignmentsResponse404 | assignmentsServiceListAssignmentsResponse500) & {
-  headers: Headers;
-};
-
-export type assignmentsServiceListAssignmentsResponse = (assignmentsServiceListAssignmentsResponseSuccess | assignmentsServiceListAssignmentsResponseError)
-
-export const getAssignmentsServiceListAssignmentsUrl = () => {
-
-
-
-
-  return `/api/api/assignments`
-}
-
-export const assignmentsServiceListAssignments = async ( options?: RequestInit): Promise<assignmentsServiceListAssignmentsResponse> => {
-
-  const res = await fetch(getAssignmentsServiceListAssignmentsUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: assignmentsServiceListAssignmentsResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as assignmentsServiceListAssignmentsResponse
-}
-
-
-
-
-
-export const getAssignmentsServiceListAssignmentsQueryKey = () => {
-    return [
-    `/api/api/assignments`
-    ] as const;
-    }
-
-
-export const getAssignmentsServiceListAssignmentsQueryOptions = <TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>>, fetch?: RequestInit}
-) => {
-
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getAssignmentsServiceListAssignmentsQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>> = ({ signal }) => assignmentsServiceListAssignments({ signal, ...fetchOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type AssignmentsServiceListAssignmentsQueryResult = NonNullable<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>>
-export type AssignmentsServiceListAssignmentsQueryError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500
-
-
-export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>,
-          TError,
-          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>,
-          TError,
-          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getAssignmentsServiceListAssignmentsQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-/**
  * Get details of a specific assignment by its ID.
  */
 export type assignmentsServiceGetAssignmentResponse200 = {
@@ -612,3 +482,133 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
       > => {
       return useMutation(getAssignmentsServiceUpdateAssignmentMutationOptions(options), queryClient);
     }
+    /**
+ * List all assignments accessible to the authenticated user.
+ */
+export type assignmentsServiceListAssignmentsResponse200 = {
+  data: AssignmentsListResponse
+  status: 200
+}
+
+export type assignmentsServiceListAssignmentsResponse401 = {
+  data: CommonErrorError401
+  status: 401
+}
+
+export type assignmentsServiceListAssignmentsResponse404 = {
+  data: CommonErrorError404
+  status: 404
+}
+
+export type assignmentsServiceListAssignmentsResponse500 = {
+  data: CommonErrorError500
+  status: 500
+}
+
+export type assignmentsServiceListAssignmentsResponseSuccess = (assignmentsServiceListAssignmentsResponse200) & {
+  headers: Headers;
+};
+export type assignmentsServiceListAssignmentsResponseError = (assignmentsServiceListAssignmentsResponse401 | assignmentsServiceListAssignmentsResponse404 | assignmentsServiceListAssignmentsResponse500) & {
+  headers: Headers;
+};
+
+export type assignmentsServiceListAssignmentsResponse = (assignmentsServiceListAssignmentsResponseSuccess | assignmentsServiceListAssignmentsResponseError)
+
+export const getAssignmentsServiceListAssignmentsUrl = (courseId: string,) => {
+
+
+
+
+  return `/api/api/assignments/${courseId}`
+}
+
+export const assignmentsServiceListAssignments = async (courseId: string, options?: RequestInit): Promise<assignmentsServiceListAssignmentsResponse> => {
+
+  const res = await fetch(getAssignmentsServiceListAssignmentsUrl(courseId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: assignmentsServiceListAssignmentsResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as assignmentsServiceListAssignmentsResponse
+}
+
+
+
+
+
+export const getAssignmentsServiceListAssignmentsQueryKey = (courseId: string,) => {
+    return [
+    `/api/api/assignments/${courseId}`
+    ] as const;
+    }
+
+
+export const getAssignmentsServiceListAssignmentsQueryOptions = <TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAssignmentsServiceListAssignmentsQueryKey(courseId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>> = ({ signal }) => assignmentsServiceListAssignments(courseId, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(courseId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AssignmentsServiceListAssignmentsQueryResult = NonNullable<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>>
+export type AssignmentsServiceListAssignmentsQueryError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500
+
+
+export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ courseId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>,
+          TError,
+          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>,
+          TError,
+          Awaited<ReturnType<typeof assignmentsServiceListAssignments>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ courseId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof assignmentsServiceListAssignments>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAssignmentsServiceListAssignmentsQueryOptions(courseId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+

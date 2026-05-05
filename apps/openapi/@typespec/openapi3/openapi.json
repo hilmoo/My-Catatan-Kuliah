@@ -93,56 +93,6 @@
           },
           "description": "The details of the assignment to create"
         }
-      },
-      "get": {
-        "operationId": "AssignmentsService_listAssignments",
-        "description": "List all assignments accessible to the authenticated user.",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Assignments.ListResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Access is unauthorized.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonError.Error401"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The server cannot find the requested resource.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonError.Error404"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonError.Error500"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Assignments"
-        ]
       }
     },
     "/api/assignments/{assignmentId}": {
@@ -339,6 +289,68 @@
           },
           "description": "The details to update for the assignment"
         }
+      }
+    },
+    "/api/assignments/{courseId}": {
+      "get": {
+        "operationId": "AssignmentsService_listAssignments",
+        "description": "List all assignments accessible to the authenticated user.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the course to filter assignments",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Assignments.ListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
       }
     },
     "/api/auth/google": {
@@ -1017,11 +1029,23 @@
           },
           "description": "The details of the note to create"
         }
-      },
+      }
+    },
+    "/api/notes/{courseId}": {
       "get": {
         "operationId": "NotesService_listNotes",
         "description": "List all notes accessible to the authenticated user.",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the course to filter notes",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "The request has succeeded.",

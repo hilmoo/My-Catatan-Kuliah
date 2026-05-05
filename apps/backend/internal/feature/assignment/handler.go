@@ -25,7 +25,7 @@ func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/assignments")
 
-	group.GET("", h.listassignments)
+	group.GET("/:courseIid", h.listassignments)
 	group.POST("", h.createassignment)
 	group.GET("/:id", h.getassignmentDetails)
 	group.PATCH("/:id", h.updateassignment)
@@ -33,8 +33,10 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 }
 
 func (h *httpHandler) listassignments(c *echo.Context) error {
+	courseIid := c.Param("courseIid")
 	resp, err := listAssignmentsService(c.Request().Context(), listAssignmentsServiceParams{
-		queries: h.queries,
+		queries:   h.queries,
+		courseIid: courseIid,
 	})
 	if err != nil {
 		return errort.HttpError(c, err)

@@ -20,6 +20,10 @@ export const NotesServiceCreateNoteBody = zod.object({
 /**
  * List all notes accessible to the authenticated user.
  */
+export const NotesServiceListNotesParams = zod.object({
+  "courseId": zod.string().describe('The unique identifier of the course to filter notes')
+})
+
 export const NotesServiceListNotesResponseItem = zod.object({
   "id": zod.string(),
   "course_id": zod.string(),

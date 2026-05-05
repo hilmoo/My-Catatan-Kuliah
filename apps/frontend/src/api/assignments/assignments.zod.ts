@@ -21,22 +21,6 @@ export const AssignmentsServiceCreateAssignmentBody = zod.object({
 })
 
 /**
- * List all assignments accessible to the authenticated user.
- */
-export const AssignmentsServiceListAssignmentsResponseItem = zod.object({
-  "id": zod.string(),
-  "course_id": zod.string(),
-  "title": zod.string(),
-  "status": zod.enum(['Todo', 'InProgress', 'Done']),
-  "position": zod.number(),
-  "due_date": zod.string().datetime({}),
-  "created_by": zod.string(),
-  "created_at": zod.string().datetime({}),
-  "updated_at": zod.string().datetime({})
-})
-export const AssignmentsServiceListAssignmentsResponse = zod.array(AssignmentsServiceListAssignmentsResponseItem)
-
-/**
  * Get details of a specific assignment by its ID.
  */
 export const AssignmentsServiceGetAssignmentParams = zod.object({
@@ -90,4 +74,24 @@ export const AssignmentsServiceUpdateAssignmentResponse = zod.object({
   "updated_at": zod.string().datetime({}),
   "content": zod.string().optional()
 })
+
+/**
+ * List all assignments accessible to the authenticated user.
+ */
+export const AssignmentsServiceListAssignmentsParams = zod.object({
+  "courseId": zod.string().describe('The unique identifier of the course to filter assignments')
+})
+
+export const AssignmentsServiceListAssignmentsResponseItem = zod.object({
+  "id": zod.string(),
+  "course_id": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['Todo', 'InProgress', 'Done']),
+  "position": zod.number(),
+  "due_date": zod.string().datetime({}),
+  "created_by": zod.string(),
+  "created_at": zod.string().datetime({}),
+  "updated_at": zod.string().datetime({})
+})
+export const AssignmentsServiceListAssignmentsResponse = zod.array(AssignmentsServiceListAssignmentsResponseItem)
 

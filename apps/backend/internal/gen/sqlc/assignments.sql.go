@@ -131,8 +131,14 @@ SELECT
 FROM assignments
 JOIN courses ON assignments.course_id = courses.id
 WHERE assignments.created_by = $1
+AND assignments.course_id = (SELECT id FROM courses WHERE courses.iid = $2)
 ORDER BY assignments.created_at DESC
 `
+
+type ListAssignmentsByUserIdParams struct {
+	CreatedBy int32
+	CourseIid uuid.UUID
+}
 
 type ListAssignmentsByUserIdRow struct {
 	ID        int32
@@ -150,8 +156,8 @@ type ListAssignmentsByUserIdRow struct {
 	CourseIid uuid.UUID
 }
 
-func (q *Queries) ListAssignmentsByUserId(ctx context.Context, createdBy int32) ([]ListAssignmentsByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, listAssignmentsByUserId, createdBy)
+func (q *Queries) ListAssignmentsByUserId(ctx context.Context, arg ListAssignmentsByUserIdParams) ([]ListAssignmentsByUserIdRow, error) {
+	rows, err := q.db.Query(ctx, listAssignmentsByUserId, arg.CreatedBy, arg.CourseIid)
 	if err != nil {
 		return nil, err
 	}

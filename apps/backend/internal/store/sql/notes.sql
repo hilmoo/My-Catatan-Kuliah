@@ -5,6 +5,7 @@ courses.iid AS course_iid
 FROM notes
 JOIN courses ON notes.course_id = courses.id
 WHERE notes.created_by = $1
+AND notes.course_id = (SELECT id FROM courses WHERE courses.iid = sqlc.arg('courseIid'))
 ORDER BY notes.created_at DESC;
 
 -- name: CreateNote :one

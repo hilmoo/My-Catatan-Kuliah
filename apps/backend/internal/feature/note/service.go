@@ -12,6 +12,7 @@ import (
 
 type listNotesServiceParams struct {
 	queries *db.Queries
+	courseIid string
 }
 
 func listNotesService(ctx context.Context, args listNotesServiceParams) (models.NotesListResponse, *herodot.DefaultError) {
@@ -23,8 +24,15 @@ func listNotesService(ctx context.Context, args listNotesServiceParams) (models.
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
 	}
+	courseIid, err := uuidx.FromBase58(args.courseIid)
+	if err != nil {
+		return nil, herodot.ErrBadRequest.WithReason("invalid course ID").WithDebug(err.Error())
+	}
 
-	notes, err := args.queries.ListNotesByUserId(ctx, user.ID)
+	notes, err := args.queries.ListNotesByUserId(ctx, db.ListNotesByUserIdParams{
+		CreatedBy :   user.ID,
+		CourseIid: courseIid,
+	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to list notes").WithDebug(err.Error())
 	}
