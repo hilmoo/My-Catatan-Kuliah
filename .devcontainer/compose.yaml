@@ -1,6 +1,6 @@
 services:
   workspace:
-    image: ghcr.io/hilmoo/containers/my-devcontainer:v0.3.0
+    image: ghcr.io/hilmoo/containers/my-devcontainer:v0.4.0
     volumes:
       - ../..:/workspaces:cached
     command: sleep infinity

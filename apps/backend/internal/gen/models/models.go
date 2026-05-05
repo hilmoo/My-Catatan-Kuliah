@@ -4,73 +4,22 @@
 package models
 
 import (
-	"encoding/json"
 	"time"
-
-	"github.com/oapi-codegen/runtime"
 )
 
 const (
-	CookieAuthScopes cookieAuthContextKey = "cookieAuth.Scopes"
+	ApiKeyAuthScopes apiKeyAuthContextKey = "ApiKeyAuth.Scopes"
 )
 
-// Defines values for PageBaseCreateType.
+// Defines values for AssignmentsAssignmentStatus.
 const (
-	PageBaseCreateTypeAssignment PageBaseCreateType = "assignment"
-	PageBaseCreateTypeCourse     PageBaseCreateType = "course"
-	PageBaseCreateTypeFolder     PageBaseCreateType = "folder"
-	PageBaseCreateTypeNote       PageBaseCreateType = "note"
+	Done       AssignmentsAssignmentStatus = "Done"
+	InProgress AssignmentsAssignmentStatus = "InProgress"
+	Todo       AssignmentsAssignmentStatus = "Todo"
 )
 
-// Valid indicates whether the value is a known member of the PageBaseCreateType enum.
-func (e PageBaseCreateType) Valid() bool {
-	switch e {
-	case PageBaseCreateTypeAssignment:
-		return true
-	case PageBaseCreateTypeCourse:
-		return true
-	case PageBaseCreateTypeFolder:
-		return true
-	case PageBaseCreateTypeNote:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for PageCreateType.
-const (
-	PageCreateTypeAssignment PageCreateType = "assignment"
-	PageCreateTypeCourse     PageCreateType = "course"
-	PageCreateTypeFolder     PageCreateType = "folder"
-	PageCreateTypeNote       PageCreateType = "note"
-)
-
-// Valid indicates whether the value is a known member of the PageCreateType enum.
-func (e PageCreateType) Valid() bool {
-	switch e {
-	case PageCreateTypeAssignment:
-		return true
-	case PageCreateTypeCourse:
-		return true
-	case PageCreateTypeFolder:
-		return true
-	case PageCreateTypeNote:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for PagePropertiesAssignmentStatus.
-const (
-	Done       PagePropertiesAssignmentStatus = "done"
-	InProgress PagePropertiesAssignmentStatus = "in_progress"
-	Todo       PagePropertiesAssignmentStatus = "todo"
-)
-
-// Valid indicates whether the value is a known member of the PagePropertiesAssignmentStatus enum.
-func (e PagePropertiesAssignmentStatus) Valid() bool {
+// Valid indicates whether the value is a known member of the AssignmentsAssignmentStatus enum.
+func (e AssignmentsAssignmentStatus) Valid() bool {
 	switch e {
 	case Done:
 		return true
@@ -83,495 +32,264 @@ func (e PagePropertiesAssignmentStatus) Valid() bool {
 	}
 }
 
-// Defines values for ListPagesParamsType.
-const (
-	Assignment ListPagesParamsType = "assignment"
-	Course     ListPagesParamsType = "course"
-	Folder     ListPagesParamsType = "folder"
-	Note       ListPagesParamsType = "note"
-)
+// AssignmentsAssignmentStatus defines model for AssignmentsAssignmentStatus.
+type AssignmentsAssignmentStatus string
 
-// Valid indicates whether the value is a known member of the ListPagesParamsType enum.
-func (e ListPagesParamsType) Valid() bool {
-	switch e {
-	case Assignment:
-		return true
-	case Course:
-		return true
-	case Folder:
-		return true
-	case Note:
-		return true
-	default:
-		return false
-	}
+// AssignmentsCreateRequest defines model for AssignmentsCreateRequest.
+type AssignmentsCreateRequest struct {
+	Content  *string                     `json:"content,omitempty" validate:"omitempty"`
+	CourseId string                      `json:"course_id" validate:"required"`
+	DueDate  time.Time                   `json:"due_date" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	Position int                         `json:"position" validate:"required"`
+	Status   AssignmentsAssignmentStatus `json:"status" validate:"omitempty,oneof=Todo InProgress Done"`
+	Title    string                      `json:"title" validate:"required"`
 }
 
-// Error defines model for Error.
-type Error struct {
-	// Code Application-specific error code.
-	Code int `json:"code" validate:"required"`
+// AssignmentsCreateResponse defines model for AssignmentsCreateResponse.
+type AssignmentsCreateResponse = AssignmentsDetailResponse
 
-	// Details Additional details about the error.
-	Details *map[string]interface{} `json:"details,omitempty" validate:"omitempty"`
+// AssignmentsDetailResponse defines model for AssignmentsDetailResponse.
+type AssignmentsDetailResponse struct {
+	Content   *string                     `json:"content,omitempty" validate:"omitempty"`
+	CourseId  string                      `json:"course_id" validate:"required"`
+	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedBy *string                     `json:"created_by,omitempty" validate:"required"`
+	DueDate   time.Time                   `json:"due_date" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	Id        *string                     `json:"id,omitempty" validate:"required"`
+	Position  int                         `json:"position" validate:"required"`
+	Status    AssignmentsAssignmentStatus `json:"status" validate:"omitempty,oneof=Todo InProgress Done"`
+	Title     string                      `json:"title" validate:"required"`
+	UpdatedAt *time.Time                  `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+}
 
-	// Id Error instance ID.
+// AssignmentsListResponse defines model for AssignmentsListResponse.
+type AssignmentsListResponse = []AssignmentsResponse
+
+// AssignmentsResponse defines model for AssignmentsResponse.
+type AssignmentsResponse struct {
+	CourseId  string                      `json:"course_id" validate:"required"`
+	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedBy *string                     `json:"created_by,omitempty" validate:"required"`
+	DueDate   time.Time                   `json:"due_date" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	Id        *string                     `json:"id,omitempty" validate:"required"`
+	Position  int                         `json:"position" validate:"required"`
+	Status    AssignmentsAssignmentStatus `json:"status" validate:"omitempty,oneof=Todo InProgress Done"`
+	Title     string                      `json:"title" validate:"required"`
+	UpdatedAt *time.Time                  `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+}
+
+// AssignmentsUpdateRequest The template for adding optional properties.
+type AssignmentsUpdateRequest struct {
+	Content  *string                      `json:"content,omitempty" validate:"omitempty"`
+	DueDate  *time.Time                   `json:"due_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
+	Position *int                         `json:"position,omitempty" validate:"omitempty"`
+	Status   *AssignmentsAssignmentStatus `json:"status,omitempty" validate:"omitempty,oneof=Todo InProgress Done"`
+	Title    *string                      `json:"title,omitempty" validate:"omitempty"`
+}
+
+// AssignmentsUpdateResponse defines model for AssignmentsUpdateResponse.
+type AssignmentsUpdateResponse = AssignmentsDetailResponse
+
+// AuthMeResponse defines model for AuthMeResponse.
+type AuthMeResponse struct {
+	// AvatarUrl The URL of the authenticated user's avatar image
+	AvatarUrl string `json:"avatar_url" validate:"required"`
+
+	// Email The email address of the authenticated user
+	Email string `json:"email" validate:"required"`
+
+	// Id The unique identifier for the authenticated user
 	Id string `json:"id" validate:"required"`
 
-	// Message Error type.
+	// Name The display name of the authenticated user
+	Name string `json:"name" validate:"required"`
+}
+
+// CommonErrorError An error response with details about the failure.
+type CommonErrorError struct {
+	// Code An optional machine-readable error code for programmatic handling
+	Code int32 `json:"code" validate:"required,int32"`
+
+	// Details Optional additional details about the error, such as missing resources or validation errors
+	Details *map[string]string `json:"details,omitempty" validate:"omitempty"`
+
+	// Id A unique identifier for this error instance
+	Id string `json:"id" validate:"required"`
+
+	// Message An optional message providing more details about the error
 	Message *string `json:"message,omitempty" validate:"omitempty"`
 
-	// Reason Human-readable reason.
+	// Reason A human-readable explanation of the error
 	Reason string `json:"reason" validate:"required"`
 
-	// Status Status string (e.g., 'error').
+	// Status The HTTP status code associated with this error
 	Status string `json:"status" validate:"required"`
 }
 
-// File defines model for File.
-type File struct {
-	// FileId Unique identifier of the file.
-	FileId string `json:"file_id" validate:"required"`
+// CommonErrorError400 An error response with details about the failure.
+type CommonErrorError400 = CommonErrorError
 
-	// Url The URL where the file can be uploaded.
-	Url string `json:"url" validate:"required,uri"`
+// CommonErrorError401 An error response with details about the failure.
+type CommonErrorError401 = CommonErrorError
+
+// CommonErrorError404 An error response with details about the failure.
+type CommonErrorError404 = CommonErrorError
+
+// CommonErrorError500 An error response with details about the failure.
+type CommonErrorError500 = CommonErrorError
+
+// CoursesCreateRequest defines model for CoursesCreateRequest.
+type CoursesCreateRequest struct {
+	Credits     int    `json:"credits" validate:"required"`
+	Instructor  string `json:"instructor" validate:"required"`
+	Title       string `json:"title" validate:"required"`
+	WorkspaceId string `json:"workspace_id" validate:"required"`
 }
 
-// FileUpload defines model for FileUpload.
-type FileUpload struct {
-	// MimeType The MIME type of the uploaded file.
-	MimeType string `json:"mime_type" validate:"required"`
+// CoursesCreateResponse defines model for CoursesCreateResponse.
+type CoursesCreateResponse = CoursesResponse
 
-	// Size Size of the file in megabytes (MB). Maximum allowed size is 5 MB.
-	Size int `json:"size" validate:"required,lte=5"`
+// CoursesListResponse defines model for CoursesListResponse.
+type CoursesListResponse = []CoursesResponse
+
+// CoursesResponse defines model for CoursesResponse.
+type CoursesResponse struct {
+	CreatedAt   *time.Time `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedBy   *string    `json:"created_by,omitempty" validate:"required"`
+	Credits     int        `json:"credits" validate:"required"`
+	Id          *string    `json:"id,omitempty" validate:"required"`
+	Instructor  string     `json:"instructor" validate:"required"`
+	Title       string     `json:"title" validate:"required"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	WorkspaceId string     `json:"workspace_id" validate:"required"`
 }
 
-// PageAllProperties defines model for PageAllProperties.
-type PageAllProperties struct {
-	union json.RawMessage
+// CoursesUpdateRequest The template for adding optional properties.
+type CoursesUpdateRequest struct {
+	Credits    *int    `json:"credits,omitempty" validate:"omitempty"`
+	Instructor *string `json:"instructor,omitempty" validate:"omitempty"`
+	Title      *string `json:"title,omitempty" validate:"omitempty"`
 }
 
-// PageBase defines model for PageBase.
-type PageBase struct {
-	// CreatedAt Timestamp when the page was created.
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// CreatedBy ID of the user who created the page. authenticated session.
-	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
-
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// Id Unique identifier of the page.
-	Id *string `json:"id,omitempty" validate:"omitempty"`
-
-	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
-
-	// Title Title of the page.
-	Title *string `json:"title,omitempty" validate:"omitempty"`
-
-	// UpdatedAt Timestamp when the page was last updated.
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// WorkspaceId ID of the workspace this page belongs to.
-	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+// FilesCreateRequest defines model for FilesCreateRequest.
+type FilesCreateRequest struct {
+	MimeType  string `json:"mime_type" validate:"required"`
+	SizeBytes int    `json:"size_bytes" validate:"required"`
 }
 
-// PageBaseCreate defines model for PageBaseCreate.
-type PageBaseCreate struct {
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+// FilesCreateResponse defines model for FilesCreateResponse.
+type FilesCreateResponse = FilesResponse
 
-	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
-
-	// Title For folders, it's the folder name. For courses, it's the course name. For assignments, it's the assignment name. For notes, it's the note title.
-	Title string `json:"title" validate:"required"`
-
-	// Type The type of the page, which determines its properties and behavior.
-	Type        PageBaseCreateType `json:"type" validate:"required,oneof=course assignment folder note"`
-	WorkspaceId string             `json:"workspace_id" validate:"required"`
+// FilesResponse defines model for FilesResponse.
+type FilesResponse struct {
+	Id        string `json:"id" validate:"required"`
+	MimeType  string `json:"mime_type" validate:"required"`
+	SizeBytes int    `json:"size_bytes" validate:"required"`
+	Url       string `json:"url" validate:"required"`
 }
 
-// PageBaseCreateType The type of the page, which determines its properties and behavior.
-type PageBaseCreateType string
-
-// PageBaseUpdate defines model for PageBaseUpdate.
-type PageBaseUpdate struct {
-	Icon     *string `json:"icon,omitempty" validate:"omitempty"`
-	ParentId *string `json:"parent_id,omitempty" validate:"omitempty"`
-	Title    *string `json:"title,omitempty" validate:"omitempty"`
+// NotesCreateRequest defines model for NotesCreateRequest.
+type NotesCreateRequest struct {
+	Content  *string `json:"content,omitempty" validate:"omitempty"`
+	CourseId string  `json:"course_id" validate:"required"`
+	Title    string  `json:"title" validate:"required"`
 }
 
-// PageCreate defines model for PageCreate.
-type PageCreate struct {
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
+// NotesCreateResponse defines model for NotesCreateResponse.
+type NotesCreateResponse = NotesDetailResponse
 
-	// ParentId Folders can be nested under another folder. Courses can only be nested under folders. Assignments can only be nested under courses. Notes can be nested under folders, courses, or other notes. Only Assignments cannot be top-level pages.
-	ParentId   *string            `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *PageAllProperties `json:"properties,omitempty"`
-
-	// Title For folders, it's the folder name. For courses, it's the course name. For assignments, it's the assignment name. For notes, it's the note title.
-	Title string `json:"title" validate:"required"`
-
-	// Type The type of the page, which determines its properties and behavior.
-	Type        PageCreateType `json:"type" validate:"required,oneof=course assignment folder note"`
-	WorkspaceId string         `json:"workspace_id" validate:"required"`
+// NotesDetailResponse defines model for NotesDetailResponse.
+type NotesDetailResponse struct {
+	Content   *string    `json:"content,omitempty" validate:"omitempty"`
+	CourseId  string     `json:"course_id" validate:"required"`
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedBy *string    `json:"created_by,omitempty" validate:"required"`
+	Id        *string    `json:"id,omitempty" validate:"required"`
+	Title     string     `json:"title" validate:"required"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 }
 
-// PageCreateType The type of the page, which determines its properties and behavior.
-type PageCreateType string
+// NotesListResponse defines model for NotesListResponse.
+type NotesListResponse = []NotesResponse
 
-// PageDetail defines model for PageDetail.
-type PageDetail struct {
-	// CreatedAt Timestamp when the page was created.
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// CreatedBy ID of the user who created the page. authenticated session.
-	CreatedBy *string `json:"created_by,omitempty" validate:"omitempty"`
-
-	// Icon Icon representing the page, can be an emoji or a URL to an image.
-	Icon *string `json:"icon,omitempty" validate:"omitempty"`
-
-	// Id Unique identifier of the page.
-	Id *string `json:"id,omitempty" validate:"omitempty"`
-
-	// ParentId ID of the parent page, null if it's a top-level page.
-	ParentId   *string            `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *PageAllProperties `json:"properties,omitempty"`
-
-	// Title Title of the page.
-	Title *string `json:"title,omitempty" validate:"omitempty"`
-
-	// UpdatedAt Timestamp when the page was last updated.
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// WorkspaceId ID of the workspace this page belongs to.
-	WorkspaceId *string `json:"workspace_id,omitempty" validate:"omitempty"`
+// NotesResponse defines model for NotesResponse.
+type NotesResponse struct {
+	CourseId  string     `json:"course_id" validate:"required"`
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedBy *string    `json:"created_by,omitempty" validate:"required"`
+	Id        *string    `json:"id,omitempty" validate:"required"`
+	Title     string     `json:"title" validate:"required"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
 }
 
-// PagePropertiesAssignment defines model for PagePropertiesAssignment.
-type PagePropertiesAssignment struct {
-	DueDate *time.Time                      `json:"due_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Status  *PagePropertiesAssignmentStatus `json:"status,omitempty" validate:"omitempty,oneof=todo in_progress done"`
+// NotesUpdateRequest The template for adding optional properties.
+type NotesUpdateRequest struct {
+	Content *string `json:"content,omitempty" validate:"omitempty"`
+	Title   *string `json:"title,omitempty" validate:"omitempty"`
 }
 
-// PagePropertiesAssignmentStatus defines model for PagePropertiesAssignment.Status.
-type PagePropertiesAssignmentStatus string
+// NotesUpdateResponse defines model for NotesUpdateResponse.
+type NotesUpdateResponse = NotesDetailResponse
 
-// PagePropertiesCourse defines model for PagePropertiesCourse.
-type PagePropertiesCourse struct {
-	Credits    *int       `json:"credits,omitempty" validate:"omitempty"`
-	EndDate    *time.Time `json:"end_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Instructor *string    `json:"instructor,omitempty" validate:"omitempty"`
-	Semester   *string    `json:"semester,omitempty" validate:"omitempty"`
-	StartDate  *time.Time `json:"start_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Subject    *string    `json:"subject,omitempty" validate:"omitempty"`
-}
-
-// PagePropertiesFolder defines model for PagePropertiesFolder.
-type PagePropertiesFolder struct {
-	Color  *string `json:"color,omitempty" validate:"omitempty"`
-	SortBy *string `json:"sort_by,omitempty" validate:"omitempty"`
-}
-
-// PagePropertiesNote defines model for PagePropertiesNote.
-type PagePropertiesNote struct {
-	CoverImage *string   `json:"cover_image,omitempty" validate:"omitempty,uri"`
-	Tags       *[]string `json:"tags,omitempty" validate:"omitempty"`
-}
-
-// PageUpdate defines model for PageUpdate.
-type PageUpdate struct {
-	Icon       *string            `json:"icon,omitempty" validate:"omitempty"`
-	ParentId   *string            `json:"parent_id,omitempty" validate:"omitempty"`
-	Properties *PageAllProperties `json:"properties,omitempty"`
-	Title      *string            `json:"title,omitempty" validate:"omitempty"`
-}
-
-// Pagination defines model for Pagination.
-type Pagination struct {
-	HasMore    *bool   `json:"has_more,omitempty" validate:"omitempty"`
-	Limit      *int    `json:"limit,omitempty" validate:"omitempty"`
-	NextCursor *string `json:"next_cursor,omitempty" validate:"omitempty"`
-}
-
-// Session User session
-type Session struct {
-	CreatedAt time.Time `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	ExpiresAt time.Time `json:"expires_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// Id Session token (identifier).
-	Id        string  `json:"id" validate:"required"`
-	IpAddress *string `json:"ip_address,omitempty" validate:"omitempty"`
-	UserAgent *string `json:"user_agent,omitempty" validate:"omitempty"`
-
-	// UserId User ID.
-	UserId string `json:"user_id" validate:"required"`
-}
-
-// Workspace defines model for Workspace.
-type Workspace struct {
-	CreatedAt time.Time `json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-
-	// Id Unique identifier.
-	Id string `json:"id" validate:"required"`
-
-	// Name Name of the workspace.
-	Name string `json:"name" validate:"required"`
-
-	// OwnerId ID of the user who owns the workspace authenticated session.
-	OwnerId string `json:"owner_id" validate:"required"`
-}
-
-// WorkspaceCreate defines model for WorkspaceCreate.
-type WorkspaceCreate struct {
+// WorkspacesCreateRequest defines model for WorkspacesCreateRequest.
+type WorkspacesCreateRequest struct {
 	Name string `json:"name" validate:"required"`
 }
 
-// WorkspaceUpdate defines model for WorkspaceUpdate.
-type WorkspaceUpdate struct {
-	Name *string `json:"name,omitempty" validate:"omitempty"`
+// WorkspacesCreateResponse defines model for WorkspacesCreateResponse.
+type WorkspacesCreateResponse = WorkspacesResponse
+
+// WorkspacesListResponse defines model for WorkspacesListResponse.
+type WorkspacesListResponse = []WorkspacesResponse
+
+// WorkspacesResponse defines model for WorkspacesResponse.
+type WorkspacesResponse struct {
+	CreatedAt string `json:"created_at" validate:"required"`
+	Id        string `json:"id" validate:"required"`
+	Name      string `json:"name" validate:"required"`
+	OwnerId   string `json:"owner_id" validate:"required"`
 }
 
-// CursorParam defines model for CursorParam.
-type CursorParam = string
-
-// LimitParam defines model for LimitParam.
-type LimitParam = int
-
-// ParentIdParam defines model for ParentIdParam.
-type ParentIdParam = string
-
-// ResourceId defines model for ResourceId.
-type ResourceId = string
-
-// WorkspaceIdParam defines model for WorkspaceIdParam.
-type WorkspaceIdParam = string
-
-// ErrorResponse defines model for ErrorResponse.
-type ErrorResponse = Error
-
-// FileGetResponse defines model for FileGetResponse.
-type FileGetResponse = File
-
-// FileUploadResponse defines model for FileUploadResponse.
-type FileUploadResponse = File
-
-// PageDetailResponse defines model for PageDetailResponse.
-type PageDetailResponse = PageDetail
-
-// PageListResponse defines model for PageListResponse.
-type PageListResponse struct {
-	Data       *[]PageDetail `json:"data,omitempty"`
-	Pagination *Pagination   `json:"pagination,omitempty"`
+// WorkspacesUpdateRequest defines model for WorkspacesUpdateRequest.
+type WorkspacesUpdateRequest struct {
+	Name string `json:"name" validate:"required"`
 }
 
-// SessionDetailResponse User session
-type SessionDetailResponse = Session
+// apiKeyAuthContextKey is the context key for ApiKeyAuth security scheme
+type apiKeyAuthContextKey string
 
-// SessionListResponse defines model for SessionListResponse.
-type SessionListResponse struct {
-	Data       *[]Session  `json:"data,omitempty"`
-	Pagination *Pagination `json:"pagination,omitempty"`
-}
-
-// WorkspaceCreateResponse defines model for WorkspaceCreateResponse.
-type WorkspaceCreateResponse = Workspace
-
-// WorkspaceDetailResponse defines model for WorkspaceDetailResponse.
-type WorkspaceDetailResponse = Workspace
-
-// WorkspaceListResponse defines model for WorkspaceListResponse.
-type WorkspaceListResponse struct {
-	Data       *[]Workspace `json:"data,omitempty"`
-	Pagination *Pagination  `json:"pagination,omitempty"`
-}
-
-// WorkspaceUpdateResponse defines model for WorkspaceUpdateResponse.
-type WorkspaceUpdateResponse = Workspace
-
-// cookieAuthContextKey is the context key for cookieAuth security scheme
-type cookieAuthContextKey string
-
-// HandleGoogleOAuthCallbackParams defines parameters for HandleGoogleOAuthCallback.
-type HandleGoogleOAuthCallbackParams struct {
-	// Code Authorization code returned by Google
+// AuthGoogleCallbackParams defines parameters for AuthGoogleCallback.
+type AuthGoogleCallbackParams struct {
+	// Code The authorization code returned by Google after user authentication
 	Code string `query:"code" json:"code" validate:"required"`
 
-	// State State parameter for CSRF protection
+	// State The state parameter returned by Google, used to maintain state between the request and callback
 	State string `query:"state" json:"state" validate:"required"`
 }
 
-// ListPagesParams defines parameters for ListPages.
-type ListPagesParams struct {
-	// Cursor Cursor for pagination (last seen item ID)
-	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
+// AssignmentsServiceCreateAssignmentJSONRequestBody defines body for AssignmentsServiceCreateAssignment for application/json ContentType.
+type AssignmentsServiceCreateAssignmentJSONRequestBody = AssignmentsCreateRequest
 
-	// Limit Number of items to return per page
-	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
+// AssignmentsServiceUpdateAssignmentJSONRequestBody defines body for AssignmentsServiceUpdateAssignment for application/json ContentType.
+type AssignmentsServiceUpdateAssignmentJSONRequestBody = AssignmentsUpdateRequest
 
-	// WorkspaceId Filter by workspace ID
-	WorkspaceId *WorkspaceIdParam `query:"workspace_id,omitempty" json:"workspace_id,omitempty"`
+// CoursesServiceCreateCourseJSONRequestBody defines body for CoursesServiceCreateCourse for application/json ContentType.
+type CoursesServiceCreateCourseJSONRequestBody = CoursesCreateRequest
 
-	// ParentId Filter by parent page ID
-	ParentId *ParentIdParam `query:"parent_id,omitempty" json:"parent_id,omitempty"`
+// CoursesServiceUpdateCourseJSONRequestBody defines body for CoursesServiceUpdateCourse for application/json ContentType.
+type CoursesServiceUpdateCourseJSONRequestBody = CoursesUpdateRequest
 
-	// Type Filter by page type
-	Type ListPagesParamsType `query:"type" json:"type" validate:"required,oneof=course assignment folder note"`
-}
+// FilesServiceCreateFileJSONRequestBody defines body for FilesServiceCreateFile for application/json ContentType.
+type FilesServiceCreateFileJSONRequestBody = FilesCreateRequest
 
-// ListPagesParamsType defines parameters for ListPages.
-type ListPagesParamsType string
+// NotesServiceCreateNoteJSONRequestBody defines body for NotesServiceCreateNote for application/json ContentType.
+type NotesServiceCreateNoteJSONRequestBody = NotesCreateRequest
 
-// ListSessionsParams defines parameters for ListSessions.
-type ListSessionsParams struct {
-	// Cursor Cursor for pagination (last seen item ID)
-	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
+// NotesServiceUpdateNoteJSONRequestBody defines body for NotesServiceUpdateNote for application/json ContentType.
+type NotesServiceUpdateNoteJSONRequestBody = NotesUpdateRequest
 
-	// Limit Number of items to return per page
-	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
-}
+// WorkspacesServiceCreateWorkspaceJSONRequestBody defines body for WorkspacesServiceCreateWorkspace for application/json ContentType.
+type WorkspacesServiceCreateWorkspaceJSONRequestBody = WorkspacesCreateRequest
 
-// ListWorkspacesParams defines parameters for ListWorkspaces.
-type ListWorkspacesParams struct {
-	// Cursor Cursor for pagination (last seen item ID)
-	Cursor *CursorParam `query:"cursor,omitempty" json:"cursor,omitempty"`
-
-	// Limit Number of items to return per page
-	Limit *LimitParam `query:"limit,omitempty" json:"limit,omitempty"`
-
-	// OwnerId Filter by owner ID
-	OwnerId *string `query:"owner_id,omitempty" json:"owner_id,omitempty" validate:"omitempty"`
-}
-
-// GetFileUploadPresignedUrlJSONRequestBody defines body for GetFileUploadPresignedUrl for application/json ContentType.
-type GetFileUploadPresignedUrlJSONRequestBody = FileUpload
-
-// CreatePageJSONRequestBody defines body for CreatePage for application/json ContentType.
-type CreatePageJSONRequestBody = PageCreate
-
-// UpdatePageJSONRequestBody defines body for UpdatePage for application/json ContentType.
-type UpdatePageJSONRequestBody = PageUpdate
-
-// CreateWorkspaceJSONRequestBody defines body for CreateWorkspace for application/json ContentType.
-type CreateWorkspaceJSONRequestBody = WorkspaceCreate
-
-// UpdateWorkspaceJSONRequestBody defines body for UpdateWorkspace for application/json ContentType.
-type UpdateWorkspaceJSONRequestBody = WorkspaceUpdate
-
-// AsPagePropertiesCourse returns the union data inside the PageAllProperties as a PagePropertiesCourse
-func (t PageAllProperties) AsPagePropertiesCourse() (PagePropertiesCourse, error) {
-	var body PagePropertiesCourse
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesCourse overwrites any union data inside the PageAllProperties as the provided PagePropertiesCourse
-func (t *PageAllProperties) FromPagePropertiesCourse(v PagePropertiesCourse) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesCourse performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesCourse
-func (t *PageAllProperties) MergePagePropertiesCourse(v PagePropertiesCourse) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesAssignment returns the union data inside the PageAllProperties as a PagePropertiesAssignment
-func (t PageAllProperties) AsPagePropertiesAssignment() (PagePropertiesAssignment, error) {
-	var body PagePropertiesAssignment
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesAssignment overwrites any union data inside the PageAllProperties as the provided PagePropertiesAssignment
-func (t *PageAllProperties) FromPagePropertiesAssignment(v PagePropertiesAssignment) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesAssignment performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesAssignment
-func (t *PageAllProperties) MergePagePropertiesAssignment(v PagePropertiesAssignment) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesFolder returns the union data inside the PageAllProperties as a PagePropertiesFolder
-func (t PageAllProperties) AsPagePropertiesFolder() (PagePropertiesFolder, error) {
-	var body PagePropertiesFolder
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesFolder overwrites any union data inside the PageAllProperties as the provided PagePropertiesFolder
-func (t *PageAllProperties) FromPagePropertiesFolder(v PagePropertiesFolder) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesFolder performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesFolder
-func (t *PageAllProperties) MergePagePropertiesFolder(v PagePropertiesFolder) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsPagePropertiesNote returns the union data inside the PageAllProperties as a PagePropertiesNote
-func (t PageAllProperties) AsPagePropertiesNote() (PagePropertiesNote, error) {
-	var body PagePropertiesNote
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromPagePropertiesNote overwrites any union data inside the PageAllProperties as the provided PagePropertiesNote
-func (t *PageAllProperties) FromPagePropertiesNote(v PagePropertiesNote) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergePagePropertiesNote performs a merge with any union data inside the PageAllProperties, using the provided PagePropertiesNote
-func (t *PageAllProperties) MergePagePropertiesNote(v PagePropertiesNote) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-func (t PageAllProperties) MarshalJSON() ([]byte, error) {
-	b, err := t.union.MarshalJSON()
-	return b, err
-}
-
-func (t *PageAllProperties) UnmarshalJSON(b []byte) error {
-	err := t.union.UnmarshalJSON(b)
-	return err
-}
+// WorkspacesServiceUpdateWorkspaceJSONRequestBody defines body for WorkspacesServiceUpdateWorkspace for application/json ContentType.
+type WorkspacesServiceUpdateWorkspaceJSONRequestBody = WorkspacesUpdateRequest

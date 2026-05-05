@@ -117,20 +117,11 @@ SELECT id, user_id, hash_token, expires_at, ip_address, user_agent, created_at
 FROM sessions
 WHERE "user_id" = $1
     AND "expires_at" > NOW()
-    AND ($3::uuid IS NULL
-        OR id < $3::uuid)
 ORDER BY "id" DESC
-LIMIT $2
 `
 
-type ListSessionsByUserIdParams struct {
-	UserID int32
-	Limit  int32
-	Cursor *uuid.UUID
-}
-
-func (q *Queries) ListSessionsByUserId(ctx context.Context, arg ListSessionsByUserIdParams) ([]Session, error) {
-	rows, err := q.db.Query(ctx, listSessionsByUserId, arg.UserID, arg.Limit, arg.Cursor)
+func (q *Queries) ListSessionsByUserId(ctx context.Context, userID int32) ([]Session, error) {
+	rows, err := q.db.Query(ctx, listSessionsByUserId, userID)
 	if err != nil {
 		return nil, err
 	}

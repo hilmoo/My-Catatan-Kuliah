@@ -3,7 +3,7 @@ import { defineConfig } from "orval";
 export default defineConfig({
   ai: {
     input: {
-      target: "../openapi.yaml",
+      target: "../openapi/openapi.json",
     },
     output: {
       baseUrl: "/api",
@@ -16,7 +16,7 @@ export default defineConfig({
   },
   aiZod: {
     input: {
-      target: "../openapi.yaml",
+      target: "../openapi/openapi.json",
     },
     output: {
       mode: "tags-split",

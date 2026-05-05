@@ -52,7 +52,7 @@ func (h *httpHandler) getFile(c *echo.Context) error {
 }
 
 func (h *httpHandler) uploadFile(c *echo.Context) error {
-	params, err := validation.BindValidatePayload[models.GetFileUploadPresignedUrlJSONRequestBody](c, h.validate)
+	params, err := validation.BindValidatePayload[models.FilesServiceCreateFileJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
