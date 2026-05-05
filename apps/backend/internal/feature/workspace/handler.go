@@ -33,14 +33,8 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 }
 
 func (h *httpHandler) listWorkspaces(c *echo.Context) error {
-	params, err := validation.BindValidatePayload[models.ListWorkspacesParams](c, h.validate)
-	if err != nil {
-		return errort.HttpError(c, err)
-	}
-
 	resp, err := listWorkspacesService(c.Request().Context(), listWorkspacesServiceParams{
 		queries: h.queries,
-		params:  params,
 	})
 	if err != nil {
 		return errort.HttpError(c, err)
@@ -50,7 +44,7 @@ func (h *httpHandler) listWorkspaces(c *echo.Context) error {
 }
 
 func (h *httpHandler) createWorkspace(c *echo.Context) error {
-	body, err := validation.BindValidatePayload[models.CreateWorkspaceJSONRequestBody](c, h.validate)
+	body, err := validation.BindValidatePayload[models.WorkspacesServiceCreateWorkspaceJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}
@@ -97,7 +91,7 @@ func (h *httpHandler) getWorkspaceDetails(c *echo.Context) error {
 func (h *httpHandler) updateWorkspace(c *echo.Context) error {
 	id := c.Param("id")
 
-	body, err := validation.BindValidatePayload[models.UpdateWorkspaceJSONRequestBody](c, h.validate)
+	body, err := validation.BindValidatePayload[models.WorkspacesServiceUpdateWorkspaceJSONRequestBody](c, h.validate)
 	if err != nil {
 		return errort.HttpError(c, err)
 	}

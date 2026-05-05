@@ -13,48 +13,89 @@ import (
 	"github.com/pgvector/pgvector-go"
 )
 
-type PageType string
+type AssignmentStatus string
 
 const (
-	PageTypeFolder     PageType = "folder"
-	PageTypeCourse     PageType = "course"
-	PageTypeAssignment PageType = "assignment"
-	PageTypeNote       PageType = "note"
+	AssignmentStatusTodo       AssignmentStatus = "Todo"
+	AssignmentStatusInProgress AssignmentStatus = "InProgress"
+	AssignmentStatusDone       AssignmentStatus = "Done"
 )
 
-func (e *PageType) Scan(src interface{}) error {
+func (e *AssignmentStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = PageType(s)
+		*e = AssignmentStatus(s)
 	case string:
-		*e = PageType(s)
+		*e = AssignmentStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for PageType: %T", src)
+		return fmt.Errorf("unsupported scan type for AssignmentStatus: %T", src)
 	}
 	return nil
 }
 
-type NullPageType struct {
-	PageType PageType
-	Valid    bool // Valid is true if PageType is not NULL
+type NullAssignmentStatus struct {
+	AssignmentStatus AssignmentStatus
+	Valid            bool // Valid is true if AssignmentStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullPageType) Scan(value interface{}) error {
+func (ns *NullAssignmentStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.PageType, ns.Valid = "", false
+		ns.AssignmentStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.PageType.Scan(value)
+	return ns.AssignmentStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullPageType) Value() (driver.Value, error) {
+func (ns NullAssignmentStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.PageType), nil
+	return string(ns.AssignmentStatus), nil
+}
+
+type EntityType string
+
+const (
+	EntityTypeAssignment EntityType = "assignment"
+	EntityTypeNote       EntityType = "note"
+)
+
+func (e *EntityType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = EntityType(s)
+	case string:
+		*e = EntityType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for EntityType: %T", src)
+	}
+	return nil
+}
+
+type NullEntityType struct {
+	EntityType EntityType
+	Valid      bool // Valid is true if EntityType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEntityType) Scan(value interface{}) error {
+	if value == nil {
+		ns.EntityType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.EntityType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEntityType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.EntityType), nil
 }
 
 type Provider string
@@ -98,10 +139,38 @@ func (ns NullProvider) Value() (driver.Value, error) {
 	return string(ns.Provider), nil
 }
 
+type Assignment struct {
+	ID        int32
+	Iid       uuid.UUID
+	CourseID  int32
+	Title     string
+	Content   *string
+	Contentb  []byte
+	Status    AssignmentStatus
+	Position  int32
+	DueDate   time.Time
+	CreatedBy int32
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Course struct {
+	ID          int32
+	Iid         uuid.UUID
+	WorkspaceID int32
+	Title       string
+	Instructor  string
+	Credits     int32
+	CreatedBy   int32
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
 type DocumentChunk struct {
 	ID          int64
-	PageID      int32
 	WorkspaceID int32
+	EntityType  EntityType
+	EntityID    int32
 	ChunkIndex  int32
 	ChunkHash   string
 	Content     string
@@ -119,25 +188,39 @@ type File struct {
 	CreatedAt time.Time
 }
 
-type Page struct {
-	ID          int32
-	Iid         uuid.UUID
-	WorkspaceID int32
-	ParentID    *int32
-	Title       string
-	Icon        *string
-	Type        PageType
-	Properties  []byte
-	CreatedBy   int32
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+type LlmChat struct {
+	ID             int64
+	Iid            uuid.UUID
+	UserID         int32
+	WorkspaceID    int32
+	Title          string
+	ActiveStreamID *string
+	CreatedAt      time.Time
 }
 
-type PagesContent struct {
-	ID              int32
-	PageID          int32
-	ContentMarkdown *string
-	ContentBlob     []byte
+type LlmChatMessage struct {
+	ID         int64
+	LlmChatsID int64
+	Role       string
+	CreatedAt  time.Time
+}
+
+type LlmChatMessagePart struct {
+	ID                int64
+	LlmChatMessagesID int64
+	Text              *string
+}
+
+type Note struct {
+	ID        int32
+	Iid       uuid.UUID
+	CourseID  int32
+	Title     string
+	Content   *string
+	Contentb  []byte
+	CreatedBy int32
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type Session struct {

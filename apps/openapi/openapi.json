@@ -1,0 +1,2561 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "My Catatan Kuliah",
+    "version": "1.0.0",
+    "description": "My Catatan Kuliah API"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Default server",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/api/assignments": {
+      "post": {
+        "operationId": "assignmentsServiceCreateAssignment",
+        "description": "Create a new assignment with the specified details.",
+        "parameters": [],
+        "requestBody": {
+          "description": "The details of the assignment to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignmentsCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentsCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
+    "/api/assignments/{assignmentId}": {
+      "get": {
+        "operationId": "assignmentsServiceGetAssignment",
+        "description": "Get details of a specific assignment by its ID.",
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "The unique identifier of the assignment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentsDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      },
+      "delete": {
+        "operationId": "assignmentsServiceDeleteAssignment",
+        "description": "Delete a specific assignment by its ID.",
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "The unique identifier of the assignment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      },
+      "patch": {
+        "operationId": "assignmentsServiceUpdateAssignment",
+        "description": "Update details of a specific assignment by its ID.",
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "The unique identifier of the assignment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The details to update for the assignment",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignmentsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentsUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
+    "/api/assignments/{courseId}": {
+      "get": {
+        "operationId": "assignmentsServiceListAssignments",
+        "description": "List all assignments accessible to the authenticated user.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "The unique identifier of the course to filter assignments",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentsListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
+    "/api/auth/google": {
+      "get": {
+        "operationId": "authGoogleRedirect",
+        "description": "Initiate the Google OAuth2 authentication flow by redirecting the user to Google's authorization endpoint.",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirection",
+            "headers": {
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {}
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/google/callback": {
+      "get": {
+        "operationId": "authGoogleCallback",
+        "description": "Callback endpoint for Google OAuth2 authentication flow. Receives the authorization code and state parameters from Google after user authentication.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "description": "The authorization code returned by Google after user authentication",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "explode": false,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "The state parameter returned by Google, used to maintain state between the request and callback",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "explode": false,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirection",
+            "headers": {
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {}
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "authLogout",
+        "description": "Log out the authenticated user by clearing their session or authentication tokens, and redirecting them to root",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirection",
+            "headers": {
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "authGetMe",
+        "description": "Get the authenticated user's information, including their unique identifier, email address, display name, and avatar URL.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthMeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/courses": {
+      "post": {
+        "operationId": "coursesServiceCreateCourse",
+        "description": "Create a new course with the specified details.",
+        "parameters": [],
+        "requestBody": {
+          "description": "The details of the course to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoursesCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoursesCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Courses"
+        ]
+      },
+      "get": {
+        "operationId": "coursesServiceListCourses",
+        "description": "List all courses accessible to the authenticated user.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoursesListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Courses"
+        ]
+      }
+    },
+    "/api/courses/{courseId}": {
+      "get": {
+        "operationId": "coursesServiceGetCourse",
+        "description": "Get details of a specific course by its ID.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "The unique identifier of the course",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoursesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Courses"
+        ]
+      },
+      "delete": {
+        "operationId": "coursesServiceDeleteCourse",
+        "description": "Delete a specific course by its ID.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "The unique identifier of the course",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Courses"
+        ]
+      },
+      "patch": {
+        "operationId": "coursesServiceUpdateCourse",
+        "description": "Update details of a specific course by its ID.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "The unique identifier of the course",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The details to update for the course",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoursesUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoursesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Courses"
+        ]
+      }
+    },
+    "/api/files": {
+      "post": {
+        "operationId": "filesServiceCreateFile",
+        "description": "Upload a new file to the system. The request should include the file's name, size in bytes, MIME type, and the file content itself. The response will include the unique identifier for the newly created file, along with its details and a URL for downloading it.",
+        "parameters": [],
+        "requestBody": {
+          "description": "The details of the file to be created, including its name, size in bytes, MIME type, and content",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilesCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Files"
+        ]
+      }
+    },
+    "/api/files/{fileId}": {
+      "get": {
+        "operationId": "filesServiceGetFile",
+        "description": "Get the details of a specific file by its unique identifier, including its name, size, type, and download URL.",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "The unique identifier of the file to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Files"
+        ]
+      },
+      "delete": {
+        "operationId": "filesServiceDeleteFile",
+        "description": "Delete a specific file from the system using its unique identifier. This operation will permanently remove the file and its associated data. The response will indicate whether the deletion was successful or if the file was not found.",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "The unique identifier of the file to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Files"
+        ]
+      }
+    },
+    "/api/notes": {
+      "post": {
+        "operationId": "notesServiceCreateNote",
+        "description": "Create a new note with the specified details.",
+        "parameters": [],
+        "requestBody": {
+          "description": "The details of the note to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotesCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotesCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/notes/{courseId}": {
+      "get": {
+        "operationId": "notesServiceListNotes",
+        "description": "List all notes accessible to the authenticated user.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "The unique identifier of the course to filter notes",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotesListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/notes/{noteId}": {
+      "get": {
+        "operationId": "notesServiceGetNote",
+        "description": "Get details of a specific note by its ID.",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "The unique identifier of the note",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotesDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      },
+      "delete": {
+        "operationId": "notesServiceDeleteNote",
+        "description": "Delete a specific note by its ID.",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "The unique identifier of the note",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      },
+      "patch": {
+        "operationId": "notesServiceUpdateNote",
+        "description": "Update details of a specific note by its ID.",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "The unique identifier of the note",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The details to update for the note",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotesUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotesUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/workspaces": {
+      "post": {
+        "operationId": "workspacesServiceCreateWorkspace",
+        "description": "Create a new workspace with the specified name.",
+        "parameters": [],
+        "requestBody": {
+          "description": "The name of the workspace to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspacesCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspacesCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Workspaces"
+        ]
+      },
+      "get": {
+        "operationId": "workspacesServiceListWorkspaces",
+        "description": "List all workspaces accessible to the authenticated user.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspacesListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Workspaces"
+        ]
+      }
+    },
+    "/api/workspaces/{workspaceId}": {
+      "get": {
+        "operationId": "workspacesServiceGetWorkspace",
+        "description": "Get details of a specific workspace by its ID.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "The unique identifier of the workspace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspacesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Workspaces"
+        ]
+      },
+      "delete": {
+        "operationId": "workspacesServiceDeleteWorkspace",
+        "description": "Delete a specific workspace by its ID.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "The unique identifier of the workspace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Workspaces"
+        ]
+      },
+      "patch": {
+        "operationId": "workspacesServiceUpdateWorkspace",
+        "description": "Update the name of a specific workspace by its ID.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "The unique identifier of the workspace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The new name for the workspace",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspacesUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspacesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Workspaces"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssignmentsAssignmentStatus": {
+        "type": "string",
+        "enum": [
+          "Todo",
+          "InProgress",
+          "Done"
+        ],
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty,oneof=Todo InProgress Done"
+        }
+      },
+      "AssignmentsCreateRequest": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
+          },
+          "position": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "content": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        },
+        "required": [
+          "course_id",
+          "title",
+          "status",
+          "position",
+          "due_date"
+        ]
+      },
+      "AssignmentsCreateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AssignmentsDetailResponse"
+          }
+        ]
+      },
+      "AssignmentsDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "course_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
+          },
+          "position": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "created_by": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "content": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "course_id",
+          "title",
+          "status",
+          "position",
+          "due_date",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "AssignmentsListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AssignmentsResponse"
+        },
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty"
+        }
+      },
+      "AssignmentsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "course_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
+          },
+          "position": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "created_by": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "course_id",
+          "title",
+          "status",
+          "position",
+          "due_date",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "AssignmentsUpdateRequest": {
+        "description": "The template for adding optional properties.",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
+          },
+          "position": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "content": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        }
+      },
+      "AssignmentsUpdateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AssignmentsDetailResponse"
+          }
+        ]
+      },
+      "AuthMeResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for the authenticated user",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "email": {
+            "description": "The email address of the authenticated user",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "name": {
+            "description": "The display name of the authenticated user",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "avatar_url": {
+            "description": "The URL of the authenticated user's avatar image",
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "avatar_url"
+        ]
+      },
+      "CommonErrorError": {
+        "description": "An error response with details about the failure.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "A unique identifier for this error instance",
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "reason": {
+            "description": "A human-readable explanation of the error",
+            "type": "string",
+            "example": "Resource Not Found",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "status": {
+            "description": "The HTTP status code associated with this error",
+            "type": "string",
+            "example": "Not Found",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "message": {
+            "description": "An optional message providing more details about the error",
+            "type": "string",
+            "example": "The requested resource could not be found",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "code": {
+            "description": "An optional machine-readable error code for programmatic handling",
+            "type": "integer",
+            "format": "int32",
+            "example": 404,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,int32"
+            }
+          },
+          "details": {
+            "description": "Optional additional details about the error, such as missing resources or validation errors",
+            "type": "object",
+            "example": {
+              "missingResource": "assignment with ID 123 not found"
+            },
+            "additionalProperties": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "reason",
+          "status",
+          "code"
+        ]
+      },
+      "CommonErrorError400": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CommonErrorError"
+          }
+        ]
+      },
+      "CommonErrorError401": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CommonErrorError"
+          }
+        ]
+      },
+      "CommonErrorError404": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CommonErrorError"
+          }
+        ]
+      },
+      "CommonErrorError500": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CommonErrorError"
+          }
+        ]
+      },
+      "CoursesCreateRequest": {
+        "type": "object",
+        "properties": {
+          "workspace_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "instructor": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "credits": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "workspace_id",
+          "title",
+          "instructor",
+          "credits"
+        ]
+      },
+      "CoursesCreateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CoursesResponse"
+          }
+        ]
+      },
+      "CoursesListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/CoursesResponse"
+        },
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty"
+        }
+      },
+      "CoursesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "workspace_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "instructor": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "credits": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_by": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "workspace_id",
+          "title",
+          "instructor",
+          "credits",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "CoursesUpdateRequest": {
+        "description": "The template for adding optional properties.",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "instructor": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "credits": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        }
+      },
+      "FilesCreateRequest": {
+        "type": "object",
+        "properties": {
+          "size_bytes": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "mime_type": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "size_bytes",
+          "mime_type"
+        ]
+      },
+      "FilesCreateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilesResponse"
+          }
+        ]
+      },
+      "FilesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "size_bytes": {
+            "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "mime_type": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "url": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "size_bytes",
+          "mime_type",
+          "url"
+        ]
+      },
+      "NotesCreateRequest": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "content": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        },
+        "required": [
+          "course_id",
+          "title"
+        ]
+      },
+      "NotesCreateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NotesDetailResponse"
+          }
+        ]
+      },
+      "NotesDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "course_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_by": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "content": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "course_id",
+          "title",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "NotesListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NotesResponse"
+        },
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty"
+        }
+      },
+      "NotesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "course_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_by": {
+            "type": "string",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "course_id",
+          "title",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "NotesUpdateRequest": {
+        "description": "The template for adding optional properties.",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "content": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          }
+        }
+      },
+      "NotesUpdateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NotesDetailResponse"
+          }
+        ]
+      },
+      "WorkspacesCreateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "WorkspacesCreateResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WorkspacesResponse"
+          }
+        ]
+      },
+      "WorkspacesListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/WorkspacesResponse"
+        },
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty"
+        }
+      },
+      "WorkspacesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "name": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "owner_id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "owner_id",
+          "created_at"
+        ]
+      },
+      "WorkspacesUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Assignments",
+      "description": "A service for managing assignments, including creation, retrieval, updating, and deletion."
+    },
+    {
+      "name": "Auth",
+      "description": "A service for handling authentication, including Google OAuth2."
+    },
+    {
+      "name": "Courses",
+      "description": "A service for managing courses, including creation, retrieval, updating, and deletion."
+    },
+    {
+      "name": "Files",
+      "description": "A service for handling file uploads and downloads, including integration with AWS S3."
+    },
+    {
+      "name": "Notes",
+      "description": "A service for managing notes, including creation, retrieval, updating, and deletion."
+    },
+    {
+      "name": "Workspaces",
+      "description": "A service for managing workspaces, including creation, retrieval, updating, and deletion."
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

@@ -19,6 +19,7 @@ CREATE TABLE "sessions"(
     "id" uuid PRIMARY KEY DEFAULT uuidv7(),
     "user_id" integer NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
     "hash_token" text NOT NULL UNIQUE,
+    
     "expires_at" timestamptz NOT NULL,
     "ip_address" text,
     "user_agent" text,

@@ -3,11 +3,12 @@ package app
 import (
 	"log/slog"
 
+	"backend/internal/feature/assignment"
 	"backend/internal/feature/auth"
+	"backend/internal/feature/course"
 	"backend/internal/feature/files"
 	"backend/internal/feature/health"
-	"backend/internal/feature/page"
-	"backend/internal/feature/session"
+	"backend/internal/feature/note"
 	"backend/internal/feature/swagger"
 	"backend/internal/feature/workspace"
 	db "backend/internal/gen/sqlc"
@@ -59,10 +60,11 @@ func initHandler(args initHandlerParams) *echo.Echo {
 
 	protected := e.Group("/api")
 	protected.Use(msession.RequireAuth)
-	session.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
-	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
-	page.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	assignment.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	course.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 	files.NewHttpHandler(httpHandlerParams, args.s3).RegisterRoutes(protected)
+	note.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 
 	return e
 }

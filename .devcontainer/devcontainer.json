@@ -15,7 +15,7 @@
 				"json.schemaDownload.trustedDomains": {
 					"https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json": true
 				},
-				"spectral.rulesetFile": "./apps/.spectral.yaml"
+				"spectral.rulesetFile": "./apps/openapi/.spectral.yaml"
 			},
 			"extensions": [
 				"ms-python.python",

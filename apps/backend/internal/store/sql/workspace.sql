@@ -8,10 +8,7 @@ WHERE iid = $1
 SELECT *
 FROM workspaces
 WHERE "owner_id" = $1
-    AND (sqlc.narg(CURSOR)::uuid IS NULL
-        OR iid < sqlc.narg(CURSOR)::uuid)
-ORDER BY "iid" DESC
-LIMIT $2;
+ORDER BY "iid" DESC;
 
 -- name: CreateWorkspace :one
 INSERT INTO workspaces("name", "owner_id")
