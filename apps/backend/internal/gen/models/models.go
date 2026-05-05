@@ -32,30 +32,6 @@ func (e AssignmentsAssignmentStatus) Valid() bool {
 	}
 }
 
-// Defines values for PageSummaryType.
-const (
-	PageSummaryTypeAssignment PageSummaryType = "assignment"
-	PageSummaryTypeCourse     PageSummaryType = "course"
-	PageSummaryTypeFolder     PageSummaryType = "folder"
-	PageSummaryTypeNote       PageSummaryType = "note"
-)
-
-// Valid indicates whether the value is a known member of the PageSummaryType enum.
-func (e PageSummaryType) Valid() bool {
-	switch e {
-	case PageSummaryTypeAssignment:
-		return true
-	case PageSummaryTypeCourse:
-		return true
-	case PageSummaryTypeFolder:
-		return true
-	case PageSummaryTypeNote:
-		return true
-	default:
-		return false
-	}
-}
-
 // AssignmentsAssignmentStatus defines model for AssignmentsAssignmentStatus.
 type AssignmentsAssignmentStatus string
 
