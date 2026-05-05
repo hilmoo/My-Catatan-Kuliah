@@ -23,12 +23,6 @@ async function bootstrap() {
   const createHocuspocusInstance = (entityType: 'assignment' | 'note') => {
     return new Hocuspocus({
       extensions: [new ContentStore(pgService, natsService, entityType)],
-      onConnect: async (data) => {
-        const url = new URL(data.request.url!, `http://${data.request.headers.host || 'localhost'}`);
-        const parts = url.pathname.split('/');
-        // The documentName is the ID part of the URL (the last part)
-        data.documentName = parts[parts.length - 1];
-      },
     });
   };
 
@@ -63,8 +57,8 @@ async function bootstrap() {
     };
   });
 
-  app.get("/assignments/:id", handleWebSocket(assignmentHocuspocus));
-  app.get("/notes/:id", handleWebSocket(noteHocuspocus));
+  app.get("/assignments", handleWebSocket(assignmentHocuspocus));
+  app.get("/notes", handleWebSocket(noteHocuspocus));
 
   const server = serve(
     {

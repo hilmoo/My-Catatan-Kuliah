@@ -35,6 +35,13 @@ export const NotesServiceListNotesResponseItem = zod.object({
 export const NotesServiceListNotesResponse = zod.array(NotesServiceListNotesResponseItem)
 
 /**
+ * Establish a WebSocket connection for real-time updates on a specific note.
+ */
+export const NotesServiceNoteWebSocketParams = zod.object({
+  "noteId": zod.string().describe('The unique identifier of the note for WebSocket connection')
+})
+
+/**
  * Get details of a specific note by its ID.
  */
 export const NotesServiceGetNoteParams = zod.object({

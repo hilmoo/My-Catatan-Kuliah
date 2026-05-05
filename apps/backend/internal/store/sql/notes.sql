@@ -40,3 +40,12 @@ WHERE n."course_id" = c."id"
 RETURNING 
     n.*, 
     c.iid AS course_iid;
+
+-- name: ValidateNoteAccess :one
+SELECT EXISTS (
+    SELECT 1
+    FROM notes
+    JOIN courses ON notes.course_id = courses.id    
+    WHERE notes.iid = $1
+        AND notes.created_by = $2
+);

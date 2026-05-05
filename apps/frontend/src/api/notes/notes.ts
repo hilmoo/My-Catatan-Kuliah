@@ -277,7 +277,92 @@ export function useNotesServiceListNotes<TData = Awaited<ReturnType<typeof notes
 
 
 
-export type notesServiceGetNoteResponse200 = {
+export type notesServiceNoteWebSocketResponse204 = {
+  data: void
+  status: 204
+}
+
+export type notesServiceNoteWebSocketResponseSuccess = (notesServiceNoteWebSocketResponse204) & {
+  headers: Headers;
+};
+;
+
+export type notesServiceNoteWebSocketResponse = (notesServiceNoteWebSocketResponseSuccess)
+
+export const getNotesServiceNoteWebSocketUrl = (noteId: string,) => {
+
+
+
+
+  return `/api/notes/ws/${noteId}`
+}
+
+/**
+ * Establish a WebSocket connection for real-time updates on a specific note.
+ */
+export const notesServiceNoteWebSocket = async (noteId: string, options?: RequestInit): Promise<notesServiceNoteWebSocketResponse> => {
+
+  const res = await fetch(getNotesServiceNoteWebSocketUrl(noteId),
+  {
+    ...options,
+    method: 'HEAD'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: notesServiceNoteWebSocketResponse['data'] = body ? JSON.parse(body) : undefined
+  return { data, status: res.status, headers: res.headers } as notesServiceNoteWebSocketResponse
+}
+
+
+
+
+export const getNotesServiceNoteWebSocketMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notesServiceNoteWebSocket>>, TError,{noteId: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof notesServiceNoteWebSocket>>, TError,{noteId: string}, TContext> => {
+
+const mutationKey = ['notesServiceNoteWebSocket'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof notesServiceNoteWebSocket>>, {noteId: string}> = (props) => {
+          const {noteId} = props ?? {};
+
+          return  notesServiceNoteWebSocket(noteId,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NotesServiceNoteWebSocketMutationResult = NonNullable<Awaited<ReturnType<typeof notesServiceNoteWebSocket>>>
+
+    export type NotesServiceNoteWebSocketMutationError = unknown
+
+    export const useNotesServiceNoteWebSocket = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notesServiceNoteWebSocket>>, TError,{noteId: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof notesServiceNoteWebSocket>>,
+        TError,
+        {noteId: string},
+        TContext
+      > => {
+      return useMutation(getNotesServiceNoteWebSocketMutationOptions(options), queryClient);
+    }
+    export type notesServiceGetNoteResponse200 = {
   data: NotesDetailResponse
   status: 200
 }

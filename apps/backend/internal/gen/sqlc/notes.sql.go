@@ -226,3 +226,25 @@ func (q *Queries) UpdateNoteByIidAndUser(ctx context.Context, arg UpdateNoteByIi
 	)
 	return i, err
 }
+
+const validateNoteAccess = `-- name: ValidateNoteAccess :one
+SELECT EXISTS (
+    SELECT 1
+    FROM notes
+    JOIN courses ON notes.course_id = courses.id    
+    WHERE notes.iid = $1
+        AND notes.created_by = $2
+)
+`
+
+type ValidateNoteAccessParams struct {
+	Iid       uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) ValidateNoteAccess(ctx context.Context, arg ValidateNoteAccessParams) (bool, error) {
+	row := q.db.QueryRow(ctx, validateNoteAccess, arg.Iid, arg.CreatedBy)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}

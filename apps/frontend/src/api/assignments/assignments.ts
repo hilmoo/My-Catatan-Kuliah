@@ -277,7 +277,92 @@ export function useAssignmentsServiceListAssignments<TData = Awaited<ReturnType<
 
 
 
-export type assignmentsServiceGetAssignmentResponse200 = {
+export type assignmentsServiceAssignmentWebSocketResponse204 = {
+  data: void
+  status: 204
+}
+
+export type assignmentsServiceAssignmentWebSocketResponseSuccess = (assignmentsServiceAssignmentWebSocketResponse204) & {
+  headers: Headers;
+};
+;
+
+export type assignmentsServiceAssignmentWebSocketResponse = (assignmentsServiceAssignmentWebSocketResponseSuccess)
+
+export const getAssignmentsServiceAssignmentWebSocketUrl = (assignmentId: string,) => {
+
+
+
+
+  return `/api/assignments/ws/${assignmentId}`
+}
+
+/**
+ * Establish a WebSocket connection for real-time updates on a specific assignment.
+ */
+export const assignmentsServiceAssignmentWebSocket = async (assignmentId: string, options?: RequestInit): Promise<assignmentsServiceAssignmentWebSocketResponse> => {
+
+  const res = await fetch(getAssignmentsServiceAssignmentWebSocketUrl(assignmentId),
+  {
+    ...options,
+    method: 'HEAD'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: assignmentsServiceAssignmentWebSocketResponse['data'] = body ? JSON.parse(body) : undefined
+  return { data, status: res.status, headers: res.headers } as assignmentsServiceAssignmentWebSocketResponse
+}
+
+
+
+
+export const getAssignmentsServiceAssignmentWebSocketMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignmentsServiceAssignmentWebSocket>>, TError,{assignmentId: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof assignmentsServiceAssignmentWebSocket>>, TError,{assignmentId: string}, TContext> => {
+
+const mutationKey = ['assignmentsServiceAssignmentWebSocket'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignmentsServiceAssignmentWebSocket>>, {assignmentId: string}> = (props) => {
+          const {assignmentId} = props ?? {};
+
+          return  assignmentsServiceAssignmentWebSocket(assignmentId,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignmentsServiceAssignmentWebSocketMutationResult = NonNullable<Awaited<ReturnType<typeof assignmentsServiceAssignmentWebSocket>>>
+
+    export type AssignmentsServiceAssignmentWebSocketMutationError = unknown
+
+    export const useAssignmentsServiceAssignmentWebSocket = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignmentsServiceAssignmentWebSocket>>, TError,{assignmentId: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignmentsServiceAssignmentWebSocket>>,
+        TError,
+        {assignmentId: string},
+        TContext
+      > => {
+      return useMutation(getAssignmentsServiceAssignmentWebSocketMutationOptions(options), queryClient);
+    }
+    export type assignmentsServiceGetAssignmentResponse200 = {
   data: AssignmentsDetailResponse
   status: 200
 }

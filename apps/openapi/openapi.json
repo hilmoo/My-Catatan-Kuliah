@@ -141,6 +141,34 @@
         ]
       }
     },
+    "/api/assignments/ws/{assignmentId}": {
+      "head": {
+        "operationId": "assignmentsServiceAssignmentWebSocket",
+        "description": "Establish a WebSocket connection for real-time updates on a specific assignment.",
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "description": "The unique identifier of the assignment for WebSocket connection",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
     "/api/assignments/{assignmentId}": {
       "get": {
         "operationId": "assignmentsServiceGetAssignment",
@@ -1118,6 +1146,34 @@
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/notes/ws/{noteId}": {
+      "head": {
+        "operationId": "notesServiceNoteWebSocket",
+        "description": "Establish a WebSocket connection for real-time updates on a specific note.",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "The unique identifier of the note for WebSocket connection",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
           }
         },
         "tags": [

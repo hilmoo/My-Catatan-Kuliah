@@ -59,4 +59,13 @@ interface NotesService {
         @body
         request: Notes.UpdateRequest,
     ): Notes.UpdateResponse | CommonError.UpdateCommonErrorAuth;
+
+    @route("/ws/{noteId}")
+    @doc("Establish a WebSocket connection for real-time updates on a specific note.")
+    @head
+    noteWebSocket(
+        @doc("The unique identifier of the note for WebSocket connection")
+        @path
+        noteId: string,
+    ): void;
 }

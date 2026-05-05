@@ -262,3 +262,25 @@ func (q *Queries) UpdateAssignmentByIidAndUser(ctx context.Context, arg UpdateAs
 	)
 	return i, err
 }
+
+const validateAssignmentAccess = `-- name: ValidateAssignmentAccess :one
+SELECT EXISTS (
+    SELECT 1
+    FROM assignments
+    JOIN courses ON assignments.course_id = courses.id
+    WHERE assignments.iid = $1
+        AND assignments.created_by = $2
+)
+`
+
+type ValidateAssignmentAccessParams struct {
+	Iid       uuid.UUID
+	CreatedBy int32
+}
+
+func (q *Queries) ValidateAssignmentAccess(ctx context.Context, arg ValidateAssignmentAccessParams) (bool, error) {
+	row := q.db.QueryRow(ctx, validateAssignmentAccess, arg.Iid, arg.CreatedBy)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}

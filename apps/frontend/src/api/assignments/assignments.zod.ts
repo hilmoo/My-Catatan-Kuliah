@@ -41,6 +41,13 @@ export const AssignmentsServiceListAssignmentsResponseItem = zod.object({
 export const AssignmentsServiceListAssignmentsResponse = zod.array(AssignmentsServiceListAssignmentsResponseItem)
 
 /**
+ * Establish a WebSocket connection for real-time updates on a specific assignment.
+ */
+export const AssignmentsServiceAssignmentWebSocketParams = zod.object({
+  "assignmentId": zod.string().describe('The unique identifier of the assignment for WebSocket connection')
+})
+
+/**
  * Get details of a specific assignment by its ID.
  */
 export const AssignmentsServiceGetAssignmentParams = zod.object({

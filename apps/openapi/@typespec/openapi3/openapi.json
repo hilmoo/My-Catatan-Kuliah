@@ -157,6 +157,31 @@
         ]
       }
     },
+    "/api/assignments/ws/{assignmentId}": {
+      "head": {
+        "operationId": "AssignmentsService_assignmentWebSocket",
+        "description": "Establish a WebSocket connection for real-time updates on a specific assignment.",
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the assignment for WebSocket connection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
     "/api/assignments/{assignmentId}": {
       "get": {
         "operationId": "AssignmentsService_getAssignment",
@@ -1098,6 +1123,31 @@
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/notes/ws/{noteId}": {
+      "head": {
+        "operationId": "NotesService_noteWebSocket",
+        "description": "Establish a WebSocket connection for real-time updates on a specific note.",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the note for WebSocket connection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
           }
         },
         "tags": [
