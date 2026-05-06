@@ -1,9 +1,34 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { getAuthGetMeQueryOptions } from "@/api/auth/auth";
+import { getNotesServiceGetNoteQueryOptions } from "@/api/notes/notes";
+import { FullSetupEditor } from "@/components/editor/editor";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/c/$courseId/n/$notesId")({
   component: RouteComponent,
+  loader: async ({ params: { notesId, courseId }, context: { queryClient } }) => {
+    const notes = await queryClient.ensureQueryData(getNotesServiceGetNoteQueryOptions(notesId));
+
+    if (notes.status !== 200) {
+      throw redirect({ to: "/c/$courseId", params: { courseId } });
+    }
+
+    const user = await queryClient.ensureQueryData(getAuthGetMeQueryOptions());
+
+    if (user.status !== 200) {
+      throw redirect({ to: "/login", params: { courseId } });
+    }
+
+    return { notes: notes.data, user: user.data };
+  },
 });
 
 function RouteComponent() {
-  return <div>Hello &quot;/$workspaceId/n/$notesId&quot;!</div>;
+  const { notesId } = Route.useParams();
+  const { user } = Route.useLoaderData();
+
+  return (
+    <>
+      <FullSetupEditor user={user} roomId={notesId} type="notes" />;
+    </>
+  );
 }

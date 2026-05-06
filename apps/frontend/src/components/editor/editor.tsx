@@ -24,13 +24,6 @@ import { applyTheme } from "@yoopta/themes-shadcn";
 import { withEmoji } from "@yoopta/emoji";
 import { withCollaboration, RemoteCursors } from "@yoopta/collaboration";
 import type { AuthMeResponse } from "@/api/model";
-import { getNotesServiceNoteWebSocketUrl } from "@/api/notes/notes";
-import { getAssignmentsServiceAssignmentWebSocketUrl } from "@/api/assignments/assignments";
-
-const EDITOR_STYLES = {
-  width: "100%",
-  paddingBottom: 100,
-};
 
 interface FullSetupEditorProps {
   initialValue?: YooptaContentValue;
@@ -51,12 +44,11 @@ const FullSetupEditor = ({
 }: FullSetupEditorProps) => {
   const internalRef = useRef<HTMLDivElement>(null);
   const containerBoxRef = externalRef ?? internalRef;
-  const currentHostname = new URL(window.location.href).hostname;
   const targetPath =
     type === "notes"
-      ? getNotesServiceNoteWebSocketUrl(roomId)
-      : getAssignmentsServiceAssignmentWebSocketUrl(roomId);
-  const url = `ws://${currentHostname}` + targetPath;
+      ? "/api/notes/ws"
+      : "/api/assignments/ws";
+  const url = `ws://${window.location.host}${targetPath}`;
 
   const editor = useMemo(() => {
     return withCollaboration(
@@ -82,7 +74,7 @@ const FullSetupEditor = ({
         },
       },
     );
-  }, [user.avatar_url, user.id, user.name, roomId, url]);
+  }, [user.avatar_url, user.id, user.name, url, roomId]);
 
   useEffect(() => {
     editor.collaboration.connect();
@@ -116,7 +108,7 @@ const FullSetupEditor = ({
       <BlockDndContext editor={editor}>
         <YooptaEditor
           editor={editor}
-          style={EDITOR_STYLES}
+          // style={EDITOR_STYLES}
           renderBlock={renderBlock}
           placeholder="Type / to open menu, or start typing..."
           onChange={onChange}

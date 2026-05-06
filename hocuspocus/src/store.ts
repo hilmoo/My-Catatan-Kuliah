@@ -1,4 +1,4 @@
-import { createYooptaEditor, SlateElement, YooptaPlugin } from "@yoopta/editor";
+import { createYooptaEditor, type SlateElement, YooptaPlugin } from "@yoopta/editor";
 import { markdown } from "@yoopta/exports";
 import * as Y from "yjs";
 import { create, toBinary } from "@bufbuild/protobuf";
@@ -40,6 +40,7 @@ export class ContentStore {
     try {
       // documentName is expected to be a base58 encoded UUIDv7
       const documentIid = bs58.decode(documentName);
+      console.log(`[${this.entityType}] Fetching document with iid: ${documentName}`);
       const entityIdResult = await this.pgService.pool.query<{ id: number }>(
         getEntityIdQuery,
         [documentIid]

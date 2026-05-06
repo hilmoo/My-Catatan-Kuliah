@@ -1,4 +1,4 @@
-import { SlateElement, YooptaContentValue } from "@yoopta/editor";
+import { type SlateElement, type YooptaContentValue } from "@yoopta/editor";
 import * as Y from "yjs";
 
 /**

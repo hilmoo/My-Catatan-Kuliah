@@ -238,11 +238,15 @@ func updateNoteService(ctx context.Context, args updateNoteServiceParams) (*mode
 	}, nil
 }
 
-func proxyHocuspocusService(hocuspocusUrl *url.URL) (*httputil.ReverseProxy, *herodot.DefaultError) {
+type proxyHocuspocusServiceParams struct {
+	hocuspocusUrl *url.URL
+	notesId        string
+}
+func proxyHocuspocusService(args proxyHocuspocusServiceParams) (*httputil.ReverseProxy, *herodot.DefaultError) {
 	proxy := &httputil.ReverseProxy{
 		Rewrite: func(pr *httputil.ProxyRequest) {
-			pr.SetURL(hocuspocusUrl)
-			pr.Out.URL.Path = "/notes"
+			pr.SetURL(args.hocuspocusUrl)
+			pr.Out.URL.Path = "/notes/" + args.notesId
 		},
 	}
 
