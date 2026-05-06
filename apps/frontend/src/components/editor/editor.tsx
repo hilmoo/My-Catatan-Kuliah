@@ -22,6 +22,10 @@ import { MentionDropdown } from "@yoopta/themes-shadcn/mention";
 import { EmojiDropdown } from "@yoopta/themes-shadcn/emoji";
 import { applyTheme } from "@yoopta/themes-shadcn";
 import { withEmoji } from "@yoopta/emoji";
+import { withCollaboration, RemoteCursors } from "@yoopta/collaboration";
+import type { AuthMeResponse } from "@/api/model";
+import { getNotesServiceNoteWebSocketUrl } from "@/api/notes/notes";
+import { getAssignmentsServiceAssignmentWebSocketUrl } from "@/api/assignments/assignments";
 
 const EDITOR_STYLES = {
   width: "100%",
@@ -32,29 +36,61 @@ interface FullSetupEditorProps {
   initialValue?: YooptaContentValue;
   containerBoxRef?: React.RefObject<HTMLDivElement>;
   onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
+  user: AuthMeResponse;
+  roomId: string;
+  type: "notes" | "assignments";
 }
 
 const FullSetupEditor = ({
   initialValue,
   containerBoxRef: externalRef,
   onChange,
+  user,
+  roomId,
+  type,
 }: FullSetupEditorProps) => {
   const internalRef = useRef<HTMLDivElement>(null);
   const containerBoxRef = externalRef ?? internalRef;
+  const currentHostname = new URL(window.location.href).hostname;
+  const targetPath =
+    type === "notes"
+      ? getNotesServiceNoteWebSocketUrl(roomId)
+      : getAssignmentsServiceAssignmentWebSocketUrl(roomId);
+  const url = `ws://${currentHostname}` + targetPath;
 
   const editor = useMemo(() => {
-    return withEmoji(
-      withMentions(
-        createYooptaEditor({
-          plugins: applyTheme(YOOPTA_PLUGINS) as unknown as YooptaPlugin<
-            Record<string, SlateElement>,
-            unknown
-          >[],
-          marks: YOOPTA_MARKS,
-        }),
+    return withCollaboration(
+      withEmoji(
+        withMentions(
+          createYooptaEditor({
+            plugins: applyTheme(YOOPTA_PLUGINS) as unknown as YooptaPlugin<
+              Record<string, SlateElement>,
+              unknown
+            >[],
+            marks: YOOPTA_MARKS,
+          }),
+        ),
       ),
+      {
+        url: url,
+        roomId: roomId,
+        user: {
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar_url,
+          color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+        },
+      },
     );
-  }, []);
+  }, [user.avatar_url, user.id, user.name, roomId, url]);
+
+  useEffect(() => {
+    editor.collaboration.connect();
+
+    return () => {
+      editor.collaboration.disconnect();
+    };
+  }, [editor.collaboration]);
 
   useEffect(() => {
     const data = initialValue;
@@ -85,6 +121,7 @@ const FullSetupEditor = ({
           placeholder="Type / to open menu, or start typing..."
           onChange={onChange}
         >
+          <RemoteCursors />
           <YooptaToolbar />
           <YooptaFloatingBlockActions />
           <YooptaSlashCommandMenu />

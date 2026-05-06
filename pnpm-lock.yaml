@@ -53,6 +53,9 @@ importers:
       '@yoopta/code':
         specifier: ^6.0.3
         version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/collaboration':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@yoopta/divider':
         specifier: ^6.0.3
         version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)

@@ -32,6 +32,7 @@
     "@yoopta/callout": "^6.0.3",
     "@yoopta/carousel": "^6.0.3",
     "@yoopta/code": "^6.0.3",
+    "@yoopta/collaboration": "^6.0.3",
     "@yoopta/divider": "^6.0.3",
     "@yoopta/editor": "^6.0.3",
     "@yoopta/embed": "^6.0.3",
