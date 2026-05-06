@@ -61,7 +61,7 @@ func loadAuthProvider(config Config) *oauth2.Config {
 		ClientID:     config.GoogleClientID,
 		ClientSecret: config.GoogleClientSecret,
 		Endpoint:     google.Endpoint,
-		RedirectURL:  config.Domain + "/api/auth/oauth/callback/google",
+		RedirectURL:  config.Domain + "/api/auth/google/callback",
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email",

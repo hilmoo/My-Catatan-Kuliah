@@ -6,6 +6,8 @@ import (
 	msession "backend/internal/transport/middleware/session"
 	"backend/internal/utils/uuidx"
 	"context"
+	"net/http/httputil"
+	"net/url"
 
 	"github.com/ory/herodot"
 )
@@ -234,4 +236,19 @@ func updateNoteService(ctx context.Context, args updateNoteServiceParams) (*mode
 		Title:     note.Title,
 		UpdatedAt: &note.UpdatedAt,
 	}, nil
+}
+
+type proxyHocuspocusServiceParams struct {
+	hocuspocusUrl *url.URL
+	notesId        string
+}
+func proxyHocuspocusService(args proxyHocuspocusServiceParams) (*httputil.ReverseProxy, *herodot.DefaultError) {
+	proxy := &httputil.ReverseProxy{
+		Rewrite: func(pr *httputil.ProxyRequest) {
+			pr.SetURL(args.hocuspocusUrl)
+			pr.Out.URL.Path = "/notes/" + args.notesId
+		},
+	}
+
+	return proxy, nil
 }

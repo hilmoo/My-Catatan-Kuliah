@@ -20,7 +20,7 @@ interface AssignmentsService {
         request: Assignments.CreateRequest,
     ): Assignments.CreateResponse | CommonError.CreateCommonErrorAuth;
 
-    @route("/{courseId}")
+    @route("/l/{courseId}")
     @doc("List all assignments accessible to the authenticated user.")
     @get
     listAssignments(
@@ -59,4 +59,13 @@ interface AssignmentsService {
         @body
         request: Assignments.UpdateRequest,
     ): Assignments.UpdateResponse | CommonError.UpdateCommonErrorAuth;
+
+    @route("/ws/{assignmentId}")
+    @doc("Establish a WebSocket connection for real-time updates on a specific assignment.")
+    @head
+    assignmentWebSocket(
+        @doc("The unique identifier of the assignment for WebSocket connection")
+        @path
+        assignmentId: string,
+    ): void;
 }

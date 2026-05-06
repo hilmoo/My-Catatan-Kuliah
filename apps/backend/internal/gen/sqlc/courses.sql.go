@@ -136,36 +136,28 @@ func (q *Queries) GetCourseByIidAndUser(ctx context.Context, arg GetCourseByIidA
 
 const listCoursesByUserId = `-- name: ListCoursesByUserId :many
 SELECT 
-courses.id, courses.iid, courses.workspace_id, courses.title, courses.instructor, courses.credits, courses.created_by, courses.created_at, courses.updated_at,
-workspaces.iid AS workspace_iid
+courses.id, courses.iid, courses.workspace_id, courses.title, courses.instructor, courses.credits, courses.created_by, courses.created_at, courses.updated_at
 FROM courses
 JOIN workspaces ON courses.workspace_id = workspaces.id
 WHERE courses.created_by = $1
+AND workspaces.iid = $2
 ORDER BY courses.created_at DESC
 `
 
-type ListCoursesByUserIdRow struct {
-	ID           int32
-	Iid          uuid.UUID
-	WorkspaceID  int32
-	Title        string
-	Instructor   string
-	Credits      int32
+type ListCoursesByUserIdParams struct {
 	CreatedBy    int32
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
 	WorkspaceIid uuid.UUID
 }
 
-func (q *Queries) ListCoursesByUserId(ctx context.Context, createdBy int32) ([]ListCoursesByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, listCoursesByUserId, createdBy)
+func (q *Queries) ListCoursesByUserId(ctx context.Context, arg ListCoursesByUserIdParams) ([]Course, error) {
+	rows, err := q.db.Query(ctx, listCoursesByUserId, arg.CreatedBy, arg.WorkspaceIid)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListCoursesByUserIdRow
+	var items []Course
 	for rows.Next() {
-		var i ListCoursesByUserIdRow
+		var i Course
 		if err := rows.Scan(
 			&i.ID,
 			&i.Iid,
@@ -176,7 +168,6 @@ func (q *Queries) ListCoursesByUserId(ctx context.Context, createdBy int32) ([]L
 			&i.CreatedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.WorkspaceIid,
 		); err != nil {
 			return nil, err
 		}

@@ -26,7 +26,18 @@ model Response {
 
 model ListResponse is Array<Response>;
 
-model CreateRequest is Create<Response>;
+model CreateRequest {
+    workspace_id: string;
+
+    @doc("The title of the course")
+    title: string;
+
+    @doc("The instructor of the course")
+    instructor: string;
+
+    @doc("The number of credits for the course")
+    credits?: integer;
+}
 
 model CreateResponse extends Response {
     @statusCode

@@ -9,50 +9,244 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as LayoutWorkspaceIdRouteImport } from './routes/_layout.$workspaceId'
+import { Route as LayoutCCourseIdRouteImport } from './routes/_layout.c.$courseId'
+import { Route as LayoutCCourseIdIndexRouteImport } from './routes/_layout.c.$courseId/index'
+import { Route as LayoutCCourseIdARouteImport } from './routes/_layout.c.$courseId/a'
+import { Route as LayoutCCourseIdNNotesIdRouteImport } from './routes/_layout.c.$courseId/n.$notesId'
+import { Route as LayoutCCourseIdAAssignmentIdRouteImport } from './routes/_layout.c.$courseId/a.$assignmentId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutWorkspaceIdRoute = LayoutWorkspaceIdRouteImport.update({
+  id: '/$workspaceId',
+  path: '/$workspaceId',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCCourseIdRoute = LayoutCCourseIdRouteImport.update({
+  id: '/c/$courseId',
+  path: '/c/$courseId',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCCourseIdIndexRoute = LayoutCCourseIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutCCourseIdRoute,
+} as any)
+const LayoutCCourseIdARoute = LayoutCCourseIdARouteImport.update({
+  id: '/a',
+  path: '/a',
+  getParentRoute: () => LayoutCCourseIdRoute,
+} as any)
+const LayoutCCourseIdNNotesIdRoute = LayoutCCourseIdNNotesIdRouteImport.update({
+  id: '/n/$notesId',
+  path: '/n/$notesId',
+  getParentRoute: () => LayoutCCourseIdRoute,
+} as any)
+const LayoutCCourseIdAAssignmentIdRoute =
+  LayoutCCourseIdAAssignmentIdRouteImport.update({
+    id: '/$assignmentId',
+    path: '/$assignmentId',
+    getParentRoute: () => LayoutCCourseIdARoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof LayoutIndexRoute
+  '/login': typeof LoginRoute
+  '/$workspaceId': typeof LayoutWorkspaceIdRoute
+  '/c/$courseId': typeof LayoutCCourseIdRouteWithChildren
+  '/c/$courseId/a': typeof LayoutCCourseIdARouteWithChildren
+  '/c/$courseId/': typeof LayoutCCourseIdIndexRoute
+  '/c/$courseId/a/$assignmentId': typeof LayoutCCourseIdAAssignmentIdRoute
+  '/c/$courseId/n/$notesId': typeof LayoutCCourseIdNNotesIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/$workspaceId': typeof LayoutWorkspaceIdRoute
+  '/': typeof LayoutIndexRoute
+  '/c/$courseId/a': typeof LayoutCCourseIdARouteWithChildren
+  '/c/$courseId': typeof LayoutCCourseIdIndexRoute
+  '/c/$courseId/a/$assignmentId': typeof LayoutCCourseIdAAssignmentIdRoute
+  '/c/$courseId/n/$notesId': typeof LayoutCCourseIdNNotesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_layout/$workspaceId': typeof LayoutWorkspaceIdRoute
+  '/_layout/': typeof LayoutIndexRoute
+  '/_layout/c/$courseId': typeof LayoutCCourseIdRouteWithChildren
+  '/_layout/c/$courseId/a': typeof LayoutCCourseIdARouteWithChildren
+  '/_layout/c/$courseId/': typeof LayoutCCourseIdIndexRoute
+  '/_layout/c/$courseId/a/$assignmentId': typeof LayoutCCourseIdAAssignmentIdRoute
+  '/_layout/c/$courseId/n/$notesId': typeof LayoutCCourseIdNNotesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/$workspaceId'
+    | '/c/$courseId'
+    | '/c/$courseId/a'
+    | '/c/$courseId/'
+    | '/c/$courseId/a/$assignmentId'
+    | '/c/$courseId/n/$notesId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/login'
+    | '/$workspaceId'
+    | '/'
+    | '/c/$courseId/a'
+    | '/c/$courseId'
+    | '/c/$courseId/a/$assignmentId'
+    | '/c/$courseId/n/$notesId'
+  id:
+    | '__root__'
+    | '/_layout'
+    | '/login'
+    | '/_layout/$workspaceId'
+    | '/_layout/'
+    | '/_layout/c/$courseId'
+    | '/_layout/c/$courseId/a'
+    | '/_layout/c/$courseId/'
+    | '/_layout/c/$courseId/a/$assignmentId'
+    | '/_layout/c/$courseId/n/$notesId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$workspaceId': {
+      id: '/_layout/$workspaceId'
+      path: '/$workspaceId'
+      fullPath: '/$workspaceId'
+      preLoaderRoute: typeof LayoutWorkspaceIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/c/$courseId': {
+      id: '/_layout/c/$courseId'
+      path: '/c/$courseId'
+      fullPath: '/c/$courseId'
+      preLoaderRoute: typeof LayoutCCourseIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/c/$courseId/': {
+      id: '/_layout/c/$courseId/'
+      path: '/'
+      fullPath: '/c/$courseId/'
+      preLoaderRoute: typeof LayoutCCourseIdIndexRouteImport
+      parentRoute: typeof LayoutCCourseIdRoute
+    }
+    '/_layout/c/$courseId/a': {
+      id: '/_layout/c/$courseId/a'
+      path: '/a'
+      fullPath: '/c/$courseId/a'
+      preLoaderRoute: typeof LayoutCCourseIdARouteImport
+      parentRoute: typeof LayoutCCourseIdRoute
+    }
+    '/_layout/c/$courseId/n/$notesId': {
+      id: '/_layout/c/$courseId/n/$notesId'
+      path: '/n/$notesId'
+      fullPath: '/c/$courseId/n/$notesId'
+      preLoaderRoute: typeof LayoutCCourseIdNNotesIdRouteImport
+      parentRoute: typeof LayoutCCourseIdRoute
+    }
+    '/_layout/c/$courseId/a/$assignmentId': {
+      id: '/_layout/c/$courseId/a/$assignmentId'
+      path: '/$assignmentId'
+      fullPath: '/c/$courseId/a/$assignmentId'
+      preLoaderRoute: typeof LayoutCCourseIdAAssignmentIdRouteImport
+      parentRoute: typeof LayoutCCourseIdARoute
     }
   }
 }
 
+interface LayoutCCourseIdARouteChildren {
+  LayoutCCourseIdAAssignmentIdRoute: typeof LayoutCCourseIdAAssignmentIdRoute
+}
+
+const LayoutCCourseIdARouteChildren: LayoutCCourseIdARouteChildren = {
+  LayoutCCourseIdAAssignmentIdRoute: LayoutCCourseIdAAssignmentIdRoute,
+}
+
+const LayoutCCourseIdARouteWithChildren =
+  LayoutCCourseIdARoute._addFileChildren(LayoutCCourseIdARouteChildren)
+
+interface LayoutCCourseIdRouteChildren {
+  LayoutCCourseIdARoute: typeof LayoutCCourseIdARouteWithChildren
+  LayoutCCourseIdIndexRoute: typeof LayoutCCourseIdIndexRoute
+  LayoutCCourseIdNNotesIdRoute: typeof LayoutCCourseIdNNotesIdRoute
+}
+
+const LayoutCCourseIdRouteChildren: LayoutCCourseIdRouteChildren = {
+  LayoutCCourseIdARoute: LayoutCCourseIdARouteWithChildren,
+  LayoutCCourseIdIndexRoute: LayoutCCourseIdIndexRoute,
+  LayoutCCourseIdNNotesIdRoute: LayoutCCourseIdNNotesIdRoute,
+}
+
+const LayoutCCourseIdRouteWithChildren = LayoutCCourseIdRoute._addFileChildren(
+  LayoutCCourseIdRouteChildren,
+)
+
+interface LayoutRouteChildren {
+  LayoutWorkspaceIdRoute: typeof LayoutWorkspaceIdRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutCCourseIdRoute: typeof LayoutCCourseIdRouteWithChildren
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutWorkspaceIdRoute: LayoutWorkspaceIdRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutCCourseIdRoute: LayoutCCourseIdRouteWithChildren,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

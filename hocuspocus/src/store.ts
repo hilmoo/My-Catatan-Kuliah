@@ -1,60 +1,112 @@
-import { Database } from "@hocuspocus/extension-database";
-import { TiptapTransformer } from "@hocuspocus/transformer";
-import { renderToMarkdown } from "@tiptap/static-renderer";
-import StarterKit from "@tiptap/starter-kit";
+import { createYooptaEditor, type SlateElement, YooptaPlugin } from "@yoopta/editor";
+import { markdown } from "@yoopta/exports";
+import * as Y from "yjs";
 import { create, toBinary } from "@bufbuild/protobuf";
-import { NewContentSchema } from "proto";
-
-import type { PostgresService } from "./services/postgres.js";
-import type { NatsService } from "./services/nats.js";
+import { NewContentSchema, EntityType } from "proto";
 import bs58 from "bs58";
 
-const fetchQuery = `SELECT content_blob FROM "pages_content" WHERE page_id = $1`;
-const updateQuery = `UPDATE "pages_content" SET content_blob = $1, content_markdown = $2 WHERE page_id = $3`;
-const getPageIdQuery = `SELECT id FROM "pages" WHERE iid = $1`;
+import { YDocAsYooptaValue } from "./yoopta/toYoopta.js";
+import { YOOPTA_PLUGINS } from "./yoopta/plugins.js";
+import { YOOPTA_MARKS } from "./yoopta/marks.js";
+import type { PostgresService } from "./services/postgres.js";
+import type { NatsService } from "./services/nats.js";
 
-export class CourseNotesStore extends Database {
+const exportEditor = createYooptaEditor({
+  plugins: YOOPTA_PLUGINS as unknown as YooptaPlugin<
+    Record<string, SlateElement>,
+    unknown
+  >[],
+  marks: YOOPTA_MARKS,
+});
+
+export class ContentStore {
   constructor(
     private readonly pgService: PostgresService,
     private readonly natsService: NatsService,
-  ) {
-    super({});
+    private readonly entityType: "assignment" | "note"
+  ) {}
 
-    this.configuration = {
-      fetch: async ({ documentName }) => {
-        const documentIid = bs58.decode(documentName);
-        const pageIdResult = await this.pgService.pool.query<{ id: number }>(getPageIdQuery, [
-          documentIid,
-        ]);
-        const pageId = pageIdResult?.rows[0]?.id;
-        if (!pageId) return null;
-        const result = await this.pgService.pool.query<{ content_blob: Buffer }>(fetchQuery, [
-          pageId,
-        ]);
-        return result?.rows[0]?.content_blob ?? null;
-      },
-      store: async ({ documentName, state, document }) => {
-        const documentIid = bs58.decode(documentName);
-        const pageIdResult = await this.pgService.pool.query<{ id: number }>(getPageIdQuery, [
-          documentIid,
-        ]);
-        const pageId = pageIdResult?.rows[0]?.id;
-
-        const json = TiptapTransformer.fromYdoc(document, "default");
-
-        const markdown = renderToMarkdown({
-          extensions: [StarterKit],
-          content: json,
-        });
-
-        await this.pgService.pool.query(updateQuery, [state, markdown, pageId]);
-
-        const message = create(NewContentSchema, { id: pageId });
-        const subject = `embedder.v1.newcontent.${pageId}`;
-
-        if (!this.natsService.js) throw new Error("NATS JetStream client not initialized");
-        await this.natsService.js.publish(subject, toBinary(NewContentSchema, message));
-      },
+  private getQueries() {
+    const tableName = this.entityType === "assignment" ? "assignments" : "notes";
+    return {
+      fetchQuery: `SELECT contentb FROM "${tableName}" WHERE id = $1`,
+      updateQuery: `UPDATE "${tableName}" SET contentb = $1, content = $2 WHERE id = $3`,
+      getEntityIdQuery: `SELECT id FROM "${tableName}" WHERE iid = $1`,
     };
+  }
+
+  async fetch(documentName: string): Promise<Uint8Array | null> {
+    const { fetchQuery, getEntityIdQuery } = this.getQueries();
+    try {
+      // documentName is expected to be a base58 encoded UUIDv7
+      const documentIid = bs58.decode(documentName);
+      console.log(`[${this.entityType}] Fetching document with iid: ${documentName}`);
+      const entityIdResult = await this.pgService.pool.query<{ id: number }>(
+        getEntityIdQuery,
+        [documentIid]
+      );
+      const entityId = entityIdResult?.rows[0]?.id;
+      if (!entityId) return null;
+      const result = await this.pgService.pool.query<{ contentb: Buffer }>(
+        fetchQuery,
+        [entityId]
+      );
+      return result?.rows[0]?.contentb ?? null;
+    } catch (error) {
+      console.error(
+        `[${this.entityType}] Error fetching document ${documentName}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  async store(documentName: string, state: Uint8Array, document: Y.Doc): Promise<void> {
+    const { updateQuery, getEntityIdQuery } = this.getQueries();
+    try {
+      const documentIid = bs58.decode(documentName);
+      const entityIdResult = await this.pgService.pool.query<{ id: number }>(
+        getEntityIdQuery,
+        [documentIid]
+      );
+      const entityId = entityIdResult?.rows[0]?.id;
+      if (!entityId) {
+        console.error(
+          `[${this.entityType}] Entity not found for iid: ${documentName}`
+        );
+        return;
+      }
+
+      const yooptaValue = YDocAsYooptaValue(document);
+      const md = markdown.serialize(exportEditor, yooptaValue);
+
+      await this.pgService.pool.query(updateQuery, [
+        Buffer.from(state),
+        md,
+        entityId,
+      ]);
+
+      const protoEntityType =
+        this.entityType === "assignment"
+          ? EntityType.ASSIGNMENT
+          : EntityType.NOTE;
+      const message = create(NewContentSchema, {
+        id: entityId,
+        entityType: protoEntityType,
+      });
+      const subject = `embedder.v1.newcontent.${this.entityType}.${entityId}`;
+
+      if (!this.natsService.js)
+        throw new Error("NATS JetStream client not initialized");
+      await this.natsService.js.publish(
+        subject,
+        toBinary(NewContentSchema, message)
+      );
+    } catch (error) {
+      console.error(
+        `[${this.entityType}] Error storing document ${documentName}:`,
+        error
+      );
+    }
   }
 }

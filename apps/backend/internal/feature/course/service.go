@@ -12,7 +12,8 @@ import (
 )
 
 type listCoursesServiceParams struct {
-	queries *db.Queries
+	queries     *db.Queries
+	workspaceId string
 }
 
 func listCoursesService(ctx context.Context, args listCoursesServiceParams) (models.CoursesListResponse, *herodot.DefaultError) {
@@ -25,8 +26,15 @@ func listCoursesService(ctx context.Context, args listCoursesServiceParams) (mod
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to encode user ID").WithDebug(err.Error())
 	}
+	workspaceId, err := uuidx.FromBase58(args.workspaceId)
+	if err != nil {
+		return nil, herodot.ErrBadRequest.WithReason("invalid workspace ID").WithDebug(err.Error())
+	}
 
-	courses, err := args.queries.ListCoursesByUserId(ctx, user.ID)
+	courses, err := args.queries.ListCoursesByUserId(ctx, db.ListCoursesByUserIdParams{
+		CreatedBy:    user.ID,
+		WorkspaceIid: workspaceId,
+	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to list courses").WithDebug(err.Error())
 	}
@@ -37,10 +45,6 @@ func listCoursesService(ctx context.Context, args listCoursesServiceParams) (mod
 		if err != nil {
 			return nil, herodot.ErrInternalServerError.WithReason("failed to encode course id").WithDebug(err.Error())
 		}
-		workspaceId, err := uuidx.ToBase58(w.WorkspaceIid)
-		if err != nil {
-			return nil, herodot.ErrInternalServerError.WithReason("failed to encode workspace id").WithDebug(err.Error())
-		}
 		courseModels = append(courseModels, models.CoursesResponse{
 			CreatedAt:   &w.CreatedAt,
 			CreatedBy:   typex.StringPtr(userIid),
@@ -49,7 +53,7 @@ func listCoursesService(ctx context.Context, args listCoursesServiceParams) (mod
 			Instructor:  w.Instructor,
 			Title:       w.Title,
 			UpdatedAt:   &w.UpdatedAt,
-			WorkspaceId: workspaceId,
+			WorkspaceId: args.workspaceId,
 		})
 	}
 
@@ -81,12 +85,16 @@ func createCourseService(ctx context.Context, args createCourseServiceParams) (*
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to get course").WithDebug(err.Error())
 	}
+	var credits int32 = 0
+	if args.body.Credits != nil {
+		credits = int32(*args.body.Credits)
+	}
 
 	course, err := args.queries.CreateCourse(ctx, db.CreateCourseParams{
 		WorkspaceID: workspace.ID,
 		Title:       args.body.Title,
 		Instructor:  args.body.Instructor,
-		Credits:     int32(args.body.Credits),
+		Credits:     credits,
 		CreatedBy:   user.ID,
 	})
 	if err != nil {
@@ -101,7 +109,7 @@ func createCourseService(ctx context.Context, args createCourseServiceParams) (*
 	return &models.CoursesCreateResponse{
 		CreatedAt:  &course.CreatedAt,
 		CreatedBy:  typex.StringPtr(userIid),
-		Credits:    int(course.Credits),
+		Credits:    int(credits),
 		Id:         &id,
 		Instructor: course.Instructor,
 		Title:      course.Title,

@@ -57,10 +57,11 @@ class EmbedderService:
 
     async def prepare_sync_data(
         self,
-        page_id: int,
+        workspace_id: int,
+        entity_type: str,
+        entity_id: int,
         parsed_chunks: list[dict],
         existing_hashes: set[str],
-        workspace_id: int,
     ) -> tuple[set[str], list[tuple]]:
         """Determines the diff and generates embeddings for new chunks."""
         new_chunk_map = {chunk["hash"]: chunk for chunk in parsed_chunks}
@@ -78,16 +79,19 @@ class EmbedderService:
             )
             embeddings = embeddings.tolist()
 
+            # Map hashes to their corresponding embeddings while preserving other data
+            # workspace_id, entity_type, entity_id, chunk_index, chunk_hash, content, embedding
             for hash_val, embedding in zip(hashes_to_add, embeddings, strict=False):
                 chunk_data = new_chunk_map[hash_val]
                 chunks_to_insert.append(
                     (
-                        page_id,
+                        workspace_id,
+                        entity_type,
+                        entity_id,
                         chunk_data["chunk_index"],
+                        hash_val,
                         chunk_data["text"],
                         embedding,
-                        hash_val,
-                        workspace_id,
                     )
                 )
 

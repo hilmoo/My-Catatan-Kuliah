@@ -43,3 +43,12 @@ WHERE a."course_id" = c."id"
 RETURNING 
     a.*, 
     c.iid AS course_iid;
+
+-- name: ValidateAssignmentAccess :one
+SELECT EXISTS (
+    SELECT 1
+    FROM assignments
+    JOIN courses ON assignments.course_id = courses.id
+    WHERE assignments.iid = $1
+        AND assignments.created_by = $2
+);

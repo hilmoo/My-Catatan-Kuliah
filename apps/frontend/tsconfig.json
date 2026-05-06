@@ -1,21 +1,21 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "eslint.config.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "src/components/editor/editor.tss"],
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "jsx": "react-jsx",
     "module": "ESNext",
     "paths": {
-      "~/*": ["./src/*"]
+      "@/*": ["./src/*"]
     },
-
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
+
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "ignoreDeprecations": "5.0",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
+
     /* Linting */
     "skipLibCheck": true,
     "strict": true,

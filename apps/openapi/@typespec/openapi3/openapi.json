@@ -95,6 +95,93 @@
         }
       }
     },
+    "/api/assignments/l/{courseId}": {
+      "get": {
+        "operationId": "AssignmentsService_listAssignments",
+        "description": "List all assignments accessible to the authenticated user.",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the course to filter assignments",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Assignments.ListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
+    "/api/assignments/ws/{assignmentId}": {
+      "head": {
+        "operationId": "AssignmentsService_assignmentWebSocket",
+        "description": "Establish a WebSocket connection for real-time updates on a specific assignment.",
+        "parameters": [
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the assignment for WebSocket connection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Assignments"
+        ]
+      }
+    },
     "/api/assignments/{assignmentId}": {
       "get": {
         "operationId": "AssignmentsService_getAssignment",
@@ -291,68 +378,6 @@
         }
       }
     },
-    "/api/assignments/{courseId}": {
-      "get": {
-        "operationId": "AssignmentsService_listAssignments",
-        "description": "List all assignments accessible to the authenticated user.",
-        "parameters": [
-          {
-            "name": "courseId",
-            "in": "path",
-            "required": true,
-            "description": "The unique identifier of the course to filter assignments",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Assignments.ListResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Access is unauthorized.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonError.Error401"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The server cannot find the requested resource.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonError.Error404"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommonError.Error500"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Assignments"
-        ]
-      }
-    },
     "/api/auth/google": {
       "get": {
         "operationId": "Auth_googleRedirect",
@@ -542,11 +567,23 @@
           },
           "description": "The details of the course to create"
         }
-      },
+      }
+    },
+    "/api/courses/l/{workspaceId}": {
       "get": {
         "operationId": "CoursesService_listCourses",
         "description": "List all courses accessible to the authenticated user.",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the workspace to filter courses",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "The request has succeeded.",
@@ -1031,7 +1068,7 @@
         }
       }
     },
-    "/api/notes/{courseId}": {
+    "/api/notes/l/{courseId}": {
       "get": {
         "operationId": "NotesService_listNotes",
         "description": "List all notes accessible to the authenticated user.",
@@ -1086,6 +1123,31 @@
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/notes/ws/{noteId}": {
+      "head": {
+        "operationId": "NotesService_noteWebSocket",
+        "description": "Establish a WebSocket connection for real-time updates on a specific note.",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the note for WebSocket connection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
           }
         },
         "tags": [
@@ -1904,21 +1966,23 @@
         "required": [
           "workspace_id",
           "title",
-          "instructor",
-          "credits"
+          "instructor"
         ],
         "properties": {
           "workspace_id": {
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "description": "The title of the course"
           },
           "instructor": {
-            "type": "string"
+            "type": "string",
+            "description": "The instructor of the course"
           },
           "credits": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The number of credits for the course"
           }
         }
       },

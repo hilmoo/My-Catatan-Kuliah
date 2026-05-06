@@ -2,31 +2,30 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
-import "./styles.css";
 
-const queryClient = new QueryClient();
-
-// Set up a Router instance
-const router = createRouter({
-  routeTree,
-  context: {
-    queryClient,
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+    },
   },
-  defaultPreload: "intent",
-  // Since we're using React Query, we don't want loader calls to ever be stale
-  // This will ensure that the loader is always called when the route is preloaded or visited
-  defaultPreloadStaleTime: 0,
-  scrollRestoration: true,
 });
 
-// Register things for typesafety
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+  scrollRestoration: true,
+  context: { queryClient },
+});
+
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+// eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
 const rootElement = document.getElementById("app")!;
 
 if (!rootElement.innerHTML) {

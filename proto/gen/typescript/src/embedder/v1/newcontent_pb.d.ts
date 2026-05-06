@@ -2,7 +2,7 @@
 // @generated from file embedder/v1/newcontent.proto (package embedder.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
@@ -18,6 +18,11 @@ export declare type NewContent = Message<"embedder.v1.NewContent"> & {
    * @generated from field: int32 id = 1;
    */
   id: number;
+
+  /**
+   * @generated from field: embedder.v1.EntityType entity_type = 2;
+   */
+  entityType: EntityType;
 };
 
 /**
@@ -25,4 +30,29 @@ export declare type NewContent = Message<"embedder.v1.NewContent"> & {
  * Use `create(NewContentSchema)` to create a new message.
  */
 export declare const NewContentSchema: GenMessage<NewContent>;
+
+/**
+ * @generated from enum embedder.v1.EntityType
+ */
+export enum EntityType {
+  /**
+   * @generated from enum value: ENTITY_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ENTITY_TYPE_ASSIGNMENT = 1;
+   */
+  ASSIGNMENT = 1,
+
+  /**
+   * @generated from enum value: ENTITY_TYPE_NOTE = 2;
+   */
+  NOTE = 2,
+}
+
+/**
+ * Describes the enum embedder.v1.EntityType.
+ */
+export declare const EntityTypeSchema: GenEnum<EntityType>;
 

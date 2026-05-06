@@ -7,12 +7,14 @@ import (
 	"backend/internal/utils/typex"
 	"backend/internal/utils/uuidx"
 	"context"
+	"net/http/httputil"
+	"net/url"
 
 	"github.com/ory/herodot"
 )
 
 type listAssignmentsServiceParams struct {
-	queries *db.Queries
+	queries   *db.Queries
 	courseIid string
 }
 
@@ -31,7 +33,7 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 	}
 
 	assignments, err := args.queries.ListAssignmentsByUserId(ctx, db.ListAssignmentsByUserIdParams{
-		CreatedBy :   user.ID,
+		CreatedBy: user.ID,
 		CourseIid: courseIid,
 	})
 	if err != nil {
@@ -263,4 +265,15 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 		Title:     assignment.Title,
 		UpdatedAt: &assignment.UpdatedAt,
 	}, nil
+}
+
+func proxyHocuspocusService(hocuspocusUrl *url.URL) (*httputil.ReverseProxy, *herodot.DefaultError) {
+	proxy := &httputil.ReverseProxy{
+		Rewrite: func(pr *httputil.ProxyRequest) {
+			pr.SetURL(hocuspocusUrl)
+			pr.Out.URL.Path = "/assignments"
+		},
+	}
+
+	return proxy, nil
 }

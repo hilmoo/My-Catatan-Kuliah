@@ -4,6 +4,13 @@ package embedder.v1;
 
 option go_package = "proto/embedder/v1;embedderv1";
 
+enum EntityType {
+  ENTITY_TYPE_UNSPECIFIED = 0;
+  ENTITY_TYPE_ASSIGNMENT = 1;
+  ENTITY_TYPE_NOTE = 2;
+}
+
 message NewContent {
   int32 id = 1;
+  EntityType entity_type = 2;
 }

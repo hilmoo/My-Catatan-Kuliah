@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1c\x65mbedder/v1/newcontent.proto\x12\x0b\x65mbedder.v1\"\x1c\n\nNewContent\x12\x0e\n\x02id\x18\x01 \x01(\x05R\x02idB\x1eZ\x1cproto/embedder/v1;embedderv1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1c\x65mbedder/v1/newcontent.proto\x12\x0b\x65mbedder.v1\"V\n\nNewContent\x12\x0e\n\x02id\x18\x01 \x01(\x05R\x02id\x12\x38\n\x0b\x65ntity_type\x18\x02 \x01(\x0e\x32\x17.embedder.v1.EntityTypeR\nentityType*[\n\nEntityType\x12\x1b\n\x17\x45NTITY_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n\x16\x45NTITY_TYPE_ASSIGNMENT\x10\x01\x12\x14\n\x10\x45NTITY_TYPE_NOTE\x10\x02\x42\x1eZ\x1cproto/embedder/v1;embedderv1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,6 +32,8 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'embedder.v1.newcontent_pb2'
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'Z\034proto/embedder/v1;embedderv1'
+  _globals['_ENTITYTYPE']._serialized_start=133
+  _globals['_ENTITYTYPE']._serialized_end=224
   _globals['_NEWCONTENT']._serialized_start=45
-  _globals['_NEWCONTENT']._serialized_end=73
+  _globals['_NEWCONTENT']._serialized_end=131
 # @@protoc_insertion_point(module_scope)

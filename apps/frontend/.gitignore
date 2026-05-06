@@ -3,9 +3,11 @@ node_modules
 dist
 dist-ssr
 *.local
-
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-.tanstack/
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+__unconfig*
+todos.json

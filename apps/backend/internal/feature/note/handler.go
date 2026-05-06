@@ -5,27 +5,34 @@ import (
 	db "backend/internal/gen/sqlc"
 	errort "backend/internal/transport/error"
 	helpert "backend/internal/transport/helper"
+	msession "backend/internal/transport/middleware/session"
 	"backend/internal/transport/validation"
+	"backend/internal/utils/uuidx"
+	"net/url"
 
 	"github.com/labstack/echo/v5"
+	"github.com/ory/herodot"
 )
 
 type httpHandler struct {
-	validate *validation.Vld
-	queries  *db.Queries
+	validate      *validation.Vld
+	queries       *db.Queries
+	hocuspocusUrl *url.URL
 }
 
 func NewHttpHandler(args helpert.HttpHandlerParams) *httpHandler {
 	return &httpHandler{
-		validate: args.Validate,
-		queries:  args.Queries,
+		validate:      args.Validate,
+		queries:       args.Queries,
+		hocuspocusUrl: args.Config.HocuspocusUrlParsed,
 	}
 }
 
 func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/notes")
 
-	group.GET("/:courseIid", h.listnotes)
+	group.GET("/l/:courseIid", h.listnotes)
+	group.Any("/ws/:id", h.proxyHocuspocus)
 	group.POST("", h.createnote)
 	group.GET("/:id", h.getnoteDetails)
 	group.PATCH("/:id", h.updatenote)
@@ -108,4 +115,40 @@ func (h *httpHandler) updatenote(c *echo.Context) error {
 	}
 
 	return c.JSON(200, resp)
+}
+
+func (h *httpHandler) proxyHocuspocus(c *echo.Context) error {
+	pageId := c.Param("id")
+
+	targetId, err := uuidx.HttpFromBase58(pageId, "notes ID")
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	user, errs := msession.GetUserFromContext(c.Request().Context())
+	if errs != nil {
+		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(errs.Error()))
+	}
+
+	exist, errs := h.queries.ValidateNoteAccess(c.Request().Context(), db.ValidateNoteAccessParams{
+		Iid:       targetId,
+		CreatedBy: user.ID,
+	})
+	if errs != nil {
+		return errort.HttpError(c, herodot.ErrInternalServerError.WithReason("failed to validate page access").WithDebug(errs.Error()))
+	}
+	if !exist {
+		return errort.HttpError(c, herodot.ErrNotFound.WithReason("page not found"))
+	}
+
+	proxy, err := proxyHocuspocusService(proxyHocuspocusServiceParams{
+		hocuspocusUrl: h.hocuspocusUrl,
+		notesId:        pageId,
+	})
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	proxy.ServeHTTP(c.Response(), c.Request())
+	return nil
 }
