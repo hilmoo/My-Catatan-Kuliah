@@ -57,8 +57,7 @@ const FullSetupEditor = ({
   }, []);
 
   useEffect(() => {
-    const localStorageValue = localStorage.getItem("yoopta-full-setup-editor-value");
-    const data = initialValue ?? (localStorageValue ? JSON.parse(localStorageValue) : undefined);
+    const data = initialValue;
 
     if (data) {
       editor.withoutSavingHistory(() => {

@@ -1,4 +1,4 @@
-import { COMMAND_MENU_DEFAULT_ICONS_MAP } from "@/lib/icons";
+import { COMMAND_MENU_DEFAULT_ICONS_MAP } from "./icons";
 import { SlashCommandMenu } from "@yoopta/ui/slash-command-menu";
 
 export const YooptaSlashCommandMenu = () => (

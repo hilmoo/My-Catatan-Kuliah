@@ -268,11 +268,8 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4(@tiptap/core@3.22.4(@tiptap/pm@3.22.4))(@tiptap/pm@3.22.4)(y-prosemirror@1.3.7(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.7)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30)
       '@hono/node-server':
-        specifier: ^1.19.9
-        version: 1.19.11(hono@4.12.9)
-      '@hono/node-ws':
-        specifier: ^1.3.0
-        version: 1.3.0(@hono/node-server@1.19.11(hono@4.12.9))(hono@4.12.9)
+        specifier: ^2.0.1
+        version: 2.0.1(hono@4.12.9)
       '@tiptap/starter-kit':
         specifier: ^3.20.1
         version: 3.21.0
@@ -282,12 +279,96 @@ importers:
       '@types/pg':
         specifier: ^8.18.0
         version: 8.20.0
+      '@yoopta/accordion':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/blockquote':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/callout':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/carousel':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/code':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/collaboration':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/divider':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/editor':
+        specifier: ^6.0.3
+        version: 6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1)
+      '@yoopta/embed':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/emoji':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/exports':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/file':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/headings':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/image':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/link':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/lists':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/marks':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/math':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/mention':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/paragraph':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/steps':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/table':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/table-of-contents':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/tabs':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/themes-shadcn':
+        specifier: ^6.0.3
+        version: 6.0.3(1890723608bfd14014bde7cbce52c2c5)
+      '@yoopta/ui':
+        specifier: ^6.0.3
+        version: 6.0.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@yoopta/video':
+        specifier: ^6.0.3
+        version: 6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       bs58:
         specifier: ^6.0.0
         version: 6.0.0
       hono:
         specifier: ^4.12.3
         version: 4.12.9
+      lib0:
+        specifier: ^0.2.117
+        version: 0.2.117
       nats:
         specifier: ^2.29.3
         version: 2.29.3
@@ -297,10 +378,22 @@ importers:
       proto:
         specifier: workspace:^
         version: link:../proto/gen/typescript
+      ws:
+        specifier: ^8.20.0
+        version: 8.20.0
+      y-protocols:
+        specifier: ^1.0.7
+        version: 1.0.7(yjs@13.6.30)
+      yjs:
+        specifier: ^13.6.30
+        version: 13.6.30
     devDependencies:
       '@types/node':
         specifier: ^20.11.17
         version: 20.19.37
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -825,12 +918,11 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@hono/node-ws@1.3.0':
-    resolution: {integrity: sha512-ju25YbbvLuXdqBCmLZLqnNYu1nbHIQjoyUqA8ApZOeL1k4skuiTcw5SW77/5SUYo2Xi2NVBJoVlfQurnKEp03Q==}
-    engines: {node: '>=18.14.1'}
+  '@hono/node-server@2.0.1':
+    resolution: {integrity: sha512-jI9yMDyFpqBeSighf/zlXnQG/nl9AyBc6aAgy4XtxJMyt/CNyJpvPfzDD+bCc2zAOmhhqtF6TnmIaY+xV4mIrw==}
+    engines: {node: '>=20'}
     peerDependencies:
-      '@hono/node-server': ^1.19.2
-      hono: ^4.6.0
+      hono: ^4
 
   '@hookform/resolvers@5.2.2':
     resolution: {integrity: sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA==}
@@ -3054,6 +3146,9 @@ packages:
   '@types/validate-npm-package-name@4.0.2':
     resolution: {integrity: sha512-lrpDziQipxCEeK5kWxvljWYhUvOiB2A9izZd9B2AFarYAkqZshb4lPbRs7zKEic6eGtH8V/2qJW+dPp9OtF6bw==}
 
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
+
   '@typescript-eslint/eslint-plugin@8.59.1':
     resolution: {integrity: sha512-BOziFIfE+6osHO9FoJG4zjoHUcvI7fTNBSpdAwrNH0/TLvzjsk2oo8XSSOT2HhqUyhZPfHv4UOffoJ9oEEQ7Ag==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -3227,6 +3322,13 @@ packages:
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
 
+  '@yoopta/collaboration@6.0.3':
+    resolution: {integrity: sha512-UGIoUo4aUSLf5IMuyUuSb19lgS5EsFTTjg2s0rqvwzgm7Kj9Bvf5a/yDXY9oJCZaDNa1mzr6EYkqQ21KYSn8ew==}
+    peerDependencies:
+      '@yoopta/editor': 6.0.3
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+
   '@yoopta/divider@6.0.3':
     resolution: {integrity: sha512-f0smb14R5/p+efaccDPKwDJgb7Ys9yR2s8hGxvdiqYoHvXA8qggIoaPfTlq5SoPetBDJ9V0ERRfGwkADSeIiNw==}
     peerDependencies:
@@ -3252,6 +3354,13 @@ packages:
 
   '@yoopta/emoji@6.0.3':
     resolution: {integrity: sha512-oq9YfoTq2qrGyG5hph+Ev4O8lRSYAuGwX/TBhqwO3FE6HslymfQSdAnC2WpN/1qeFSUBWS1k1w8o/0/7lTfCKA==}
+    peerDependencies:
+      '@yoopta/editor': 6.0.3
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+
+  '@yoopta/exports@6.0.3':
+    resolution: {integrity: sha512-2r92I2IKIMr+1QnUssoDieyDLH4Oy9Ac17kJFz31EnmebiYzxdcLoaPzYjUIysQh9MH7fs75VAdMJxt0gSncpA==}
     peerDependencies:
       '@yoopta/editor': 6.0.3
       react: '>=18.2.0'
@@ -4872,6 +4981,11 @@ packages:
 
   markdown-it@14.1.1:
     resolution: {integrity: sha512-BuU2qnTti9YKgK5N+IeMubp14ZUKUUw7yeJbkjtosvHiP0AZ5c8IAgEMk79D0eC8F23r4Ac/q8cAIFdm2FtyoA==}
+    hasBin: true
+
+  marked@13.0.3:
+    resolution: {integrity: sha512-rqRix3/TWzE9rIoFGIn8JmsVfhiuC8VIQ8IdX5TfzmeBucdY05/0UlzKaw0eVtpcN/OdVFpBk7CjKGo9iHJ/zA==}
+    engines: {node: '>= 18'}
     hasBin: true
 
   math-intrinsics@1.1.0:
@@ -6978,14 +7092,9 @@ snapshots:
     dependencies:
       hono: 4.12.9
 
-  '@hono/node-ws@1.3.0(@hono/node-server@1.19.11(hono@4.12.9))(hono@4.12.9)':
+  '@hono/node-server@2.0.1(hono@4.12.9)':
     dependencies:
-      '@hono/node-server': 1.19.11(hono@4.12.9)
       hono: 4.12.9
-      ws: 8.20.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.75.0(react@19.2.4))':
     dependencies:
@@ -9143,6 +9252,10 @@ snapshots:
 
   '@types/validate-npm-package-name@4.0.2': {}
 
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 22.19.17
+
   '@typescript-eslint/eslint-plugin@8.59.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.2))(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.2)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
@@ -9325,6 +9438,15 @@ snapshots:
       react-dom: 19.2.4(react@19.2.4)
       shiki: 3.23.0
 
+  '@yoopta/collaboration@6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@yoopta/editor': 6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1)
+      lib0: 0.2.117
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+      y-protocols: 1.0.7(yjs@13.6.30)
+      yjs: 13.6.30
+
   '@yoopta/divider@6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@yoopta/editor': 6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1)
@@ -9353,6 +9475,13 @@ snapshots:
   '@yoopta/emoji@6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@yoopta/editor': 6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+
+  '@yoopta/exports@6.0.3(@yoopta/editor@6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@yoopta/editor': 6.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate-react@0.124.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(slate-dom@0.124.1(slate@0.124.1))(slate@0.124.1))(slate@0.124.1)
+      marked: 13.0.3
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
@@ -11163,6 +11292,8 @@ snapshots:
       mdurl: 2.0.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
+
+  marked@13.0.3: {}
 
   math-intrinsics@1.1.0: {}
 

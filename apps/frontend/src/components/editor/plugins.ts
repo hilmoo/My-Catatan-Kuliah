@@ -16,7 +16,6 @@ import File from "@yoopta/file";
 import Tabs from "@yoopta/tabs";
 import Steps from "@yoopta/steps";
 import Carousel from "@yoopta/carousel";
-import Mention from "@yoopta/mention";
 import { MathInline, MathBlock } from "@yoopta/math";
 import TableOfContents from "@yoopta/table-of-contents";
 
@@ -105,33 +104,6 @@ export const YOOPTA_PLUGINS = [
     injectElementsFromPlugins: [YImage],
   }),
   Tabs,
-  Mention.extend({
-    options: {
-      onSearch: async (query, trigger) => {
-        if (trigger.type === "page") {
-          const response = await fetch(`https://jsonplaceholder.typicode.com/posts?q=${query}`);
-          const data = await response.json();
-          return data.map((post: { id: string; title: string; body: string }) => ({
-            id: post.id,
-            name: post.title,
-            avatar: post.body,
-          }));
-        }
-
-        const response = await fetch(`https://jsonplaceholder.typicode.com/users?q=${query}`);
-        const data = await response.json();
-        return data.map((user: { id: string; name: string; avatar: string }) => ({
-          id: user.id,
-          name: user.name,
-          avatar: user.avatar,
-        }));
-      },
-      triggers: [
-        { char: "@", type: "user" },
-        { char: "#", type: "page" },
-      ],
-    },
-  }),
   MathInline,
   MathBlock,
 ];
