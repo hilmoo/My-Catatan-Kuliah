@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 
-version: '3'
+version: "3"
 
 tasks:
   default:
@@ -8,11 +8,17 @@ tasks:
     cmds:
       - uv run python -m app
 
+  check:
+    desc: check the codebase using ruff
+    cmds:
+      - task: lint
+      - task: format
+
   format:
     desc: format the codebase using black
     cmds:
       - uv run ruff format
-  
+
   lint:
     desc: lint the codebase using ruff
     cmds:

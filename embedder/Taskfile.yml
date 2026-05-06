@@ -8,6 +8,12 @@ tasks:
     cmds:
       - uv run python -m app
 
+  check:
+    desc: check the codebase using ruff
+    cmds:
+      - task: lint
+      - task: format
+
   format:
     desc: format the codebase using black
     cmds:
