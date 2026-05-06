@@ -19,13 +19,16 @@ class DatabaseRepository:
             record = await conn.fetchrow(query, entity_id)
             return record["workspace_id"] if record else None
 
-    async def get_content_markdown(self, entity_type: str, entity_id: int) -> str | None:
+    async def get_content_markdown(
+        self, entity_type: str, entity_id: int
+    ) -> str | None:
         """Fetch the markdown content for a given assignment or note."""
         table_name = "assignments" if entity_type == "assignment" else "notes"
         async with self.pool.acquire() as conn:
             # assignments and notes have 'content' column for markdown
             record = await conn.fetchrow(
-                f"SELECT content FROM {table_name} WHERE id = $1", entity_id  # noqa: S608
+                f"SELECT content FROM {table_name} WHERE id = $1",
+                entity_id,  # noqa: S608
             )
             return record["content"] if record else None
 

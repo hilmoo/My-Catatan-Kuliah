@@ -22,20 +22,33 @@ class ContentProcessor:
         elif content_msg.entity_type == EntityType.ENTITY_TYPE_NOTE:
             entity_type = "note"
         else:
-            logger.warning("Unspecified or unknown entity type for ID %s: %s", entity_id, content_msg.entity_type)
+            logger.warning(
+                "Unspecified or unknown entity type for ID %s: %s",
+                entity_id,
+                content_msg.entity_type,
+            )
             return
 
         markdown = await self.db.get_content_markdown(entity_type, entity_id)
         if markdown is None:
-            logger.warning("No markdown content found for %s_id: %s", entity_type, entity_id)
+            logger.warning(
+                "No markdown content found for %s_id: %s", entity_type, entity_id
+            )
             return
 
         workspace_id = await self.db.get_workspace_id(entity_type, entity_id)
         if workspace_id is None:
-            logger.warning("No workspace_id found for %s_id: %s", entity_type, entity_id)
+            logger.warning(
+                "No workspace_id found for %s_id: %s", entity_type, entity_id
+            )
             return
 
-        logger.info("Processing %s_id: %s in workspace: %s", entity_type, entity_id, workspace_id)
+        logger.info(
+            "Processing %s_id: %s in workspace: %s",
+            entity_type,
+            entity_id,
+            workspace_id,
+        )
 
         parsed_chunks = self.embedder.process_content(markdown)
 

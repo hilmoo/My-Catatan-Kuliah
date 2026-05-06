@@ -34,6 +34,20 @@ interface FullSetupEditorProps {
   type: "notes" | "assignments";
 }
 
+function stringToColor(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += value.toString(16).padStart(2, "0");
+  }
+  return color;
+}
+
 const FullSetupEditor = ({
   initialValue,
   containerBoxRef: externalRef,
@@ -44,10 +58,7 @@ const FullSetupEditor = ({
 }: FullSetupEditorProps) => {
   const internalRef = useRef<HTMLDivElement>(null);
   const containerBoxRef = externalRef ?? internalRef;
-  const targetPath =
-    type === "notes"
-      ? "/api/notes/ws"
-      : "/api/assignments/ws";
+  const targetPath = type === "notes" ? "/api/notes/ws" : "/api/assignments/ws";
   const url = `ws://${window.location.host}${targetPath}`;
 
   const editor = useMemo(() => {
@@ -70,7 +81,7 @@ const FullSetupEditor = ({
           id: user.id,
           name: user.name,
           avatar: user.avatar_url,
-          color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+          color: stringToColor(user.id),
         },
       },
     );

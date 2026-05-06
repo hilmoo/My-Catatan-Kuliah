@@ -19,9 +19,12 @@ import {
   GridIcon,
   TableOfContentsIcon,
   RadicalIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-export const COMMAND_MENU_DEFAULT_ICONS_MAP: Record<string, React.ComponentType<{ width?: number; height?: number }>> = {
+export const COMMAND_MENU_DEFAULT_ICONS_MAP: Record<
+  string,
+  React.ComponentType<{ width?: number; height?: number }>
+> = {
   Paragraph: TextIcon,
   HeadingOne: Heading1Icon,
   HeadingTwo: Heading2Icon,

@@ -7,3 +7,8 @@ tasks:
     desc: run the embedder service
     cmds:
       - uv run python -m app
+
+  format:
+    desc: format the codebase using black
+    cmds:
+      - uv run ruff format
