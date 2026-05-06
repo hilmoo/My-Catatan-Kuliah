@@ -7,3 +7,13 @@ tasks:
     desc: run the ai service
     cmds:
       - uv run python -m app
+
+  format:
+    desc: format the codebase using black
+    cmds:
+      - uv run ruff format
+  
+  lint:
+    desc: lint the codebase using ruff
+    cmds:
+      - uv run ruff check

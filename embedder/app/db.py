@@ -27,8 +27,8 @@ class DatabaseRepository:
         async with self.pool.acquire() as conn:
             # assignments and notes have 'content' column for markdown
             record = await conn.fetchrow(
-                f"SELECT content FROM {table_name} WHERE id = $1",
-                entity_id,  # noqa: S608
+                f"SELECT content FROM {table_name} WHERE id = $1", # noqa: S608
+                entity_id,
             )
             return record["content"] if record else None
 
