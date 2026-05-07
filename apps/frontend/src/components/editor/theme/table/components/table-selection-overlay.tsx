@@ -204,7 +204,7 @@ export const TableSelectionOverlay = ({ blockId }: TableSelectionOverlayProps) =
     <>
       {/* Selection overlay */}
       <div
-        className="pointer-events-none absolute z-[9999]"
+        className="pointer-events-none absolute z-9999"
         style={{
           top: `${selectionRect.top}px`,
           left: `${selectionRect.left}px`,

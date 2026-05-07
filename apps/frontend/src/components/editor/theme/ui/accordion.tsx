@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import type { ComponentProps } from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 
-import { cn } from "@lib/utils";
+import { cn } from "@/lib/utils";
 
 const Accordion = forwardRef<HTMLDivElement, ComponentProps<typeof AccordionPrimitive.Root>>(
   ({ children, className, ...props }, ref) => (

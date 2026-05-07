@@ -64,7 +64,7 @@ export const RowControls = ({
   return (
     <Portal id={`table-row-controls-${blockId}-${rowIndex}`}>
       <div
-        className="fixed z-[9998] pointer-events-auto"
+        className="fixed z-9998 pointer-events-auto"
         style={{
           left: `${position.left + 20}px`,
           top: `${position.top}px`,

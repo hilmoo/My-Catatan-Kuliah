@@ -40,7 +40,7 @@ export const AddColumnButton = ({
   return (
     <Portal id={`table-add-column-button-${blockId}`}>
       <div
-        className="fixed z-[9999] pointer-events-auto"
+        className="fixed z-9999 pointer-events-auto"
         style={{
           left: `${position.left + 4}px`,
           top: `${position.top}px`,

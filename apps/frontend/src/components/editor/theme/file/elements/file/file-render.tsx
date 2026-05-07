@@ -57,7 +57,7 @@ export const FileRender = ({
           )}
         >
           {/* File Icon */}
-          <div className={cn("flex-shrink-0 rounded-lg p-2.5", typeStyles.bgColor)}>
+          <div className={cn("shrink-0 rounded-lg p-2.5", typeStyles.bgColor)}>
             <FileIcon fileType={fileType} className={cn("h-5 w-5", typeStyles.color)} />
           </div>
 
@@ -72,7 +72,7 @@ export const FileRender = ({
             <Button
               variant="ghost"
               size="icon"
-              className="flex-shrink-0 h-8 w-8 opacity-0 group-hover/file:opacity-100 transition-opacity"
+              className="shrink-0 h-8 w-8 opacity-0 group-hover/file:opacity-100 transition-opacity"
               onClick={handleDownload}
             >
               <Download className="h-4 w-4" />

@@ -63,9 +63,9 @@ export const StepListItem = (props: PluginElementRenderProps) => {
             data-component-part="step-line"
             contentEditable={false}
             className={cn(
-              "absolute w-px h-[calc(100%-2.75rem)] top-[2.75rem]",
+              "absolute w-px h-[calc(100%-2.75rem)] top-11",
               isLast
-                ? "bg-transparent bg-gradient-to-b from-border via-80% to-transparent"
+                ? "bg-transparent bg-linear-to-b from-border via-80% to-transparent"
                 : "bg-border/70",
               isLast && isEmpty && "hidden",
             )}

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 
-import { cn } from "@lib/utils";
+import { cn } from "@/lib/utils";
 
 type SeparatorProps = React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root> & {
   orientation?: "horizontal" | "vertical";
@@ -17,7 +17,7 @@ const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
       orientation={orientation}
       className={cn(
         "shrink-0 bg-border",
-        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+        orientation === "horizontal" ? "h-px w-full" : "h-full w-px",
         className,
       )}
       {...props}

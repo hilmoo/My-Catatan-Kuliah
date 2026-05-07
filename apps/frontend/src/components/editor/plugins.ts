@@ -1,25 +1,25 @@
-import { HeadingOne, HeadingThree, HeadingTwo } from "@yoopta/headings";
-import Code from "@yoopta/code";
-import Table from "@yoopta/table";
-import Accordion from "@yoopta/accordion";
-import Divider from "@yoopta/divider";
-import Paragraph from "@yoopta/paragraph";
-import Blockquote from "@yoopta/blockquote";
-import Callout from "@yoopta/callout";
-import Link from "@yoopta/link";
-import { NumberedList, BulletedList, TodoList } from "@yoopta/lists";
-import Embed from "@yoopta/embed";
-import Image from "@yoopta/image";
-import Video from "@yoopta/video";
-import Emoji from "@yoopta/emoji";
-import File from "@yoopta/file";
-import Tabs from "@yoopta/tabs";
-import Steps from "@yoopta/steps";
-import Carousel from "@yoopta/carousel";
-import { MathInline, MathBlock } from "@yoopta/math";
-import TableOfContents from "@yoopta/table-of-contents";
+import { HeadingOne, HeadingThree, HeadingTwo } from '@yoopta/headings';
+import Code from '@yoopta/code';
+import Table from '@yoopta/table';
+import Accordion from '@yoopta/accordion';
+import Divider from '@yoopta/divider';
+import Paragraph from '@yoopta/paragraph';
+import Blockquote from '@yoopta/blockquote';
+import Callout from '@yoopta/callout';
+import Link from '@yoopta/link';
+import { NumberedList, BulletedList, TodoList } from '@yoopta/lists';
+import Embed from '@yoopta/embed';
+import Image from '@yoopta/image';
+import Video from '@yoopta/video';
+import Emoji from '@yoopta/emoji';
+import File from '@yoopta/file';
+import Tabs from '@yoopta/tabs';
+import Steps from '@yoopta/steps';
+import Carousel from '@yoopta/carousel';
+import { MathInline, MathBlock } from '@yoopta/math';
+import TableOfContents from '@yoopta/table-of-contents';
 
-import "katex/dist/katex.min.css";
+import 'katex/dist/katex.min.css';
 
 const YImage = Image.extend({
   options: {
@@ -27,8 +27,8 @@ const YImage = Image.extend({
       return {
         id: file.name,
         src: URL.createObjectURL(file),
-        alt: "cloudinary",
-        fit: "cover",
+        alt: 'cloudinary',
+        fit: 'cover',
         sizes: {
           width: file.size,
           height: file.size,
@@ -36,7 +36,7 @@ const YImage = Image.extend({
       };
     },
   },
-});
+})
 
 export const YOOPTA_PLUGINS = [
   TableOfContents,
@@ -48,7 +48,7 @@ export const YOOPTA_PLUGINS = [
           src: URL.createObjectURL(file),
           name: file.name,
           size: file.size,
-          format: file.name.split(".").pop(),
+          format: file.name.split('.').pop(),
         };
       },
     },
@@ -61,8 +61,8 @@ export const YOOPTA_PLUGINS = [
   Paragraph,
   HeadingOne.extend({
     elements: {
-      "heading-one": {
-        placeholder: "Heading 1",
+      'heading-one': {
+        placeholder: 'Heading 1',
       },
     },
   }),
@@ -85,23 +85,23 @@ export const YOOPTA_PLUGINS = [
           src: URL.createObjectURL(file),
           name: file.name,
           size: file.size,
-          format: file.name.split(".").pop(),
+          format: file.name.split('.').pop(),
         };
       },
     },
   }),
   Steps.extend({
     elements: {
-      "step-list-item-heading": {
-        placeholder: "Step title",
+      'step-list-item-heading': {
+        placeholder: 'Step title',
       },
-      "step-list-item-content": {
-        placeholder: "Describe this step...",
+      'step-list-item-content': {
+        placeholder: 'Describe this step...',
       },
     },
   }),
   Carousel.extend({
-    injectElementsFromPlugins: [YImage],
+    injectElementsFromPlugins: [YImage]
   }),
   Tabs,
   MathInline,

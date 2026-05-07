@@ -24,6 +24,7 @@ import { withEmoji } from "@yoopta/emoji";
 import { withCollaboration, RemoteCursors } from "@yoopta/collaboration";
 import type { AuthMeResponse } from "@/api/model";
 import { initial } from "./initial";
+import { applyTheme } from "./applyTheme";
 
 const EDITOR_STYLES = {
   width: "100%",
@@ -72,7 +73,7 @@ const FullSetupEditor = ({
       withEmoji(
         withMentions(
           createYooptaEditor({
-            plugins: YOOPTA_PLUGINS as unknown as YooptaPlugin<
+            plugins: applyTheme(YOOPTA_PLUGINS) as unknown as YooptaPlugin<
               Record<string, SlateElement>,
               unknown
             >[],

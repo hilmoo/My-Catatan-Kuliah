@@ -22,7 +22,7 @@ const getSeparatorClassName = (theme: DividerTheme, color: string | undefined) =
     case "gradient":
       return "h-[2px] bg-transparent border-0";
     default: // solid
-      return cn("h-[1px]", color ? "" : "bg-border");
+      return cn("h-px", color ? "" : "bg-border");
   }
 };
 

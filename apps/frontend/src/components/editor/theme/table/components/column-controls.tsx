@@ -67,7 +67,7 @@ export const ColumnControls = ({
   return (
     <Portal id={`table-column-controls-${blockId}-${colIndex}`}>
       <div
-        className="fixed z-[9999] pointer-events-auto"
+        className="fixed z-9999 pointer-events-auto"
         style={{
           left: `${position.left}px`,
           top: `${position.top + 4}px`,
