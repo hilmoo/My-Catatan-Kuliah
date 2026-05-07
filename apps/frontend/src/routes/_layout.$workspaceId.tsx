@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/$workspaceId")({
   component: RouteComponent,
@@ -52,9 +52,7 @@ function RouteComponent() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          Hi
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">Hi</div>
       </SidebarInset>
     </>
   );
