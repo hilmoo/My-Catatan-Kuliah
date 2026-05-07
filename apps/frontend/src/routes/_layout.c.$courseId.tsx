@@ -17,6 +17,8 @@ export const Route = createFileRoute("/_layout/c/$courseId")({
 
 function RouteComponent() {
   const courseId = Route.useParams().courseId;
+
+  // TODO: Add llm chat aside here
   return (
     <>
       <AppSidebar courseId={courseId} />

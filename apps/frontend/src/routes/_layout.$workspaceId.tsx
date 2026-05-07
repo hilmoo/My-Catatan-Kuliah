@@ -30,6 +30,7 @@ export const Route = createFileRoute("/_layout/$workspaceId")({
 function RouteComponent() {
   const workspaceId = Route.useParams().workspaceId;
 
+  // TODO: Add llm chat ui in here (replace the "Hi" text with the chat ui)
   return (
     <>
       <AppSidebar workspaceId={workspaceId} />
@@ -52,7 +53,7 @@ function RouteComponent() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Outlet />
+          Hi
         </div>
       </SidebarInset>
     </>
