@@ -7,7 +7,13 @@
   "env": {
     "builtin": true
   },
-  "ignorePatterns": ["**/node_modules/**", "**/dist/**", "src/api/**", "postcss.config.cjs"],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "src/api/**",
+    "postcss.config.cjs",
+    "src/components/editor/theme/**"
+  ],
   "rules": {
     "constructor-super": "error",
     "for-direction": "error",

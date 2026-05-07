@@ -10,6 +10,7 @@ layout {
     }
 
     tab name="Dev Dashboard" split_direction="vertical" {
+        // Left Column (2 panes)
         pane split_direction="horizontal" {
             pane name="backend" command="task" {
                 args "backend"
@@ -18,12 +19,16 @@ layout {
                 args "frontend"
             }
         }
+        // Right Column (3 panes)
         pane split_direction="horizontal" {
             pane name="hocuspocus" command="task" {
                 args "hocuspocus"
             }
             pane name="ai" command="task" {
                 args "ai"
+            }
+            pane name="embedder" command="task" {
+                args "embedder"
             }
         }
     }

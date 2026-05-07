@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/c/$courseId")({
@@ -17,8 +17,10 @@ export const Route = createFileRoute("/_layout/c/$courseId")({
 
 function RouteComponent() {
   const courseId = Route.useParams().courseId;
+
+  // TODO: Add llm chat aside here
   return (
-    <SidebarProvider>
+    <>
       <AppSidebar courseId={courseId} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
@@ -38,10 +40,10 @@ function RouteComponent() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden px-[100px]">
           <Outlet />
         </div>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

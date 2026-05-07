@@ -7,7 +7,13 @@ import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
 
-const ignoredFiles = ["**/node_modules/**", "**/dist/**", "src/api/**", "postcss.config.cjs"];
+const ignoredFiles = [
+  "**/node_modules/**",
+  "**/dist/**",
+  "src/api/**",
+  "postcss.config.cjs",
+  "src/components/editor/theme/**",
+];
 
 // @see https://typescript-eslint.io/rules/no-unused-vars/#what-benefits-does-this-rule-have-over-typescript
 const unusedVarsExceptUnderscored = {

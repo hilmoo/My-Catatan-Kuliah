@@ -4,6 +4,7 @@ export const Route = createFileRoute("/_layout/c/$courseId/a")({
   component: RouteComponent,
 });
 
+// TODO: Add kanban board here
 function RouteComponent() {
   return <div>Hello &quot;/_layout/c/$courseId/a&quot;!</div>;
 }

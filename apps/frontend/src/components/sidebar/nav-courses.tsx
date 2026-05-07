@@ -22,7 +22,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import {
   MoreHorizontalIcon,
   Trash2Icon,
@@ -78,6 +78,7 @@ export function NavCourses({ courseId }: NavCoursesProps) {
   const courseQuery = useCoursesServiceGetCourse(courseId);
   const updateCourseMutation = useCoursesServiceUpdateCourse();
   const deleteCourseMutation = useCoursesServiceDeleteCourse();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -160,12 +161,13 @@ export function NavCourses({ courseId }: NavCoursesProps) {
     createNoteMutation.mutate(
       { data: { ...data, course_id: courseId } },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           queryClient.invalidateQueries({
             queryKey: getNotesServiceListNotesQueryKey(courseId),
           });
           setShowAddDialog(false);
           reset();
+          navigate({ to: "/c/$courseId/n/$notesId", params: { courseId, notesId: data.data.id } });
         },
       },
     );
