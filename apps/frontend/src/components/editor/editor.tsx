@@ -24,10 +24,18 @@ import { applyTheme } from "@yoopta/themes-shadcn";
 import { withEmoji } from "@yoopta/emoji";
 import { withCollaboration, RemoteCursors } from "@yoopta/collaboration";
 import type { AuthMeResponse } from "@/api/model";
+import { initial } from "./initial";
+
+const EDITOR_STYLES = {
+  width: '100%',
+  height: '100%',
+  paddingBottom: 100,
+  overflowY: 'auto' as const,
+}
 
 interface FullSetupEditorProps {
   initialValue?: YooptaContentValue;
-  containerBoxRef?: React.RefObject<HTMLDivElement>;
+  containerBoxRef?: React.RefObject<HTMLDivElement | null>;
   onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
   user: AuthMeResponse;
   roomId: string;
@@ -49,7 +57,6 @@ function stringToColor(str: string): string {
 }
 
 const FullSetupEditor = ({
-  initialValue,
   containerBoxRef: externalRef,
   onChange,
   user,
@@ -96,7 +103,7 @@ const FullSetupEditor = ({
   }, [editor.collaboration]);
 
   useEffect(() => {
-    const data = initialValue;
+    const data = initial;
 
     if (data) {
       editor.withoutSavingHistory(() => {
@@ -104,7 +111,7 @@ const FullSetupEditor = ({
         editor.focus();
       });
     }
-  }, [editor, initialValue]);
+  }, [editor]);
 
   const renderBlock = useCallback(({ children, blockId }: RenderBlockProps) => {
     return (
@@ -115,11 +122,11 @@ const FullSetupEditor = ({
   }, []);
 
   return (
-    <div ref={containerBoxRef} className="w-full max-w-4xl mx-auto">
+    <div ref={containerBoxRef} className="w-full h-full">
       <BlockDndContext editor={editor}>
         <YooptaEditor
           editor={editor}
-          // style={EDITOR_STYLES}
+          style={EDITOR_STYLES}
           renderBlock={renderBlock}
           placeholder="Type / to open menu, or start typing..."
           onChange={onChange}

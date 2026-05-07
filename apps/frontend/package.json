@@ -63,6 +63,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.75.0",
+    "react-shadow": "^20.6.0",
     "shadcn": "^4.6.0",
     "slate": "^0.124.1",
     "slate-dom": "^0.124.1",

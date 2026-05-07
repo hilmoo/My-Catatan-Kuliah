@@ -9,7 +9,7 @@ import {
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/$workspaceId")({
@@ -31,7 +31,7 @@ function RouteComponent() {
   const workspaceId = Route.useParams().workspaceId;
 
   return (
-    <SidebarProvider>
+    <>
       <AppSidebar workspaceId={workspaceId} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
@@ -55,6 +55,6 @@ function RouteComponent() {
           <Outlet />
         </div>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }
