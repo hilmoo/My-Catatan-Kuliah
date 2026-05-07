@@ -1,0 +1,80 @@
+[data-element-type="table-data-cell"] [data-slate-node="element"] {
+  margin: 0;
+}
+
+[data-slate-node="table"] {
+  user-select: none;
+}
+
+[data-slate-node="table-data-cell"] {
+  cursor: cell;
+}
+
+[data-slate-node="table-data-cell"]:active {
+  cursor: crosshair;
+}
+
+[data-is-selecting="true"] *::selection {
+  background: none;
+}
+
+/* Column resize handles */
+.column-resize-handle {
+  transition: background-color 0.15s ease;
+}
+
+.column-resize-handle:hover {
+  background-color: hsl(var(--primary) / 0.3) !important;
+}
+
+/* Table appearance variants */
+
+/* Bordered: add outer edge borders on extreme cells */
+.yoopta-table-bordered [data-slot="table-cell"]:first-child,
+.yoopta-table-bordered [data-slot="table-head"]:first-child {
+  border-left: 1px solid hsl(var(--border));
+}
+
+.yoopta-table-bordered [data-slot="table-cell"]:last-child,
+.yoopta-table-bordered [data-slot="table-head"]:last-child {
+  border-right: 1px solid hsl(var(--border));
+}
+
+/* No borders: remove outer edge borders from extreme rows */
+.yoopta-table-no-borders [data-slot="table-body"] tr:first-child {
+  border-top: none;
+}
+
+.yoopta-table-no-borders [data-slot="table-body"] tr:last-child {
+  border-bottom: none;
+}
+
+/* Striped: alternating row backgrounds */
+.yoopta-table-striped [data-slot="table-body"] tr:nth-child(even) {
+  background-color: hsl(var(--muted) / 0.4);
+}
+
+/* Compact: reduced padding */
+.yoopta-table-compact [data-slot="table-cell"],
+.yoopta-table-compact [data-slot="table-head"] {
+  padding: 4px 6px;
+}
+
+.yoopta-table-compact [data-slot="table-head"] {
+  height: auto;
+}
+
+/* Scrollable: table uses explicit width from columnWidths sum */
+.yoopta-table-scrollable table[data-slot="table"] {
+  min-width: 100%;
+}
+
+/* Prevent text selection during resize */
+body.resizing-column {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+body.resizing-column * {
+  cursor: col-resize !important;
+}

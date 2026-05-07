@@ -20,18 +20,17 @@ import { withMentions } from "@yoopta/mention";
 import { MentionDropdown } from "@yoopta/themes-shadcn/mention";
 // @ts-expect-error - EmojiDropdown types not properly exported
 import { EmojiDropdown } from "@yoopta/themes-shadcn/emoji";
-import { applyTheme } from "@yoopta/themes-shadcn";
 import { withEmoji } from "@yoopta/emoji";
 import { withCollaboration, RemoteCursors } from "@yoopta/collaboration";
 import type { AuthMeResponse } from "@/api/model";
 import { initial } from "./initial";
 
 const EDITOR_STYLES = {
-  width: '100%',
-  height: '100%',
+  width: "100%",
+  height: "100%",
   paddingBottom: 100,
-  overflowY: 'auto' as const,
-}
+  overflowY: "auto" as const,
+};
 
 interface FullSetupEditorProps {
   initialValue?: YooptaContentValue;
@@ -73,7 +72,7 @@ const FullSetupEditor = ({
       withEmoji(
         withMentions(
           createYooptaEditor({
-            plugins: applyTheme(YOOPTA_PLUGINS) as unknown as YooptaPlugin<
+            plugins: YOOPTA_PLUGINS as unknown as YooptaPlugin<
               Record<string, SlateElement>,
               unknown
             >[],
