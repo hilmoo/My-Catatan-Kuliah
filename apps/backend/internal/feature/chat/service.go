@@ -109,3 +109,30 @@ func listChatsService(ctx context.Context, args listChatsServiceParams) (models.
 
 	return chats, nil
 }
+
+type updateChatTitleServiceParams struct {
+	queries *db.Queries
+	chatId  string
+	userId  int32
+	title   string
+}
+
+func updateChatTitleService(ctx context.Context, args updateChatTitleServiceParams) (models.ChatsUpdateChatTitleResponse, *herodot.DefaultError) {
+	chatIid, hErr := uuidx.HttpFromBase58(args.chatId, "chat ID")
+	if hErr != nil {
+		return models.ChatsUpdateChatTitleResponse{}, hErr
+	}
+
+	err := args.queries.UpdateChatTitle(ctx, db.UpdateChatTitleParams{
+		Title:  args.title,
+		Iid:    chatIid,
+		UserID: args.userId,
+	})
+	if err != nil {
+		return models.ChatsUpdateChatTitleResponse{}, herodot.ErrInternalServerError.WithReason("failed to update chat title").WithDebug(err.Error())
+	}
+
+	return models.ChatsUpdateChatTitleResponse{
+		Title: args.title,
+	}, nil
+}

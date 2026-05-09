@@ -24,6 +24,282 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query';
 
+import type {
+  ChatsChatHistoryResponse,
+  ChatsChatListResponse,
+  ChatsUpdateChatTitleRequest,
+  ChatsUpdateChatTitleResponse,
+  CommonErrorError401,
+  CommonErrorError404,
+  CommonErrorError500
+} from '../model';
+
+
+
+
+
+export type chatListChatsResponse200 = {
+  data: ChatsChatListResponse
+  status: 200
+}
+
+export type chatListChatsResponse401 = {
+  data: CommonErrorError401
+  status: 401
+}
+
+export type chatListChatsResponse404 = {
+  data: CommonErrorError404
+  status: 404
+}
+
+export type chatListChatsResponse500 = {
+  data: CommonErrorError500
+  status: 500
+}
+
+export type chatListChatsResponseSuccess = (chatListChatsResponse200) & {
+  headers: Headers;
+};
+export type chatListChatsResponseError = (chatListChatsResponse401 | chatListChatsResponse404 | chatListChatsResponse500) & {
+  headers: Headers;
+};
+
+export type chatListChatsResponse = (chatListChatsResponseSuccess | chatListChatsResponseError)
+
+export const getChatListChatsUrl = (workspaceId: string,) => {
+
+
+
+
+  return `/api/chat/workspace/${workspaceId}`
+}
+
+/**
+ * List all chats in a workspace.
+ */
+export const chatListChats = async (workspaceId: string, options?: RequestInit): Promise<chatListChatsResponse> => {
+
+  const res = await fetch(getChatListChatsUrl(workspaceId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: chatListChatsResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as chatListChatsResponse
+}
+
+
+
+
+
+export const getChatListChatsQueryKey = (workspaceId: string,) => {
+    return [
+    `/api/chat/workspace/${workspaceId}`
+    ] as const;
+    }
+
+
+export const getChatListChatsQueryOptions = <TData = Awaited<ReturnType<typeof chatListChats>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(workspaceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListChats>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getChatListChatsQueryKey(workspaceId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatListChats>>> = ({ signal }) => chatListChats(workspaceId, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(workspaceId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof chatListChats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ChatListChatsQueryResult = NonNullable<Awaited<ReturnType<typeof chatListChats>>>
+export type ChatListChatsQueryError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500
+
+
+export function useChatListChats<TData = Awaited<ReturnType<typeof chatListChats>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ workspaceId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListChats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListChats>>,
+          TError,
+          Awaited<ReturnType<typeof chatListChats>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListChats<TData = Awaited<ReturnType<typeof chatListChats>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ workspaceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListChats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListChats>>,
+          TError,
+          Awaited<ReturnType<typeof chatListChats>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListChats<TData = Awaited<ReturnType<typeof chatListChats>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ workspaceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListChats>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useChatListChats<TData = Awaited<ReturnType<typeof chatListChats>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ workspaceId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListChats>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getChatListChatsQueryOptions(workspaceId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+export type chatGetChatHistoryResponse200 = {
+  data: ChatsChatHistoryResponse
+  status: 200
+}
+
+export type chatGetChatHistoryResponse401 = {
+  data: CommonErrorError401
+  status: 401
+}
+
+export type chatGetChatHistoryResponse404 = {
+  data: CommonErrorError404
+  status: 404
+}
+
+export type chatGetChatHistoryResponse500 = {
+  data: CommonErrorError500
+  status: 500
+}
+
+export type chatGetChatHistoryResponseSuccess = (chatGetChatHistoryResponse200) & {
+  headers: Headers;
+};
+export type chatGetChatHistoryResponseError = (chatGetChatHistoryResponse401 | chatGetChatHistoryResponse404 | chatGetChatHistoryResponse500) & {
+  headers: Headers;
+};
+
+export type chatGetChatHistoryResponse = (chatGetChatHistoryResponseSuccess | chatGetChatHistoryResponseError)
+
+export const getChatGetChatHistoryUrl = (chatId: string,) => {
+
+
+
+
+  return `/api/chat/${chatId}/history`
+}
+
+/**
+ * Get chat history for a specific s
+ */
+export const chatGetChatHistory = async (chatId: string, options?: RequestInit): Promise<chatGetChatHistoryResponse> => {
+
+  const res = await fetch(getChatGetChatHistoryUrl(chatId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: chatGetChatHistoryResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as chatGetChatHistoryResponse
+}
+
+
+
+
+
+export const getChatGetChatHistoryQueryKey = (chatId: string,) => {
+    return [
+    `/api/chat/${chatId}/history`
+    ] as const;
+    }
+
+
+export const getChatGetChatHistoryQueryOptions = <TData = Awaited<ReturnType<typeof chatGetChatHistory>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(chatId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetChatHistory>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getChatGetChatHistoryQueryKey(chatId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetChatHistory>>> = ({ signal }) => chatGetChatHistory(chatId, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(chatId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof chatGetChatHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ChatGetChatHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof chatGetChatHistory>>>
+export type ChatGetChatHistoryQueryError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500
+
+
+export function useChatGetChatHistory<TData = Awaited<ReturnType<typeof chatGetChatHistory>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ chatId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetChatHistory>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatGetChatHistory>>,
+          TError,
+          Awaited<ReturnType<typeof chatGetChatHistory>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatGetChatHistory<TData = Awaited<ReturnType<typeof chatGetChatHistory>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ chatId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetChatHistory>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatGetChatHistory>>,
+          TError,
+          Awaited<ReturnType<typeof chatGetChatHistory>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatGetChatHistory<TData = Awaited<ReturnType<typeof chatGetChatHistory>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ chatId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetChatHistory>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useChatGetChatHistory<TData = Awaited<ReturnType<typeof chatGetChatHistory>>, TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ chatId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetChatHistory>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getChatGetChatHistoryQueryOptions(chatId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
 
 
 
@@ -144,7 +420,111 @@ export function useChatStreamMessages<TData = Awaited<ReturnType<typeof chatStre
 
 
 
-export type chatSendMessageResponse204 = {
+export type chatUpdateChatTitleResponse200 = {
+  data: ChatsUpdateChatTitleResponse
+  status: 200
+}
+
+export type chatUpdateChatTitleResponse401 = {
+  data: CommonErrorError401
+  status: 401
+}
+
+export type chatUpdateChatTitleResponse404 = {
+  data: CommonErrorError404
+  status: 404
+}
+
+export type chatUpdateChatTitleResponse500 = {
+  data: CommonErrorError500
+  status: 500
+}
+
+export type chatUpdateChatTitleResponseSuccess = (chatUpdateChatTitleResponse200) & {
+  headers: Headers;
+};
+export type chatUpdateChatTitleResponseError = (chatUpdateChatTitleResponse401 | chatUpdateChatTitleResponse404 | chatUpdateChatTitleResponse500) & {
+  headers: Headers;
+};
+
+export type chatUpdateChatTitleResponse = (chatUpdateChatTitleResponseSuccess | chatUpdateChatTitleResponseError)
+
+export const getChatUpdateChatTitleUrl = (chatId: string,) => {
+
+
+
+
+  return `/api/chat/${chatId}/title`
+}
+
+/**
+ * Update the title of a chat session.
+ */
+export const chatUpdateChatTitle = async (chatId: string,
+    chatsUpdateChatTitleRequest: ChatsUpdateChatTitleRequest, options?: RequestInit): Promise<chatUpdateChatTitleResponse> => {
+
+  const res = await fetch(getChatUpdateChatTitleUrl(chatId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      chatsUpdateChatTitleRequest,)
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: chatUpdateChatTitleResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as chatUpdateChatTitleResponse
+}
+
+
+
+
+export const getChatUpdateChatTitleMutationOptions = <TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatUpdateChatTitle>>, TError,{chatId: string;data: ChatsUpdateChatTitleRequest}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof chatUpdateChatTitle>>, TError,{chatId: string;data: ChatsUpdateChatTitleRequest}, TContext> => {
+
+const mutationKey = ['chatUpdateChatTitle'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatUpdateChatTitle>>, {chatId: string;data: ChatsUpdateChatTitleRequest}> = (props) => {
+          const {chatId,data} = props ?? {};
+
+          return  chatUpdateChatTitle(chatId,data,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChatUpdateChatTitleMutationResult = NonNullable<Awaited<ReturnType<typeof chatUpdateChatTitle>>>
+    export type ChatUpdateChatTitleMutationBody = ChatsUpdateChatTitleRequest
+    export type ChatUpdateChatTitleMutationError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500
+
+    export const useChatUpdateChatTitle = <TError = CommonErrorError401 | CommonErrorError404 | CommonErrorError500,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatUpdateChatTitle>>, TError,{chatId: string;data: ChatsUpdateChatTitleRequest}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof chatUpdateChatTitle>>,
+        TError,
+        {chatId: string;data: ChatsUpdateChatTitleRequest},
+        TContext
+      > => {
+      return useMutation(getChatUpdateChatTitleMutationOptions(options), queryClient);
+    }
+    export type chatSendMessageResponse204 = {
   data: void
   status: 204
 }

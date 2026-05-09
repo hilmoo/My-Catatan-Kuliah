@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"backend/internal/gen/models"
 	db "backend/internal/gen/sqlc"
 	errort "backend/internal/transport/error"
 	helpert "backend/internal/transport/helper"
@@ -33,8 +34,33 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group.Any("/:workspaceId", h.proxyAi)
 	group.Any("/:chatId/stream", h.proxyChatStream)
 	group.GET("/:chatId/history", h.getChatHistory)
+	group.PATCH("/:chatId/title", h.updateChatTitle)
 	group.GET("/workspace/:workspaceId", h.listChats)
 
+}
+
+func (h *httpHandler) updateChatTitle(c *echo.Context) error {
+	user, errs := msession.GetUserFromContext(c.Request().Context())
+	if errs != nil {
+		return errort.HttpError(c, herodot.ErrUnauthorized.WithReason("user not authenticated").WithDebug(errs.Error()))
+	}
+
+	var req models.ChatsUpdateChatTitleRequest
+	if err := c.Bind(&req); err != nil {
+		return errort.HttpError(c, herodot.ErrBadRequest.WithReason("invalid request body").WithDebug(err.Error()))
+	}
+
+	resp, err := updateChatTitleService(c.Request().Context(), updateChatTitleServiceParams{
+		queries: h.queries,
+		chatId:  c.Param("chatId"),
+		userId:  user.ID,
+		title:   req.Title,
+	})
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	return c.JSON(200, resp)
 }
 
 func (h *httpHandler) listChats(c *echo.Context) error {

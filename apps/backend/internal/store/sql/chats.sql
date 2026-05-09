@@ -23,3 +23,8 @@ LEFT JOIN llm_chat_message_parts p ON m.id = p.llm_chat_messages_id
 WHERE m.llm_chats_id = (SELECT id FROM llm_chats WHERE llm_chats.iid = $1 AND llm_chats.user_id = $2)
 GROUP BY m.id
 ORDER BY m.created_at ASC;
+
+-- name: UpdateChatTitle :exec
+UPDATE llm_chats
+SET title = $1
+WHERE iid = $2 AND user_id = $3;

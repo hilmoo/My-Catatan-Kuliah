@@ -19,3 +19,11 @@ model ChatMessage {
 }
 
 model ChatHistoryResponse is Array<ChatMessage>;
+
+model UpdateChatTitleRequest {
+    title: string;
+}
+
+model UpdateChatTitleResponse {
+    title: string;
+}

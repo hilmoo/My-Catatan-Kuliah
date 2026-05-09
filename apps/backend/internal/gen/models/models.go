@@ -126,6 +126,16 @@ type ChatsChatSummary struct {
 	Title     string `json:"title" validate:"required"`
 }
 
+// ChatsUpdateChatTitleRequest defines model for ChatsUpdateChatTitleRequest.
+type ChatsUpdateChatTitleRequest struct {
+	Title string `json:"title" validate:"required"`
+}
+
+// ChatsUpdateChatTitleResponse defines model for ChatsUpdateChatTitleResponse.
+type ChatsUpdateChatTitleResponse struct {
+	Title string `json:"title" validate:"required"`
+}
+
 // CommonErrorError An error response with details about the failure.
 type CommonErrorError struct {
 	// Code An optional machine-readable error code for programmatic handling
@@ -298,6 +308,9 @@ type AssignmentsServiceCreateAssignmentJSONRequestBody = AssignmentsCreateReques
 
 // AssignmentsServiceUpdateAssignmentJSONRequestBody defines body for AssignmentsServiceUpdateAssignment for application/json ContentType.
 type AssignmentsServiceUpdateAssignmentJSONRequestBody = AssignmentsUpdateRequest
+
+// ChatUpdateChatTitleJSONRequestBody defines body for ChatUpdateChatTitle for application/json ContentType.
+type ChatUpdateChatTitleJSONRequestBody = ChatsUpdateChatTitleRequest
 
 // CoursesServiceCreateCourseJSONRequestBody defines body for CoursesServiceCreateCourse for application/json ContentType.
 type CoursesServiceCreateCourseJSONRequestBody = CoursesCreateRequest

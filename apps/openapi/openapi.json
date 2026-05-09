@@ -664,6 +664,80 @@
         ]
       }
     },
+    "/api/chat/{chatId}/title": {
+      "patch": {
+        "operationId": "chatUpdateChatTitle",
+        "description": "Update the title of a chat session.",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatsUpdateChatTitleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatsUpdateChatTitleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
     "/api/chat/{workspaceId}": {
       "post": {
         "operationId": "chatSendMessage",
@@ -2279,6 +2353,34 @@
           "id",
           "title",
           "created_at"
+        ]
+      },
+      "ChatsUpdateChatTitleRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "ChatsUpdateChatTitleResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "title"
         ]
       },
       "CommonErrorError": {

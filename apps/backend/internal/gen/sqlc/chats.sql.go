@@ -102,6 +102,23 @@ func (q *Queries) ListChatsByWorkspaceID(ctx context.Context, arg ListChatsByWor
 	return items, nil
 }
 
+const updateChatTitle = `-- name: UpdateChatTitle :exec
+UPDATE llm_chats
+SET title = $1
+WHERE iid = $2 AND user_id = $3
+`
+
+type UpdateChatTitleParams struct {
+	Title  string
+	Iid    uuid.UUID
+	UserID int32
+}
+
+func (q *Queries) UpdateChatTitle(ctx context.Context, arg UpdateChatTitleParams) error {
+	_, err := q.db.Exec(ctx, updateChatTitle, arg.Title, arg.Iid, arg.UserID)
+	return err
+}
+
 const validateChatOwnership = `-- name: ValidateChatOwnership :one
 SELECT EXISTS (
     SELECT 1

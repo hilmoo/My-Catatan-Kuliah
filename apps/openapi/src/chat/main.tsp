@@ -42,4 +42,12 @@ interface Chat {
     getChatHistory(
         @path chatId: string
     ): Chats.ChatHistoryResponse | CommonError.GetCommonErrorAuth;
+
+    @route("/{chatId}/title")
+    @doc("Update the title of a chat session.")
+    @patch
+    updateChatTitle(
+        @path chatId: string,
+        @body body: Chats.UpdateChatTitleRequest
+    ): Chats.UpdateChatTitleResponse | CommonError.GetCommonErrorAuth;
 }

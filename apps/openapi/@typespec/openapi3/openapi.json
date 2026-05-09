@@ -657,6 +657,77 @@
         ]
       }
     },
+    "/api/chat/{chatId}/title": {
+      "patch": {
+        "operationId": "Chat_updateChatTitle",
+        "description": "Update the title of a chat session.",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Chats.UpdateChatTitleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chat"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Chats.UpdateChatTitleRequest"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/chat/{workspaceId}": {
       "post": {
         "operationId": "Chat_sendMessage",
@@ -2107,6 +2178,28 @@
             "type": "string"
           },
           "created_at": {
+            "type": "string"
+          }
+        }
+      },
+      "Chats.UpdateChatTitleRequest": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "Chats.UpdateChatTitleResponse": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
             "type": "string"
           }
         }
