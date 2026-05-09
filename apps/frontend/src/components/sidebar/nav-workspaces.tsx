@@ -269,10 +269,13 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
         </SidebarMenu>
       </SidebarGroup>
 
-      <SidebarGroup className="mt-auto group-data-[collapsible=icon]:hidden">
+      <SidebarGroup className="mt-auto">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => setShowEditWorkspaceDialog(true)}>
+            <SidebarMenuButton
+              tooltip="Workspace Settings"
+              onClick={() => setShowEditWorkspaceDialog(true)}
+            >
               <SettingsIcon />
               <span>Workspace Settings</span>
             </SidebarMenuButton>
@@ -280,6 +283,7 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              tooltip="Delete Workspace"
               onClick={onDeleteWorkspace}
             >
               <Trash2Icon />

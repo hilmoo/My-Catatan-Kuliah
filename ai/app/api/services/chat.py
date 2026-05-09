@@ -162,7 +162,7 @@ class ChatService:
         self._background_tasks.add(task)
         task.add_done_callback(self._background_tasks.discard)
 
-        last_id = "-"
+        last_id = "0-0"
         while True:
             events = await self.redis_repo.read_stream_blocking(
                 stream_id, last_id, block_ms=2000

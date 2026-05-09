@@ -142,3 +142,27 @@ class DbRepository:
                 chat_iid,
             )
             return row is not None and row["active_stream_id"] is not None
+
+    async def resolve_user_id(self, user_iid: uuid.UUID) -> int:
+        """Resolve a user's UUID (iid) to their integer ID."""
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchval(
+                "SELECT id FROM users WHERE iid = $1::uuid",
+                user_iid,
+            )
+        if row is None:
+            msg = f"User not found for iid={user_iid}"
+            raise ValueError(msg)
+        return row
+
+    async def resolve_workspace_id(self, workspace_iid: uuid.UUID) -> int:
+        """Resolve a workspace's UUID (iid) to its integer ID."""
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchval(
+                "SELECT id FROM workspaces WHERE iid = $1::uuid",
+                workspace_iid,
+            )
+        if row is None:
+            msg = f"Workspace not found for iid={workspace_iid}"
+            raise ValueError(msg)
+        return row

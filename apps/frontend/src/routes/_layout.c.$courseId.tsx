@@ -1,24 +1,40 @@
+import { getCoursesServiceGetCourseQueryOptions } from "@/api/courses/courses";
+import { useAuthGetMe } from "@/api/auth/auth";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { ChatAside } from "@/components/chat/chat-aside";
 import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/c/$courseId")({
   component: RouteComponent,
+  loader: async ({ params: { courseId }, context: { queryClient } }) => {
+    const course = await queryClient.ensureQueryData(
+      getCoursesServiceGetCourseQueryOptions(courseId),
+    );
+
+    if (course.status !== 200) {
+      throw redirect({ to: "/" });
+    }
+
+    return { course: course.data };
+  },
 });
 
 function RouteComponent() {
-  const courseId = Route.useParams().courseId;
+  const { courseId } = Route.useParams();
+  const { course } = Route.useLoaderData();
+  const { data: me } = useAuthGetMe();
 
-  // TODO: Add llm chat aside here
+  const userId = me?.status === 200 ? me.data.id : "";
+  const workspaceId = course.workspace_id;
+
   return (
     <>
       <AppSidebar courseId={courseId} />
@@ -29,12 +45,8 @@ function RouteComponent() {
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>{course.title}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -44,6 +56,9 @@ function RouteComponent() {
           <Outlet />
         </div>
       </SidebarInset>
+
+      {/* Floating chat aside */}
+      <ChatAside workspaceId={workspaceId} userId={userId} />
     </>
   );
 }

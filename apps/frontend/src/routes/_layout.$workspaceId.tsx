@@ -1,11 +1,11 @@
 import { getWorkspacesServiceGetWorkspaceQueryOptions } from "@/api/workspaces/workspaces";
+import { useAuthGetMe } from "@/api/auth/auth";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { WorkspaceChat } from "@/components/chat/workspace-chat";
 import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
@@ -28,9 +28,13 @@ export const Route = createFileRoute("/_layout/$workspaceId")({
 });
 
 function RouteComponent() {
-  const workspaceId = Route.useParams().workspaceId;
+  const { workspaceId } = Route.useParams();
+  const { workspace } = Route.useLoaderData();
+  const { data: me } = useAuthGetMe();
 
-  // TODO: Add llm chat ui in here (replace the "Hi" text with the chat ui)
+  const userId = me?.status === 200 ? me.data.id : "";
+  const userName = me?.status === 200 ? me.data.name : "";
+
   return (
     <>
       <AppSidebar workspaceId={workspaceId} />
@@ -41,18 +45,16 @@ function RouteComponent() {
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>{workspace.name}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">Hi</div>
+        <div className="flex flex-1 flex-col">
+          <WorkspaceChat workspaceId={workspaceId} userId={userId} userName={userName} />
+        </div>
       </SidebarInset>
     </>
   );

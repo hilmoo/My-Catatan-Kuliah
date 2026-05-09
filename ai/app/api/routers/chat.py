@@ -8,6 +8,7 @@ from fastapi.responses import StreamingResponse
 from app.api.dependencies import AppState, get_container
 from app.api.schema import ChatRequest
 from app.api.services.chat import ChatService, ChatServiceRequest, get_chat_service
+from app.utils.base58 import base58_to_uuid
 from app.utils.stream import format_sse
 from app.utils.uuid import is_valid_uuidv7
 
@@ -20,12 +21,20 @@ logger = logging.getLogger(__name__)
 async def chat(
     request: ChatRequest,
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
+    container: Annotated[AppState, Depends(get_container)],
 ) -> StreamingResponse:
+    # Decode Base58 public IDs → UUIDs → resolve to integer IDs
+    user_iid = base58_to_uuid(request.user_id)
+    workspace_iid = base58_to_uuid(request.workspace_id)
+
+    user_id = await container.db_repo.resolve_user_id(user_iid)
+    workspace_id = await container.db_repo.resolve_workspace_id(workspace_iid)
+
     service_request = ChatServiceRequest(
-        id=request.id,
-        user_id=request.user_id,
+        chat_iid=request.id,
+        user_id=user_id,
         message=request.message,
-        workspace_id=request.workspace_id,
+        workspace_id=workspace_id,
     )
 
     async def event_stream() -> AsyncIterator[str]:

@@ -18,6 +18,11 @@ const config = defineConfig({
         secure: false,
         ws: true,
       },
+      "/chat": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   resolve: { tsconfigPaths: true },
