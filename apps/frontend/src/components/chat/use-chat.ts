@@ -95,11 +95,10 @@ export function useChat({
 
       try {
         const chatId = crypto.randomUUID();
-        const stream = streamChat({
+        const stream = streamChat(workspaceId, {
           id: chatId,
           user_id: userId,
           message: trimmed,
-          workspace_id: workspaceId,
           ...(courseId ? { course_id: courseId } : {}),
           ...(notesId ? { notes_id: notesId } : {}),
           ...(answerStyle ? { answer_style: answerStyle } : {}),

@@ -5,6 +5,8 @@
  * AI SDK Data Stream Protocol (start → text-delta* → finish → [DONE]).
  */
 
+import { getChatSendMessageUrl, getChatStreamMessagesUrl } from "@/api/chat/chat";
+
 /** Event types emitted by the AI service SSE stream. */
 export type ChatStreamEvent =
   | { type: "start"; messageId: string }
@@ -19,7 +21,6 @@ export interface ChatRequestPayload {
   id: string;
   user_id: string;
   message: string;
-  workspace_id: string;
   course_id?: string;
   notes_id?: string;
   answer_style?: "auto" | "concise" | "direct" | "tutor";
@@ -31,8 +32,11 @@ export interface ChatRequestPayload {
  * Uses a standard `fetch` with streaming body parsing —
  * no external dependencies required.
  */
-export async function* streamChat(payload: ChatRequestPayload): AsyncGenerator<ChatStreamEvent> {
-  const response = await fetch("/chat", {
+export async function* streamChat(
+  workspaceId: string,
+  payload: ChatRequestPayload,
+): AsyncGenerator<ChatStreamEvent> {
+  const response = await fetch(getChatSendMessageUrl(workspaceId), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -96,7 +100,7 @@ export async function* streamChat(payload: ChatRequestPayload): AsyncGenerator<C
  * Returns null if no active stream exists (204 response).
  */
 export async function* resumeStream(chatId: string): AsyncGenerator<ChatStreamEvent> {
-  const response = await fetch(`/chat/${chatId}/stream`, {
+  const response = await fetch(getChatStreamMessagesUrl(chatId), {
     credentials: "include",
   });
 

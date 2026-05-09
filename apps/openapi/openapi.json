@@ -508,6 +508,190 @@
         ]
       }
     },
+    "/api/chat/workspace/{workspaceId}": {
+      "get": {
+        "operationId": "chatListChats",
+        "description": "List all chats in a workspace.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatsChatListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/api/chat/{chatId}/history": {
+      "get": {
+        "operationId": "chatGetChatHistory",
+        "description": "Get chat history for a specific s",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatsChatHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorError500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/api/chat/{chatId}/stream": {
+      "get": {
+        "operationId": "chatStreamMessages",
+        "description": "Stream chat messages in real-time for the specified chat session.",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "description": "The unique identifier of the chat session",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/api/chat/{workspaceId}": {
+      "post": {
+        "operationId": "chatSendMessage",
+        "description": "Send a message to the chat associated with the specified workspace.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "description": "The unique identifier of the workspace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
     "/api/courses": {
       "post": {
         "operationId": "coursesServiceCreateCourse",
@@ -2016,6 +2200,87 @@
           "avatar_url"
         ]
       },
+      "ChatsChatHistoryResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChatsChatMessage"
+        },
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty"
+        }
+      },
+      "ChatsChatListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChatsChatSummary"
+        },
+        "x-oapi-codegen-extra-tags": {
+          "validate": "omitempty"
+        }
+      },
+      "ChatsChatMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "role": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "text": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "text",
+          "created_at"
+        ]
+      },
+      "ChatsChatSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "created_at"
+        ]
+      },
       "CommonErrorError": {
         "description": "An error response with details about the failure.",
         "type": "object",
@@ -2608,6 +2873,10 @@
     {
       "name": "Auth",
       "description": "A service for handling authentication, including Google OAuth2."
+    },
+    {
+      "name": "Chat",
+      "description": "A service for handling chat functionality, including sending messages and real-time updates via WebSockets."
     },
     {
       "name": "Courses",

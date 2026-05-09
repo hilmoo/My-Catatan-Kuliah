@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logger.info("Initializing dependencies...")
     app_config = Config()
+    print(app_config.dict())  # Debug: Print the loaded configuration
 
     async def init_db(conn) -> None:  # noqa: ANN001
         await register_vector(conn)

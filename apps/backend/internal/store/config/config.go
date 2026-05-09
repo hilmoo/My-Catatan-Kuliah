@@ -33,6 +33,8 @@ type Config struct {
 
 	DatabaseUrl         string `env:"DATABASE_URL,required"`
 	NatsUrl             string `env:"NATS_URL,required"`
+	AiServiceUrl        string `env:"AI_SERVICE_URL,required"`
+	AiServiceUrlParsed  *url.URL
 	HocuspocusUrl       string `env:"HOCUSPOCUS_URL,required"`
 	HocuspocusUrlParsed *url.URL
 }
@@ -52,6 +54,12 @@ func LoadConfig() (Config, error) {
 		return c, fmt.Errorf("invalid Hocuspocus URL: %w", err)
 	}
 	c.HocuspocusUrlParsed = hocuspocusParsedUrl
+
+	aiServiceParsedUrl, err := url.Parse(c.AiServiceUrl)
+	if err != nil {
+		return c, fmt.Errorf("invalid AI Service URL: %w", err)
+	}
+	c.AiServiceUrlParsed = aiServiceParsedUrl
 
 	return c, nil
 }

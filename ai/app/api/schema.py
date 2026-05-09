@@ -8,7 +8,6 @@ class ChatRequest(BaseModel):
     id: UUID
     user_id: str
     message: str
-    workspace_id: str
     course_id: str | None = None
     notes_id: str | None = None
     answer_style: Literal["auto", "concise", "direct", "tutor"] = "auto"

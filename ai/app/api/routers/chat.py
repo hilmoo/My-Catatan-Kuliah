@@ -17,15 +17,16 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 logger = logging.getLogger(__name__)
 
 
-@router.post("")
+@router.post("/{workspace_id}")
 async def chat(
+    workspace_id: str,
     request: ChatRequest,
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
     container: Annotated[AppState, Depends(get_container)],
 ) -> StreamingResponse:
     # Decode Base58 public IDs → UUIDs → resolve to integer IDs
     user_iid = base58_to_uuid(request.user_id)
-    workspace_iid = base58_to_uuid(request.workspace_id)
+    workspace_iid = base58_to_uuid(workspace_id)
 
     user_id = await container.db_repo.resolve_user_id(user_iid)
     workspace_id = await container.db_repo.resolve_workspace_id(workspace_iid)

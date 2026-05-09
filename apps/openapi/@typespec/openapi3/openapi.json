@@ -15,6 +15,10 @@
       "description": "A service for handling authentication, including Google OAuth2."
     },
     {
+      "name": "Chat",
+      "description": "A service for handling chat functionality, including sending messages and real-time updates via WebSockets."
+    },
+    {
       "name": "Courses",
       "description": "A service for managing courses, including creation, retrieval, updating, and deletion."
     },
@@ -503,6 +507,178 @@
         },
         "tags": [
           "Auth"
+        ]
+      }
+    },
+    "/api/chat/workspace/{workspaceId}": {
+      "get": {
+        "operationId": "Chat_listChats",
+        "description": "List all chats in a workspace.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Chats.ChatListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/api/chat/{chatId}/history": {
+      "get": {
+        "operationId": "Chat_getChatHistory",
+        "description": "Get chat history for a specific s",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Chats.ChatHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonError.Error500"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/api/chat/{chatId}/stream": {
+      "get": {
+        "operationId": "Chat_streamMessages",
+        "description": "Stream chat messages in real-time for the specified chat session.",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the chat session",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Chat"
+        ]
+      }
+    },
+    "/api/chat/{workspaceId}": {
+      "post": {
+        "operationId": "Chat_sendMessage",
+        "description": "Send a message to the chat associated with the specified workspace.",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the workspace",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "There is no content to send for this request, but the headers may be useful. "
+          }
+        },
+        "tags": [
+          "Chat"
         ]
       }
     },
@@ -1878,6 +2054,60 @@
           "avatar_url": {
             "type": "string",
             "description": "The URL of the authenticated user's avatar image"
+          }
+        }
+      },
+      "Chats.ChatHistoryResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Chats.ChatMessage"
+        }
+      },
+      "Chats.ChatListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Chats.ChatSummary"
+        }
+      },
+      "Chats.ChatMessage": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "text",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        }
+      },
+      "Chats.ChatSummary": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
           }
         }
       },
