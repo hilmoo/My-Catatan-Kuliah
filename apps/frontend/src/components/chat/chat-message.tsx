@@ -9,20 +9,25 @@ interface ChatMessageProps {
   message: ChatMessageType;
 }
 
-type MarkdownElementProps<T extends keyof JSX.IntrinsicElements> =
-  ComponentPropsWithoutRef<T> & {
-    node?: unknown;
-  };
+type MarkdownElementProps<T extends keyof JSX.IntrinsicElements> = ComponentPropsWithoutRef<T> & {
+  node?: unknown;
+};
 
 const markdownComponents = {
-  h1: ({ node: _node, className, ...props }: MarkdownElementProps<"h1">) => (
-    <h1 className={cn("mb-3 mt-1 text-lg font-semibold leading-7", className)} {...props} />
+  h1: ({ node: _node, className, children, ...props }: MarkdownElementProps<"h1">) => (
+    <h1 className={cn("mb-3 mt-1 text-lg font-semibold leading-7", className)} {...props}>
+      {children}
+    </h1>
   ),
-  h2: ({ node: _node, className, ...props }: MarkdownElementProps<"h2">) => (
-    <h2 className={cn("mb-2.5 mt-5 text-base font-semibold leading-7", className)} {...props} />
+  h2: ({ node: _node, className, children, ...props }: MarkdownElementProps<"h2">) => (
+    <h2 className={cn("mb-2.5 mt-5 text-base font-semibold leading-7", className)} {...props}>
+      {children}
+    </h2>
   ),
-  h3: ({ node: _node, className, ...props }: MarkdownElementProps<"h3">) => (
-    <h3 className={cn("mb-2 mt-4 text-sm font-semibold leading-6", className)} {...props} />
+  h3: ({ node: _node, className, children, ...props }: MarkdownElementProps<"h3">) => (
+    <h3 className={cn("mb-2 mt-4 text-sm font-semibold leading-6", className)} {...props}>
+      {children}
+    </h3>
   ),
   p: ({ node: _node, className, ...props }: MarkdownElementProps<"p">) => (
     <p className={cn("my-2 leading-7 first:mt-0 last:mb-0", className)} {...props} />

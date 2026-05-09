@@ -6,10 +6,7 @@ import {
   useCoursesServiceCreateCourse,
   useCoursesServiceListCourses,
 } from "@/api/courses/courses";
-import {
-  getNotesServiceListNotesQueryKey,
-  useNotesServiceCreateNote,
-} from "@/api/notes/notes";
+import { getNotesServiceListNotesQueryKey, useNotesServiceCreateNote } from "@/api/notes/notes";
 import {
   BookOpenIcon,
   ChevronDownIcon,
@@ -299,9 +296,7 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
       <div className="flex flex-1 flex-col items-center justify-center px-4">
         <div className="flex w-full max-w-2xl flex-col items-center gap-8">
           {/* Greeting */}
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {landingGreeting}
-          </h1>
+          <h1 className="text-3xl font-semibold tracking-tight">{landingGreeting}</h1>
 
           {/* Input box — send button inline with textarea */}
           <form onSubmit={handleSubmit} className="w-full">

@@ -58,9 +58,7 @@ export function useChat({
     switch (event.type) {
       case "text-delta":
         setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantId ? { ...m, content: m.content + event.delta } : m,
-          ),
+          prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + event.delta } : m)),
         );
         break;
       case "error":

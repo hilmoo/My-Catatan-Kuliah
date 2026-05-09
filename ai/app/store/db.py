@@ -147,53 +147,45 @@ class DbRepository:
         note_id: int | None = None,
     ) -> list[dict[str, object]]:
         """Run hybrid search against one explicit scope."""
-        scope_clause = "dc.workspace_id = $3"
-        params: list[object] = [
-            embedding,
-            query,
-            workspace_id,
-            match_count,
-            excluded_chunk_ids,
-        ]
-
-        if note_id is not None:
-            scope_clause += """
-                AND dc.entity_type = 'note'
-                AND dc.entity_id = $6
-            """
-            params.append(note_id)
-        elif course_id is not None:
-            scope_clause += """
-                AND (
-                    (
-                        dc.entity_type = 'note'
-                        AND EXISTS (
-                            SELECT 1
-                            FROM notes n
-                            WHERE n.id = dc.entity_id
-                              AND n.course_id = $6
-                        )
-                    )
-                    OR (
-                        dc.entity_type = 'assignment'
-                        AND EXISTS (
-                            SELECT 1
-                            FROM assignments a
-                            WHERE a.id = dc.entity_id
-                              AND a.course_id = $6
-                        )
-                    )
-                )
-            """
-            params.append(course_id)
-
         rows = await conn.fetch(
-            f"""
+            """
             WITH candidate_chunks AS (
                 SELECT dc.*
                 FROM document_chunks dc
-                WHERE {scope_clause}
+                WHERE dc.workspace_id = $3
                   AND NOT (dc.id = ANY($5::bigint[]))
+                  AND (
+                    ($6::integer IS NULL AND $7::integer IS NULL)
+                    OR (
+                        $6::integer IS NOT NULL
+                        AND dc.entity_type = 'note'
+                        AND dc.entity_id = $6
+                    )
+                    OR (
+                        $6::integer IS NULL
+                        AND $7::integer IS NOT NULL
+                        AND (
+                            (
+                                dc.entity_type = 'note'
+                                AND EXISTS (
+                                    SELECT 1
+                                    FROM notes n
+                                    WHERE n.id = dc.entity_id
+                                      AND n.course_id = $7
+                                )
+                            )
+                            OR (
+                                dc.entity_type = 'assignment'
+                                AND EXISTS (
+                                    SELECT 1
+                                    FROM assignments a
+                                    WHERE a.id = dc.entity_id
+                                      AND a.course_id = $7
+                                )
+                            )
+                        )
+                    )
+                  )
             ),
             semantic_search AS (
                 SELECT cc.id,
@@ -236,7 +228,13 @@ class DbRepository:
             ORDER BY rrf_score DESC
             LIMIT $4
             """,
-            *params,
+            embedding,
+            query,
+            workspace_id,
+            match_count,
+            excluded_chunk_ids,
+            note_id,
+            course_id,
         )
 
         return [dict(r) for r in rows]

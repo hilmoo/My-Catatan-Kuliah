@@ -119,10 +119,7 @@ export function ChatAside({ workspaceId, userId, courseId, notesId }: ChatAsideP
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
               {Object.entries(ANSWER_STYLES).map(([value, label]) => (
-                <DropdownMenuItem
-                  key={value}
-                  onClick={() => setAnswerStyle(value as AnswerStyle)}
-                >
+                <DropdownMenuItem key={value} onClick={() => setAnswerStyle(value as AnswerStyle)}>
                   {label}
                 </DropdownMenuItem>
               ))}

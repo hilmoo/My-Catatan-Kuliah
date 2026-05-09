@@ -31,9 +31,7 @@ export interface ChatRequestPayload {
  * Uses a standard `fetch` with streaming body parsing —
  * no external dependencies required.
  */
-export async function* streamChat(
-  payload: ChatRequestPayload,
-): AsyncGenerator<ChatStreamEvent> {
+export async function* streamChat(payload: ChatRequestPayload): AsyncGenerator<ChatStreamEvent> {
   const response = await fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -42,7 +40,10 @@ export async function* streamChat(
   });
 
   if (!response.ok) {
-    yield { type: "error", message: `HTTP ${response.status}: ${response.statusText}` };
+    yield {
+      type: "error",
+      message: `HTTP ${response.status}: ${response.statusText}`,
+    };
     return;
   }
 
@@ -94,9 +95,7 @@ export async function* streamChat(
  * Resume a previously started stream by its chat ID.
  * Returns null if no active stream exists (204 response).
  */
-export async function* resumeStream(
-  chatId: string,
-): AsyncGenerator<ChatStreamEvent> {
+export async function* resumeStream(chatId: string): AsyncGenerator<ChatStreamEvent> {
   const response = await fetch(`/chat/${chatId}/stream`, {
     credentials: "include",
   });
@@ -104,7 +103,10 @@ export async function* resumeStream(
   if (response.status === 204) return;
 
   if (!response.ok) {
-    yield { type: "error", message: `HTTP ${response.status}: ${response.statusText}` };
+    yield {
+      type: "error",
+      message: `HTTP ${response.status}: ${response.statusText}`,
+    };
     return;
   }
 
