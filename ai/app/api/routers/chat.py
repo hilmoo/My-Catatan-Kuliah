@@ -29,12 +29,34 @@ async def chat(
 
     user_id = await container.db_repo.resolve_user_id(user_iid)
     workspace_id = await container.db_repo.resolve_workspace_id(workspace_iid)
+    course_id = None
+    note_id = None
+
+    if request.course_id:
+        course_iid = base58_to_uuid(request.course_id)
+        course_id = await container.db_repo.resolve_course_id(
+            course_iid, workspace_id=workspace_id
+        )
+
+    if request.notes_id:
+        note_iid = base58_to_uuid(request.notes_id)
+        note_id, note_course_id = await container.db_repo.resolve_note_id(
+            note_iid, workspace_id=workspace_id
+        )
+        if course_id is not None and course_id != note_course_id:
+            msg = "notes_id does not belong to course_id"
+            raise ValueError(msg)
+        if course_id is None:
+            course_id = note_course_id
 
     service_request = ChatServiceRequest(
         chat_iid=request.id,
         user_id=user_id,
         message=request.message,
         workspace_id=workspace_id,
+        course_id=course_id,
+        note_id=note_id,
+        answer_style=request.answer_style,
     )
 
     async def event_stream() -> AsyncIterator[str]:

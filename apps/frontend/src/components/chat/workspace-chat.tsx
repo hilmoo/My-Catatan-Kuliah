@@ -12,6 +12,7 @@ import {
 } from "@/api/notes/notes";
 import {
   BookOpenIcon,
+  ChevronDownIcon,
   ClipboardListIcon,
   LightbulbIcon,
   PlusIcon,
@@ -20,6 +21,12 @@ import {
   SparklesIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -38,6 +45,15 @@ interface WorkspaceChatProps {
   userId: string;
   userName: string;
 }
+
+type AnswerStyle = "auto" | "concise" | "direct" | "tutor";
+
+const ANSWER_STYLES: Record<AnswerStyle, string> = {
+  auto: "Auto",
+  concise: "Concise",
+  direct: "Direct",
+  tutor: "Tutor",
+};
 
 const AI_SUGGESTIONS = [
   {
@@ -101,9 +117,11 @@ function getLandingGreeting(name: string) {
 }
 
 export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatProps) {
+  const [answerStyle, setAnswerStyle] = useState<AnswerStyle>("auto");
   const { messages, isLoading, error, sendMessage, clearMessages } = useChat({
     userId,
     workspaceId,
+    answerStyle,
   });
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -257,6 +275,24 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
     );
   };
 
+  const answerStyleSelect = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-8 shrink-0 gap-1 px-2 text-xs">
+          {ANSWER_STYLES[answerStyle]}
+          <ChevronDownIcon className="size-3" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-36">
+        {Object.entries(ANSWER_STYLES).map(([value, label]) => (
+          <DropdownMenuItem key={value} onClick={() => setAnswerStyle(value as AnswerStyle)}>
+            {label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   // --- Landing state (Claude-like) ---
   if (isLanding) {
     return (
@@ -279,6 +315,7 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
                 rows={1}
                 className="min-h-7 flex-1 resize-none bg-transparent py-0.5 text-sm leading-6 outline-none placeholder:text-muted-foreground/60"
               />
+              {answerStyleSelect}
               <Button
                 type="submit"
                 size="icon"
@@ -475,6 +512,7 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
               disabled={isLoading}
               className="min-h-7 flex-1 resize-none bg-transparent py-0.5 text-sm leading-6 outline-none placeholder:text-muted-foreground/60 disabled:opacity-50"
             />
+            {answerStyleSelect}
             <Button
               type="submit"
               size="icon"

@@ -20,6 +20,9 @@ export interface ChatRequestPayload {
   user_id: string;
   message: string;
   workspace_id: string;
+  course_id?: string;
+  notes_id?: string;
+  answer_style?: "auto" | "concise" | "direct" | "tutor";
 }
 
 /**

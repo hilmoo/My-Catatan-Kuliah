@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/c/$courseId")({
   component: RouteComponent,
@@ -31,6 +31,14 @@ function RouteComponent() {
   const { courseId } = Route.useParams();
   const { course } = Route.useLoaderData();
   const { data: me } = useAuthGetMe();
+  const activeNotesId = useRouterState({
+    select: (state) => {
+      const noteMatch = state.matches.find(
+        (match) => match.routeId === "/_layout/c/$courseId/n/$notesId",
+      );
+      return noteMatch?.params.notesId;
+    },
+  });
 
   const userId = me?.status === 200 ? me.data.id : "";
   const workspaceId = course.workspace_id;
@@ -58,7 +66,12 @@ function RouteComponent() {
       </SidebarInset>
 
       {/* Floating chat aside */}
-      <ChatAside workspaceId={workspaceId} userId={userId} />
+      <ChatAside
+        workspaceId={workspaceId}
+        courseId={courseId}
+        notesId={activeNotesId}
+        userId={userId}
+      />
     </>
   );
 }
