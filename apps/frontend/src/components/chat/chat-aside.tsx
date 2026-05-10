@@ -54,7 +54,14 @@ interface ChatAsideProps {
   notesTitle?: string;
 }
 
-export function ChatAside({ workspaceId, userId, courseId, notesId, courseTitle, notesTitle }: ChatAsideProps) {
+export function ChatAside({
+  workspaceId,
+  userId,
+  courseId,
+  notesId,
+  courseTitle,
+  notesTitle,
+}: ChatAsideProps) {
   const [open, setOpen] = useState(false);
   const [answerStyle, setAnswerStyle] = useState<AnswerStyle>("auto");
   const queryClient = useQueryClient();
@@ -91,8 +98,7 @@ export function ChatAside({ workspaceId, userId, courseId, notesId, courseTitle,
     },
   });
   const chatListQuery = useChatListChats(workspaceId);
-  const recentChats =
-    chatListQuery.data?.status === 200 ? chatListQuery.data.data.slice(0, 2) : [];
+  const recentChats = chatListQuery.data?.status === 200 ? chatListQuery.data.data.slice(0, 2) : [];
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -179,7 +185,13 @@ export function ChatAside({ workspaceId, userId, courseId, notesId, courseTitle,
             </DropdownMenuContent>
           </DropdownMenu>
           {messages.length > 0 && (
-            <Button variant="ghost" size="icon" className="size-7" onClick={clearMessages} title="New chat">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={clearMessages}
+              title="New chat"
+            >
               <Trash2Icon className="size-3.5" />
             </Button>
           )}

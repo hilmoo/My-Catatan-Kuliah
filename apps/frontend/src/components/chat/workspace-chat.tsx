@@ -151,40 +151,47 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
 
   // Chat history
   const chatListQuery = useChatListChats(workspaceId);
-  const chatList =
-    chatListQuery.data?.status === 200 ? chatListQuery.data.data : [];
+  const chatList = chatListQuery.data?.status === 200 ? chatListQuery.data.data : [];
 
-  const { messages, isLoading, error, activeChatId, setActiveChatId, sendMessage, clearMessages, loadChat } =
-    useChat({
-      userId,
-      workspaceId,
-      answerStyle,
-      onChatCreated: async () => {
-        // Refetch chat list and auto-set activeChatId to the most recent chat
-        const result = await queryClient.fetchQuery({
-          queryKey: getChatListChatsQueryKey(workspaceId),
-          queryFn: () => chatListChats(workspaceId),
-        });
-        if (result.status === 200 && result.data.length > 0) {
-          const newestChat = result.data[0];
-          setActiveChatId(newestChat.id);
-          // Auto-title: if the chat has no real title, set it from the first message
-          const existingTitle = newestChat.title?.trim();
-          const isDefaultTitle = !existingTitle || existingTitle === "Untitled Chat";
-          const autoTitle = makeAutoTitle(firstMessageRef.current);
-          if (isDefaultTitle && autoTitle) {
-            updateTitleMutation.mutate(
-              { chatId: newestChat.id, data: { title: autoTitle } },
-              {
-                onSuccess: () => {
-                  queryClient.invalidateQueries({ queryKey: getChatListChatsQueryKey(workspaceId) });
-                },
+  const {
+    messages,
+    isLoading,
+    error,
+    activeChatId,
+    setActiveChatId,
+    sendMessage,
+    clearMessages,
+    loadChat,
+  } = useChat({
+    userId,
+    workspaceId,
+    answerStyle,
+    onChatCreated: async () => {
+      // Refetch chat list and auto-set activeChatId to the most recent chat
+      const result = await queryClient.fetchQuery({
+        queryKey: getChatListChatsQueryKey(workspaceId),
+        queryFn: () => chatListChats(workspaceId),
+      });
+      if (result.status === 200 && result.data.length > 0) {
+        const newestChat = result.data[0];
+        setActiveChatId(newestChat.id);
+        // Auto-title: if the chat has no real title, set it from the first message
+        const existingTitle = newestChat.title?.trim();
+        const isDefaultTitle = !existingTitle || existingTitle === "Untitled Chat";
+        const autoTitle = makeAutoTitle(firstMessageRef.current);
+        if (isDefaultTitle && autoTitle) {
+          updateTitleMutation.mutate(
+            { chatId: newestChat.id, data: { title: autoTitle } },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: getChatListChatsQueryKey(workspaceId) });
               },
-            );
-          }
+            },
+          );
         }
-      },
-    });
+      }
+    },
+  });
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -546,7 +553,9 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
           tabIndex={-1}
           className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
           onClick={() => setShowHistoryDrawer(false)}
-          onKeyDown={(e) => { if (e.key === "Escape") setShowHistoryDrawer(false); }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setShowHistoryDrawer(false);
+          }}
         />
       )}
       {/* Drawer */}

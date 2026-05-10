@@ -137,42 +137,48 @@ export function useChat({
         onChatCreated?.();
       }
     },
-    [answerStyle, courseId, handleStreamEvent, isLoading, notesId, onChatCreated, userId, workspaceId],
+    [
+      answerStyle,
+      courseId,
+      handleStreamEvent,
+      isLoading,
+      notesId,
+      onChatCreated,
+      userId,
+      workspaceId,
+    ],
   );
 
-  const loadChat = useCallback(
-    async (chatId: string) => {
-      setError(null);
-      setIsLoading(true);
-      abortRef.current = true; // cancel any running stream
+  const loadChat = useCallback(async (chatId: string) => {
+    setError(null);
+    setIsLoading(true);
+    abortRef.current = true; // cancel any running stream
 
-      try {
-        const response = await chatGetChatHistory(chatId);
+    try {
+      const response = await chatGetChatHistory(chatId);
 
-        if (response.status !== 200) {
-          setError("Failed to load chat history");
-          setIsLoading(false);
-          return;
-        }
-
-        const history = response.data;
-        const restored: ChatMessage[] = history.map((msg) => ({
-          id: msg.id,
-          role: msg.role as "user" | "assistant",
-          content: msg.text,
-        }));
-
-        setMessages(restored);
-        setActiveChatId(chatId);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to load history";
-        setError(message);
-      } finally {
+      if (response.status !== 200) {
+        setError("Failed to load chat history");
         setIsLoading(false);
+        return;
       }
-    },
-    [],
-  );
+
+      const history = response.data;
+      const restored: ChatMessage[] = history.map((msg) => ({
+        id: msg.id,
+        role: msg.role as "user" | "assistant",
+        content: msg.text,
+      }));
+
+      setMessages(restored);
+      setActiveChatId(chatId);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to load history";
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -181,5 +187,14 @@ export function useChat({
     abortRef.current = true;
   }, []);
 
-  return { messages, isLoading, error, activeChatId, setActiveChatId, sendMessage, clearMessages, loadChat };
+  return {
+    messages,
+    isLoading,
+    error,
+    activeChatId,
+    setActiveChatId,
+    sendMessage,
+    clearMessages,
+    loadChat,
+  };
 }
