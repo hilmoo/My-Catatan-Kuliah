@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mycatatankuliah
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/18/docker
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d mycatatankuliah"]
       interval: 10s
@@ -36,9 +36,9 @@ services:
       - "8080:8080"
     environment:
       DOMAIN: http://localhost:8080
-      SECRET: supersecret
-      GOOGLE_CLIENT_ID: google-client-id
-      GOOGLE_CLIENT_SECRET: google-client-secret
+      SECRET: <SECRET>
+      GOOGLE_CLIENT_ID: <GOOGLE_CLIENT_ID>
+      GOOGLE_CLIENT_SECRET: <GOOGLE_CLIENT_SECRET>
       S3_ENDPOINT: http://minio:9000
       S3_ACCESS_KEY_ID: minioadmin
       S3_SECRET_ACCESS_KEY: minioadmin
@@ -54,6 +54,12 @@ services:
         condition: service_started
       minio:
         condition: service_started
+      embedder:
+        condition: service_started
+      hocuspocus:
+        condition: service_started
+      ai:
+        condition: service_started
 
   ai:
     build:
@@ -62,10 +68,11 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
       NATS_URL: nats://nats:4222
+      REDIS_URL: redis://redis:6379
       EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
-      LLM_BASE_URL: http://host.docker.internal:8000
-      LLM_API_KEY: your-llm-api-key
-      LLM_MODEL: gpt-4
+      LLM_BASE_URL: https://api.openai.com/v1
+      LLM_API_KEY: <LLM_API_KEY>
+      LLM_MODEL: minimaxai/minimax-m2.7
     depends_on:
       db:
         condition: service_healthy
