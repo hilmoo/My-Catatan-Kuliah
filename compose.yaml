@@ -28,6 +28,12 @@ services:
     volumes:
       - minio_data:/data
 
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
   apps:
     build:
       context: .
@@ -54,6 +60,8 @@ services:
         condition: service_started
       minio:
         condition: service_started
+      redis:
+        condition: service_started
       embedder:
         condition: service_started
       hocuspocus:
@@ -77,6 +85,8 @@ services:
       db:
         condition: service_healthy
       nats:
+        condition: service_started
+      redis:
         condition: service_started
 
   embedder:
@@ -112,3 +122,4 @@ volumes:
   postgres_data:
   nats_data:
   minio_data:
+  redis_data:
