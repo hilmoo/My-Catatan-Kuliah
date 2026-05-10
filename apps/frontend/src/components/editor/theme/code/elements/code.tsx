@@ -120,7 +120,7 @@ export const CodeBlockElement = ({
     }
   };
 
-  const copyCode = useCallback(async() => {
+  const copyCode = useCallback(async () => {
     const codeText = getNodeText(element);
     const success = await copy(codeText);
     if (success) {

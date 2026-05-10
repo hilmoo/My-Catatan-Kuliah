@@ -73,7 +73,7 @@ export const TableSelectionOverlay = ({ blockId }: TableSelectionOverlayProps) =
 
   useEffect(() => {
     setSavedSelectedCells(selectedCells);
-  // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [selectedCells]);
 
   const cellsToUse =

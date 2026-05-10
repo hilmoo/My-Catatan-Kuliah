@@ -6,7 +6,7 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
-import oxlint from 'eslint-plugin-oxlint';
+import oxlint from "eslint-plugin-oxlint";
 
 const ignoredFiles = [
   "**/node_modules/**",
@@ -29,7 +29,7 @@ const unusedVarsExceptUnderscored = {
 
 export default defineConfig(
   globalIgnores(ignoredFiles),
-  ...oxlint.configs['flat/recommended'],
+  ...oxlint.configs["flat/recommended"],
   eslint.configs.recommended,
   tseslint.configs.recommended,
   tseslint.configs.strict,

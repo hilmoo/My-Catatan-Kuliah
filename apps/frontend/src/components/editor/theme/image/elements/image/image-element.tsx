@@ -108,9 +108,15 @@ export const ImageElement = ({
         preview={preview}
         progress={progress}
         loading={loading}
-        onInsertUrl={() => { /* empty */ }}
-        onInsertFromUnsplash={() => { /* empty */ }}
-        onInsertFromAI={async () => { /* empty */ }}
+        onInsertUrl={() => {
+          /* empty */
+        }}
+        onInsertFromUnsplash={() => {
+          /* empty */
+        }}
+        onInsertFromAI={async () => {
+          /* empty */
+        }}
         attributes={attributes}
       >
         {children}
