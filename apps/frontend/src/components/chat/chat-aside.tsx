@@ -8,7 +8,7 @@ import {
   MessageSquareIcon,
   SendIcon,
   SparklesIcon,
-  Trash2Icon,
+  MessageSquarePlus,
   XIcon,
 } from "lucide-react";
 import {
@@ -192,7 +192,7 @@ export function ChatAside({
               onClick={clearMessages}
               title="New chat"
             >
-              <Trash2Icon className="size-3.5" />
+              <MessageSquarePlus className="size-3.5" />
             </Button>
           )}
           <Button variant="ghost" size="icon" className="size-7" onClick={() => setOpen(false)}>

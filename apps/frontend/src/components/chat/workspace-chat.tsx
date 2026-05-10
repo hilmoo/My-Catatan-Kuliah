@@ -23,7 +23,7 @@ import {
   PencilIcon,
   PlusIcon,
   SendIcon,
-  Trash2Icon,
+  MessageSquarePlus,
   SparklesIcon,
   XIcon,
 } from "lucide-react";
@@ -51,6 +51,7 @@ interface WorkspaceChatProps {
   workspaceId: string;
   userId: string;
   userName: string;
+  chatId?: string;
 }
 
 type AnswerStyle = "auto" | "concise" | "direct" | "tutor";
@@ -145,9 +146,10 @@ function makeAutoTitle(text: string): string {
   return words.length > 50 ? words.slice(0, 47) + "…" : words;
 }
 
-export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatProps) {
+export function WorkspaceChat({ workspaceId, userId, userName, chatId }: WorkspaceChatProps) {
   const [answerStyle, setAnswerStyle] = useState<AnswerStyle>("auto");
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Chat history
   const chatListQuery = useChatListChats(workspaceId);
@@ -175,6 +177,16 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
       if (result.status === 200 && result.data.length > 0) {
         const newestChat = result.data[0];
         setActiveChatId(newestChat.id);
+
+        // If we were on the landing page, navigate to the new chat's URL
+        if (!chatId) {
+          navigate({
+            to: "/$workspaceId/c/$chatId",
+            params: { workspaceId, chatId: newestChat.id },
+            replace: true,
+          });
+        }
+
         // Auto-title: if the chat has no real title, set it from the first message
         const existingTitle = newestChat.title?.trim();
         const isDefaultTitle = !existingTitle || existingTitle === "Untitled Chat";
@@ -192,12 +204,21 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
       }
     },
   });
+
+  // Load chat history when URL chatId changes
+  useEffect(() => {
+    if (chatId && chatId !== activeChatId) {
+      loadChat(chatId);
+    } else if (!chatId && activeChatId) {
+      clearMessages();
+    }
+  }, [chatId, activeChatId, loadChat, clearMessages]);
+
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const drawerTitleInputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
   const coursesQuery = useCoursesServiceListCourses(workspaceId);
   const createCourseMutation = useCoursesServiceCreateCourse();
   const createNoteMutation = useNotesServiceCreateNote();
@@ -281,13 +302,19 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
     setShowCreateNoteDialog(true);
   };
 
-  const handleLoadChat = async (chatId: string) => {
-    await loadChat(chatId);
+  const handleLoadChat = (chatId: string) => {
+    navigate({
+      to: "/$workspaceId/c/$chatId",
+      params: { workspaceId, chatId },
+    });
     setShowHistoryDrawer(false);
   };
 
   const handleNewChat = () => {
-    clearMessages();
+    navigate({
+      to: "/$workspaceId",
+      params: { workspaceId },
+    });
     setShowHistoryDrawer(false);
   };
 
@@ -771,7 +798,7 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
   return (
     <div className="flex flex-1 flex-col">
       {/* Chat header */}
-      <div className="flex items-center justify-between px-4 py-2">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-2">
         <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
           <SparklesIcon className="size-4 shrink-0 text-primary" />
           {activeChatId && editingTitleId === activeChatId ? (
@@ -830,15 +857,21 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
           >
             <HistoryIcon className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="size-8" onClick={clearMessages}>
-            <Trash2Icon className="size-4" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            onClick={() => navigate({ to: "/$workspaceId", params: { workspaceId } })}
+            title="New chat"
+          >
+            <MessageSquarePlus className="size-4" />
           </Button>
         </div>
       </div>
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <div className="w-full max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
           ))}
@@ -847,7 +880,7 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
 
       {/* Error */}
       {error && (
-        <div className="mb-2 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-2 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
             {error}
           </div>
@@ -855,7 +888,7 @@ export function WorkspaceChat({ workspaceId, userId, userName }: WorkspaceChatPr
       )}
 
       {/* Input — send button inline */}
-      <div className="w-full max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
         <form onSubmit={handleSubmit}>
           <div className="flex min-h-14 items-center gap-2 rounded-2xl border bg-card/80 px-4 py-3 shadow-sm transition-colors focus-within:border-primary/50 focus-within:bg-card">
             <textarea

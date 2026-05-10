@@ -1,7 +1,5 @@
 import { getWorkspacesServiceGetWorkspaceQueryOptions } from "@/api/workspaces/workspaces";
-import { useAuthGetMe } from "@/api/auth/auth";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { WorkspaceChat } from "@/components/chat/workspace-chat";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -10,7 +8,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/$workspaceId")({
   component: RouteComponent,
@@ -30,10 +28,6 @@ export const Route = createFileRoute("/_layout/$workspaceId")({
 function RouteComponent() {
   const { workspaceId } = Route.useParams();
   const { workspace } = Route.useLoaderData();
-  const { data: me } = useAuthGetMe();
-
-  const userId = me?.status === 200 ? me.data.id : "";
-  const userName = me?.status === 200 ? me.data.name : "";
 
   return (
     <>
@@ -53,7 +47,7 @@ function RouteComponent() {
           </div>
         </header>
         <div className="flex flex-1 flex-col">
-          <WorkspaceChat workspaceId={workspaceId} userId={userId} userName={userName} />
+          <Outlet />
         </div>
       </SidebarInset>
     </>
