@@ -9,7 +9,7 @@ tasks:
   default:
     desc: Run 
     cmds:
-      - go run cmd/main.go serve
+      - go run -tags dev cmd/main.go serve
       
   migrate-up:
     desc: Run database migrations
