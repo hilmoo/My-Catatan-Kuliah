@@ -21,6 +21,11 @@ SYSTEM_PROMPT_TEMPLATE = """\
 Kamu adalah asisten belajar untuk catatan kuliah.
 Jawab pertanyaan berdasarkan konteks berikut. \
 Jika tidak ada informasi yang relevan dalam konteks, katakan bahwa kamu tidak memiliki informasi tersebut.
+Prioritaskan sumber "catatan yang sedang dibuka", lalu "course yang sedang dibuka", lalu "workspace".
+Gunakan bahasa yang sama dengan bahasa pertanyaan user.
+Jika pertanyaan user singkat atau meminta definisi cepat, jawab singkat dan langsung.
+Jika user meminta detail, contoh, langkah, atau penjelasan mendalam, jawab lebih lengkap.
+Ikuti gaya jawaban berikut: {answer_style_instruction}
 
 Konteks:
 {context}
@@ -33,6 +38,9 @@ class ChatServiceRequest:
     user_id: int
     message: str
     workspace_id: int
+    course_id: int | None = None
+    note_id: int | None = None
+    answer_style: str = "auto"
 
 
 class ChatService:
@@ -53,9 +61,36 @@ class ChatService:
         self.llm_model = llm_model
         self._background_tasks: set[asyncio.Task[None]] = set()
 
-    def _build_system_prompt(self, chunks: list[dict[str, object]]) -> str:
-        context = "\n\n---\n\n".join(str(chunk["content"]) for chunk in chunks)
-        return SYSTEM_PROMPT_TEMPLATE.format(context=context)
+    def _answer_style_instruction(self, answer_style: str) -> str:
+        instructions = {
+            "concise": "Concise - maksimal 3-5 poin pendek, tanpa tabel kecuali diminta.",
+            "direct": "Direct - jawab inti pertanyaan dulu, lalu detail pendukung seperlunya.",
+            "tutor": "Tutor - jelaskan bertahap, beri analogi/contoh, dan cek pemahaman jika cocok.",
+            "auto": "Auto - sesuaikan panjang dan format dengan kompleksitas pertanyaan user.",
+        }
+        return instructions.get(answer_style, instructions["auto"])
+
+    def _build_system_prompt(
+        self, chunks: list[dict[str, object]], answer_style: str
+    ) -> str:
+        scope_labels = {
+            "active_note": "catatan yang sedang dibuka",
+            "course": "course yang sedang dibuka",
+            "workspace": "workspace",
+        }
+        context = "\n\n---\n\n".join(
+            "\n".join(
+                (
+                    f"Sumber: {scope_labels.get(str(chunk.get('scope')), 'workspace')}",
+                    str(chunk["content"]),
+                )
+            )
+            for chunk in chunks
+        )
+        return SYSTEM_PROMPT_TEMPLATE.format(
+            answer_style_instruction=self._answer_style_instruction(answer_style),
+            context=context,
+        )
 
     async def _generate_and_buffer_llm_response(
         self,
@@ -107,10 +142,12 @@ class ChatService:
 
     async def stream_chat(self, request: ChatServiceRequest) -> AsyncIterator[str]:
         embedding = await self.retriever.embed_query(request.message)
-        chunks = await self.db_repo.hybrid_search(
+        chunks = await self.db_repo.contextual_hybrid_search(
             request.message,
             embedding,
             request.workspace_id,
+            course_id=request.course_id,
+            note_id=request.note_id,
         )
 
         chat_id, stream_id = await self.db_repo.create_stream(
@@ -147,7 +184,7 @@ class ChatService:
             await self.redis_repo.expire_stream(stream_id)
             return
 
-        system_prompt = self._build_system_prompt(chunks)
+        system_prompt = self._build_system_prompt(chunks, request.answer_style)
 
         task = asyncio.create_task(
             self._generate_and_buffer_llm_response(
@@ -162,7 +199,7 @@ class ChatService:
         self._background_tasks.add(task)
         task.add_done_callback(self._background_tasks.discard)
 
-        last_id = "-"
+        last_id = "0-0"
         while True:
             events = await self.redis_repo.read_stream_blocking(
                 stream_id, last_id, block_ms=2000

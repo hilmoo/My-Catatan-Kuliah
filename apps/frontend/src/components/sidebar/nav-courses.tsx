@@ -298,10 +298,13 @@ export function NavCourses({ courseId }: NavCoursesProps) {
         </SidebarMenu>
       </SidebarGroup>
 
-      <SidebarGroup className="mt-auto group-data-[collapsible=icon]:hidden">
+      <SidebarGroup className="mt-auto">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => setShowEditCourseDialog(true)}>
+            <SidebarMenuButton
+              tooltip="Course Settings"
+              onClick={() => setShowEditCourseDialog(true)}
+            >
               <SettingsIcon />
               <span>Course Settings</span>
             </SidebarMenuButton>
@@ -309,6 +312,7 @@ export function NavCourses({ courseId }: NavCoursesProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              tooltip="Delete Course"
               onClick={onDeleteCourse}
             >
               <Trash2Icon />

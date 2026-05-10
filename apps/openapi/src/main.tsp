@@ -7,6 +7,7 @@ import "./course/";
 import "./file/";
 import "./note/";
 import "./workspace/";
+import "./chat/";
 
 using TypeSpec.Http;
 using TypeSpec.OpenAPI;
@@ -37,6 +38,12 @@ using TypeSpec.OpenAPI;
     "Courses",
     #{
         description: "A service for managing courses, including creation, retrieval, updating, and deletion.",
+    }
+)
+@tagMetadata(
+    "Chat",
+    #{
+        description: "A service for handling chat functionality, including sending messages and real-time updates via WebSockets.",
     }
 )
 @tagMetadata(

@@ -155,3 +155,24 @@ func (q *Queries) UpdateWorkspaceByIidAndUser(ctx context.Context, arg UpdateWor
 	)
 	return i, err
 }
+
+const validateWorkspaceOwnership = `-- name: ValidateWorkspaceOwnership :one
+SELECT EXISTS (
+    SELECT 1
+    FROM workspaces
+    WHERE "iid" = $1
+        AND "owner_id" = $2
+)
+`
+
+type ValidateWorkspaceOwnershipParams struct {
+	Iid     uuid.UUID
+	OwnerID int32
+}
+
+func (q *Queries) ValidateWorkspaceOwnership(ctx context.Context, arg ValidateWorkspaceOwnershipParams) (bool, error) {
+	row := q.db.QueryRow(ctx, validateWorkspaceOwnership, arg.Iid, arg.OwnerID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
