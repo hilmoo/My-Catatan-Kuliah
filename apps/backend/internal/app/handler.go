@@ -2,6 +2,7 @@ package app
 
 import (
 	"log/slog"
+	"net/http"
 
 	"backend/internal/feature/assignment"
 	"backend/internal/feature/auth"
@@ -40,7 +41,11 @@ func initHandler(args initHandlerParams) *echo.Echo {
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Recover())
 	e.Use(middleware.RequestID())
-	e.Use(middleware.CORS("*"))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPost},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 	e.Use(mlog.New(args.logger).EchoMiddleware())
 
 	e.Use(msession.New(queries, args.cfg.Secret).LoadSession)
@@ -50,6 +55,8 @@ func initHandler(args initHandlerParams) *echo.Echo {
 		Queries:  queries,
 		Config:   args.cfg,
 	}
+
+	registerFrontend(e)
 
 	api := e.Group("/api")
 	health.NewHttpHandler().RegisterRoutes(api)

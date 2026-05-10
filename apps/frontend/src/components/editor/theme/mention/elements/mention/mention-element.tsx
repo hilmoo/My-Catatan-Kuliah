@@ -70,12 +70,12 @@ export const MentionElement = (props: PluginElementRenderProps) => {
     }
   };
 
-  const handleCopy = (e: React.MouseEvent) => {
+  const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     const textToCopy = mentionUrl ?? `@${name}`;
-    const success = copy(textToCopy);
+    const success = await copy(textToCopy);
 
     if (success) {
       setCopied(true);

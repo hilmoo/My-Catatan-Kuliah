@@ -57,9 +57,9 @@ export const MathBlockElement = (props: PluginElementRenderProps) => {
     editor.deleteBlock({ blockId });
   };
 
-  const copyLatex = () => {
+  const copyLatex = async () => {
     if (latex) {
-      const success = copy(latex);
+      const success = await copy(latex);
       if (success) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);

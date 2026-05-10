@@ -140,7 +140,7 @@ export const VideoRender = ({
       a.download = `video-${Date.now()}.mp4`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch (_error) {
       // error
     }
   };
@@ -163,7 +163,7 @@ export const VideoRender = ({
           copy(elementProps.src);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       const { default: copy } = await import("copy-to-clipboard");
       copy(elementProps.src || "");
     }
@@ -241,6 +241,7 @@ export const VideoRender = ({
         >
           {isProviderVideo && embedUrl ? (
             <iframe
+              // oxlint-disable-next-line typescript/no-non-null-assertion
               title={elementProps.provider!.type!}
               src={embedUrl}
               width="100%"

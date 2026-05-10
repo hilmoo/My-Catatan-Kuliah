@@ -60,9 +60,9 @@ export const CodeGroupContent = (props: PluginElementRenderProps) => {
     }
   };
 
-  const copyCode = () => {
+  const copyCode = async () => {
     const codeText = getNodeText(element);
-    const success = copy(codeText);
+    const success = await copy(codeText);
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);

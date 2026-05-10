@@ -25,7 +25,7 @@ export const DIVIDER_COLORS = [
 
 export type DividerTheme = "solid" | "dashed" | "dotted" | "gradient";
 
-export interface DividerElementProps {
+export interface DividerElementProps extends Record<string, unknown> {
   theme?: DividerTheme;
   color?: string;
 }

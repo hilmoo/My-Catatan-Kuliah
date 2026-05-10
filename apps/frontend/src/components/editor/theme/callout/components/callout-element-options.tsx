@@ -23,7 +23,7 @@ export const CALLOUT_THEMES = [
 
 export type CalloutTheme = "default" | "success" | "warning" | "error" | "info";
 
-interface CalloutElementProps {
+interface CalloutElementProps extends Record<string, unknown> {
   theme: CalloutTheme;
 }
 

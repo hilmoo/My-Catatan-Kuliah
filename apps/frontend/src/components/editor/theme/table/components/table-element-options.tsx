@@ -4,7 +4,7 @@ import {
   useUpdateElementProps,
 } from "@yoopta/ui/element-options";
 
-interface TableAppearanceProps {
+interface TableAppearanceProps extends Record<string, unknown> {
   bordered?: boolean;
   striped?: boolean;
   compact?: boolean;

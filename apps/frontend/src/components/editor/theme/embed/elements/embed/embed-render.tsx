@@ -111,11 +111,16 @@ export const EmbedRender = ({
     }
   };
 
+  // @ts-expect-error - provider type is not typed yet
   const alignmentClass = {
     left: "justify-start",
     center: "justify-center",
     right: "justify-end",
   }[(elementProps as any).alignment ?? "center"];
+
+  const iframeTitle = provider?.meta?.title
+    ? `Embedded content: ${provider.meta.title}`
+    : `Embedded ${provider?.type || "media"} content`;
 
   return (
     <div
@@ -181,7 +186,7 @@ export const EmbedRender = ({
           className={cn("rounded-sm overflow-hidden")}
         >
           <iframe
-            title={provider?.meta?.title ?? `Embedded content from ${provider?.type ?? "unknown"}`}
+            title={iframeTitle}
             src={embedUrl}
             width="100%"
             height="100%"

@@ -88,11 +88,11 @@ export const MathElement = (props: PluginElementRenderProps) => {
     setIsEditing(false);
   };
 
-  const copyLatex = (e: React.MouseEvent) => {
+  const copyLatex = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (latex) {
-      const success = copy(latex);
+      const success = await copy(latex);
       if (success) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);

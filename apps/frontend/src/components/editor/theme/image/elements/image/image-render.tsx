@@ -31,7 +31,7 @@ export const ImageRender = ({
   onReplace,
   pluginOptions,
 }: Props) => {
-  const [sizes, setSizes] = useState(elementProps.sizes);
+  const [_, setSizes] = useState(elementProps.sizes);
   const { isElementSelected } = useElementSelected();
   const isBlockSelected = useBlockSelected({ blockId });
   const isSelected = isElementSelected && isBlockSelected;
@@ -124,7 +124,7 @@ export const ImageRender = ({
       a.download = `image-${Date.now()}.jpg`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch (_error) {
       // error
     }
   };
@@ -139,7 +139,7 @@ export const ImageRender = ({
       } else {
         copy(elementProps.src);
       }
-    } catch (error) {
+    } catch (_error) {
       copy(elementProps.src);
     }
   };
