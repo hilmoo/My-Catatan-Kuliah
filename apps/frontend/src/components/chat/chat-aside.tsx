@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   BookOpenIcon,
   ChevronDownIcon,
   GraduationCapIcon,
+  HistoryIcon,
   MessageSquareIcon,
   SendIcon,
   SparklesIcon,
   Trash2Icon,
   XIcon,
 } from "lucide-react";
+import {
+  chatListChats,
+  getChatListChatsQueryKey,
+  useChatListChats,
+  useChatUpdateChatTitle,
+} from "@/api/chat/chat";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +27,12 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ChatMessage } from "./chat-message";
 import { useChat } from "./use-chat";
+
+/** Generate a short title from first ~6 words of text, max 50 chars. */
+function makeAutoTitle(text: string): string {
+  const words = text.trim().split(/\s+/).slice(0, 6).join(" ");
+  return words.length > 50 ? words.slice(0, 47) + "…" : words;
+}
 
 type AnswerStyle = "auto" | "concise" | "direct" | "tutor";
 
@@ -34,22 +48,57 @@ interface ChatAsideProps {
   userId: string;
   courseId?: string;
   notesId?: string;
+  /** Display name for the course (shown in context label) */
+  courseTitle?: string;
+  /** Display name for the note (shown in context label) */
+  notesTitle?: string;
 }
 
-export function ChatAside({ workspaceId, userId, courseId, notesId }: ChatAsideProps) {
+export function ChatAside({ workspaceId, userId, courseId, notesId, courseTitle, notesTitle }: ChatAsideProps) {
   const [open, setOpen] = useState(false);
   const [answerStyle, setAnswerStyle] = useState<AnswerStyle>("auto");
-  const { messages, isLoading, error, sendMessage, clearMessages } = useChat({
+  const queryClient = useQueryClient();
+  const updateTitleMutation = useChatUpdateChatTitle();
+  const firstMessageRef = useRef<string>("");
+
+  const { messages, isLoading, error, sendMessage, clearMessages, loadChat } = useChat({
     userId,
     workspaceId,
     courseId,
     notesId,
     answerStyle,
+    onChatCreated: async () => {
+      const result = await queryClient.fetchQuery({
+        queryKey: getChatListChatsQueryKey(workspaceId),
+        queryFn: () => chatListChats(workspaceId),
+      });
+      if (result.status === 200 && result.data.length > 0) {
+        const newestChat = result.data[0];
+        const existingTitle = newestChat.title?.trim();
+        const isDefaultTitle = !existingTitle || existingTitle === "Untitled Chat";
+        const autoTitle = makeAutoTitle(firstMessageRef.current);
+        if (isDefaultTitle && autoTitle) {
+          updateTitleMutation.mutate(
+            { chatId: newestChat.id, data: { title: autoTitle } },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: getChatListChatsQueryKey(workspaceId) });
+              },
+            },
+          );
+        }
+      }
+    },
   });
+  const chatListQuery = useChatListChats(workspaceId);
+  const recentChats =
+    chatListQuery.data?.status === 200 ? chatListQuery.data.data.slice(0, 2) : [];
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const contextLabel = notesId ? "Note context" : courseId ? "Course context" : "Workspace context";
+  const contextBase = notesId ? "Note context" : courseId ? "Course context" : "Workspace context";
+  const contextSuffix = notesId ? notesTitle : courseId ? courseTitle : undefined;
+  const contextLabel = contextSuffix ? `${contextBase} · ${contextSuffix}` : contextBase;
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -69,6 +118,10 @@ export function ChatAside({ workspaceId, userId, courseId, notesId }: ChatAsideP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
+    // Capture first message for auto-title on new chats
+    if (messages.length === 0) {
+      firstMessageRef.current = input.trim();
+    }
     sendMessage(input);
     setInput("");
   };
@@ -126,7 +179,7 @@ export function ChatAside({ workspaceId, userId, courseId, notesId }: ChatAsideP
             </DropdownMenuContent>
           </DropdownMenu>
           {messages.length > 0 && (
-            <Button variant="ghost" size="icon" className="size-7" onClick={clearMessages}>
+            <Button variant="ghost" size="icon" className="size-7" onClick={clearMessages} title="New chat">
               <Trash2Icon className="size-3.5" />
             </Button>
           )}
@@ -166,6 +219,28 @@ export function ChatAside({ workspaceId, userId, courseId, notesId }: ChatAsideP
                 </button>
               ))}
             </div>
+            {/* Recent chats */}
+            {recentChats.length > 0 && (
+              <div className="mt-2 w-full space-y-0.5">
+                <div className="flex items-center gap-1.5 px-1 text-[10px] text-muted-foreground/60">
+                  <HistoryIcon className="size-2.5" />
+                  Recent
+                </div>
+                {recentChats.map((chat) => (
+                  <button
+                    key={chat.id}
+                    type="button"
+                    onClick={() => loadChat(chat.id)}
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent/60"
+                  >
+                    <MessageSquareIcon className="size-3 shrink-0 text-muted-foreground/40" />
+                    <span className="truncate text-[11px] text-muted-foreground">
+                      {chat.title || "Untitled chat"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-3">

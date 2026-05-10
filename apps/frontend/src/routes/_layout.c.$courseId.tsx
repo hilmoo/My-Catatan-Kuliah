@@ -69,6 +69,7 @@ function RouteComponent() {
       <ChatAside
         workspaceId={workspaceId}
         courseId={courseId}
+        courseTitle={course.title}
         notesId={activeNotesId}
         userId={userId}
       />
