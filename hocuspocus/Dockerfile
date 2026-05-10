@@ -6,8 +6,12 @@ WORKDIR /app
 
 FROM base AS build
 COPY . .
+
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile
+    pnpm --filter proto install --frozen-lockfile
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm --filter hocuspocus install --frozen-lockfile
 
 RUN pnpm --filter hocuspocus run build
 
