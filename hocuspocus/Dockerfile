@@ -13,6 +13,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm --filter hocuspocus install --frozen-lockfile
 
+RUN pnpm --filter proto run build
 RUN pnpm --filter hocuspocus run build
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
