@@ -1,0 +1,107 @@
+services:
+  db:
+    image: pgvector/pgvector:pg18-trixie
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mycatatankuliah
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mycatatankuliah"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nats:
+    image: nats:2.12-alpine
+    command: -js -sd /data
+    volumes:
+      - nats_data:/data
+
+  minio:
+    image: pgsty/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+
+  apps:
+    build:
+      context: .
+      dockerfile: apps/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DOMAIN: http://localhost:8080
+      SECRET: supersecret
+      GOOGLE_CLIENT_ID: google-client-id
+      GOOGLE_CLIENT_SECRET: google-client-secret
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY_ID: minioadmin
+      S3_SECRET_ACCESS_KEY: minioadmin
+      S3_REGION: us-east-1
+      S3_BUCKET: mycatatankuliah
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
+      NATS_URL: nats://nats:4222
+      HOCUSPOCUS_URL: http://hocuspocus:3005
+    depends_on:
+      db:
+        condition: service_healthy
+      nats:
+        condition: service_started
+      minio:
+        condition: service_started
+
+  ai:
+    build:
+      context: .
+      dockerfile: ai/Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
+      NATS_URL: nats://nats:4222
+      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+      LLM_BASE_URL: http://host.docker.internal:8000
+      LLM_API_KEY: your-llm-api-key
+      LLM_MODEL: gpt-4
+    depends_on:
+      db:
+        condition: service_healthy
+      nats:
+        condition: service_started
+
+  embedder:
+    build:
+      context: .
+      dockerfile: embedder/Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
+      NATS_URL: nats://nats:4222
+      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+      CHUNK_SIZE: 500
+    depends_on:
+      db:
+        condition: service_healthy
+      nats:
+        condition: service_started
+
+  hocuspocus:
+    build:
+      context: .
+      dockerfile: hocuspocus/Dockerfile
+    environment:
+      PORT: 3005
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
+      NATS_URL: nats://nats:4222
+    depends_on:
+      db:
+        condition: service_healthy
+      nats:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  nats_data:
+  minio_data:
