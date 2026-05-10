@@ -78,6 +78,7 @@
     "react-hook-form": "^7.75.0",
     "react-markdown": "^10.1.0",
     "react-rnd": "^10.5.3",
+    "remark-gfm": "^4.0.1",
     "shadcn": "^4.6.0",
     "shiki": "^4.0.2",
     "slate": "^0.124.1",
