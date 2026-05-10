@@ -5,7 +5,7 @@ import { Button } from "../../../ui/button";
 import { Label } from "../../../ui/label";
 
 interface MathEditProps {
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   editedLatex: string;
   onChangeLatex: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;

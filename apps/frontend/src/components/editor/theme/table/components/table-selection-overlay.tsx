@@ -69,11 +69,11 @@ export const TableSelectionOverlay = ({ blockId }: TableSelectionOverlayProps) =
     [TableCellElement, Path][] | undefined
   >([]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const selectedCells = slate ? TABLE_CELLS_IN_SELECTION.get(slate) : [];
 
   useEffect(() => {
     setSavedSelectedCells(selectedCells);
+  // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [selectedCells]);
 
   const cellsToUse =

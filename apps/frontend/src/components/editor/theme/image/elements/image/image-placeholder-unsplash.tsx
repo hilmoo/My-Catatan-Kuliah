@@ -1,7 +1,11 @@
 import { Button } from "../../../ui/button";
 import { TabsContent } from "../../../ui/tabs";
 
-export const ImagePlaceholderUnsplash = ({ onInsertFromUnsplash }) => (
+export const ImagePlaceholderUnsplash = ({
+  onInsertFromUnsplash,
+}: {
+  onInsertFromUnsplash?: React.MouseEventHandler<HTMLButtonElement>;
+}) => (
   <TabsContent value="unsplash" className="mt-4">
     <div className="flex flex-col items-center gap-3 py-6">
       <div className="rounded-lg bg-muted p-3">

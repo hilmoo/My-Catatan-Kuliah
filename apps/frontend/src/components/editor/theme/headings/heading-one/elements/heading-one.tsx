@@ -1,7 +1,4 @@
-import { Anchor, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import type { PluginElementRenderProps } from "@yoopta/editor";
-import { Popover } from "../../../ui/popover";
-import { Input } from "../../../ui/input";
 
 export const HeadingOne = (props: PluginElementRenderProps) => {
   const { attributes, children, element } = props;

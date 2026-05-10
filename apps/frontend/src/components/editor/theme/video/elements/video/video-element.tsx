@@ -23,7 +23,9 @@ export const VideoElement = ({
 }: PluginElementRenderProps) => {
   const editor = useYooptaEditor();
   const pluginOptions = useYooptaPluginOptions<VideoPluginOptions>("Video");
+  // oxlint-disable-next-line typescript/no-non-null-assertion
   const { upload: uploadVideoToStorage, progress, loading } = useVideoUpload(pluginOptions.upload!);
+  // oxlint-disable-next-line typescript/no-non-null-assertion
   const { deleteVideo: deleteVideoFromStorage } = useVideoDelete(pluginOptions.delete!);
   const { preview, generatePreview, clearPreview } = useVideoPreview();
 

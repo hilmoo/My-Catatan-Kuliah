@@ -23,7 +23,7 @@ export const AccordionItemHeading = (props: PluginElementRenderProps) => {
       });
       const parentElement = Editor.parent(slate, elementPath as Location);
       return parentElement[0] as SlateElement;
-    } catch (error) {
+    } catch (_error) {
       // Element path not found
     }
 
@@ -38,7 +38,7 @@ export const AccordionItemHeading = (props: PluginElementRenderProps) => {
 
     try {
       return Elements.getElementPath(editor, { blockId, element: parentListItem });
-    } catch (error) {
+    } catch (_error) {
       // Element path not found
     }
 

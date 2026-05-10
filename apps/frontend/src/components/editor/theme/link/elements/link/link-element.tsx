@@ -51,11 +51,11 @@ const Link = (props: PluginElementRenderProps) => {
     }
   };
 
-  const copyUrl = (e: React.MouseEvent) => {
+  const copyUrl = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (element.props.url) {
-      const success = copy(element.props.url);
+      const success = await copy(element.props.url);
       if (success) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);

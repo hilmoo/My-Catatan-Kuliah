@@ -5,8 +5,8 @@ import { Input } from "../../../ui/input";
 import { Label } from "../../../ui/label";
 
 interface LinkEditProps {
-  textInputRef: React.RefObject<HTMLInputElement>;
-  urlInputRef: React.RefObject<HTMLInputElement>;
+  textInputRef: React.RefObject<HTMLInputElement | null>;
+  urlInputRef: React.RefObject<HTMLInputElement | null>;
   editedText: string;
   editedUrl: string;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;

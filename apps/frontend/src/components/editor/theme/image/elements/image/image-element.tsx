@@ -22,7 +22,9 @@ export const ImageElement = ({
 }: PluginElementRenderProps) => {
   const editor = useYooptaEditor();
   const pluginOptions = useYooptaPluginOptions<ImagePluginOptions>("Image");
+  // oxlint-disable-next-line typescript/no-non-null-assertion
   const { upload: uploadImageToStorage, progress, loading } = useImageUpload(pluginOptions.upload!);
+  // oxlint-disable-next-line typescript/no-non-null-assertion
   const { deleteImage: deleteImageFromStorage } = useImageDelete(pluginOptions.delete!);
   const { preview, generatePreview, clearPreview } = useImagePreview();
 
@@ -84,6 +86,7 @@ export const ImageElement = ({
         id: result.id || (result as any).fileId,
         src: result.url,
         alt: file.name,
+        // oxlint-disable-next-line typescript/no-non-null-assertion
         sizes: { width: result.width!, height: result.height! },
       });
       clearPreview();
@@ -105,9 +108,9 @@ export const ImageElement = ({
         preview={preview}
         progress={progress}
         loading={loading}
-        onInsertUrl={() => {}}
-        onInsertFromUnsplash={() => {}}
-        onInsertFromAI={async () => {}}
+        onInsertUrl={() => { /* empty */ }}
+        onInsertFromUnsplash={() => { /* empty */ }}
+        onInsertFromAI={async () => { /* empty */ }}
         attributes={attributes}
       >
         {children}
