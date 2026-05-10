@@ -24,7 +24,7 @@ function RootComponent() {
       </SidebarProvider>
       <TanStackDevtools
         config={{
-          position: "bottom-right",
+          position: "top-right",
         }}
         plugins={[
           {

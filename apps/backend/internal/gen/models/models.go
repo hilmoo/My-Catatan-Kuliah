@@ -105,6 +105,37 @@ type AuthMeResponse struct {
 	Name string `json:"name" validate:"required"`
 }
 
+// ChatsChatHistoryResponse defines model for ChatsChatHistoryResponse.
+type ChatsChatHistoryResponse = []ChatsChatMessage
+
+// ChatsChatListResponse defines model for ChatsChatListResponse.
+type ChatsChatListResponse = []ChatsChatSummary
+
+// ChatsChatMessage defines model for ChatsChatMessage.
+type ChatsChatMessage struct {
+	CreatedAt string `json:"created_at" validate:"required"`
+	Id        string `json:"id" validate:"required"`
+	Role      string `json:"role" validate:"required"`
+	Text      string `json:"text" validate:"required"`
+}
+
+// ChatsChatSummary defines model for ChatsChatSummary.
+type ChatsChatSummary struct {
+	CreatedAt string `json:"created_at" validate:"required"`
+	Id        string `json:"id" validate:"required"`
+	Title     string `json:"title" validate:"required"`
+}
+
+// ChatsUpdateChatTitleRequest defines model for ChatsUpdateChatTitleRequest.
+type ChatsUpdateChatTitleRequest struct {
+	Title string `json:"title" validate:"required"`
+}
+
+// ChatsUpdateChatTitleResponse defines model for ChatsUpdateChatTitleResponse.
+type ChatsUpdateChatTitleResponse struct {
+	Title string `json:"title" validate:"required"`
+}
+
 // CommonErrorError An error response with details about the failure.
 type CommonErrorError struct {
 	// Code An optional machine-readable error code for programmatic handling
@@ -277,6 +308,9 @@ type AssignmentsServiceCreateAssignmentJSONRequestBody = AssignmentsCreateReques
 
 // AssignmentsServiceUpdateAssignmentJSONRequestBody defines body for AssignmentsServiceUpdateAssignment for application/json ContentType.
 type AssignmentsServiceUpdateAssignmentJSONRequestBody = AssignmentsUpdateRequest
+
+// ChatUpdateChatTitleJSONRequestBody defines body for ChatUpdateChatTitle for application/json ContentType.
+type ChatUpdateChatTitleJSONRequestBody = ChatsUpdateChatTitleRequest
 
 // CoursesServiceCreateCourseJSONRequestBody defines body for CoursesServiceCreateCourse for application/json ContentType.
 type CoursesServiceCreateCourseJSONRequestBody = CoursesCreateRequest

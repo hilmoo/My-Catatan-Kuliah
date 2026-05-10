@@ -34,3 +34,10 @@ WHERE "iid" = $1
     AND "owner_id" = $2
 RETURNING *;
 
+-- name: ValidateWorkspaceOwnership :one
+SELECT EXISTS (
+    SELECT 1
+    FROM workspaces
+    WHERE "iid" = $1
+        AND "owner_id" = $2
+);

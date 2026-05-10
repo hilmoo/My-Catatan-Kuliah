@@ -45,8 +45,11 @@ class RedisRepository:
 
     async def read_stream_blocking(
         self, stream_id: str, last_id: str, block_ms: int = 2000
-    ) -> list[str]:
-        """Blocking read for new chunks from Redis Stream (XREAD)."""
+    ) -> list[tuple[str, str]]:
+        """Blocking read for new chunks from Redis Stream (XREAD).
+
+        Returns a list of (entry_id, data) tuples.
+        """
         key = self._stream_key(stream_id)
 
         # XREAD blocks until new entries after last_id are available
@@ -56,4 +59,16 @@ class RedisRepository:
 
         # result format: [(key, [(entry_id, {field: value})])]
         _, entries = result[0]
-        return [entry[1]["data"] for entry in entries]
+        return [(entry[0], entry[1]["data"]) for entry in entries]
+
+    async def replay_stream_paginated(
+        self, stream_id: str, start: str = "-", count: int = 50
+    ) -> list[tuple[str, str]]:
+        """Paginated replay using XRANGE.
+
+        Returns a list of (entry_id, data) tuples.
+        """
+        key = self._stream_key(stream_id)
+
+        entries = await self.redis.xrange(key, min=start, max="+", count=count)
+        return [(entry[0], entry[1]["data"]) for entry in entries]

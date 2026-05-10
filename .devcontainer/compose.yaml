@@ -20,6 +20,13 @@ services:
       - my-catatan-kuliah-nats:/data
     command: -js -sd /data
 
+  redis:
+    image: redis:7-alpine
+    network_mode: service:workspace
+    volumes:
+      - my-catatan-kuliah-redis:/data
+    command: redis-server --appendonly yes
+
   ports:
     image: pgsty/minio
     command: server /data --console-address ":9001"
@@ -30,4 +37,6 @@ services:
 volumes:
   my-catatan-kuliah-postgres:
   my-catatan-kuliah-nats:
+  my-catatan-kuliah-redis:
   my-catatan-kuliah-minio:
+

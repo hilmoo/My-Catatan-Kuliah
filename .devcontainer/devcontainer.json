@@ -29,7 +29,8 @@
 				"bufbuild.vscode-buf",
 				"tamasfe.even-better-toml",
 				"task.vscode-task",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"typespec.typespec-vscode"
 			]
 		}
 	},

@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/feature/assignment"
 	"backend/internal/feature/auth"
+	"backend/internal/feature/chat"
 	"backend/internal/feature/course"
 	"backend/internal/feature/files"
 	"backend/internal/feature/health"
@@ -72,6 +73,7 @@ func initHandler(args initHandlerParams) *echo.Echo {
 	files.NewHttpHandler(httpHandlerParams, args.s3).RegisterRoutes(protected)
 	note.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 	workspace.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
+	chat.NewHttpHandler(httpHandlerParams).RegisterRoutes(protected)
 
 	return e
 }

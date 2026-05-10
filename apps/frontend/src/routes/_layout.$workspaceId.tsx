@@ -4,13 +4,11 @@ import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/$workspaceId")({
   component: RouteComponent,
@@ -28,9 +26,9 @@ export const Route = createFileRoute("/_layout/$workspaceId")({
 });
 
 function RouteComponent() {
-  const workspaceId = Route.useParams().workspaceId;
+  const { workspaceId } = Route.useParams();
+  const { workspace } = Route.useLoaderData();
 
-  // TODO: Add llm chat ui in here (replace the "Hi" text with the chat ui)
   return (
     <>
       <AppSidebar workspaceId={workspaceId} />
@@ -41,18 +39,16 @@ function RouteComponent() {
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>{workspace.name}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">Hi</div>
+        <div className="flex flex-1 flex-col">
+          <Outlet />
+        </div>
       </SidebarInset>
     </>
   );
