@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AssignmentKanbanDetail } from "@/components/assignment-kanban";
 
 export const Route = createFileRoute("/_layout/c/$courseId/a/$assignmentId")({
   component: RouteComponent,
 });
 
-// TODO: Add kanban detail board here
 function RouteComponent() {
-  return <div>Hello &quot;/$workspaceId/a/$courseId&quot;!</div>;
+  const { courseId, assignmentId } = Route.useParams();
+
+  return <AssignmentKanbanDetail courseId={courseId} assignmentId={assignmentId} />;
 }
