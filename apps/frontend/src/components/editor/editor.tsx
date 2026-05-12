@@ -122,7 +122,7 @@ const FullSetupEditor = ({
   }, []);
 
   return (
-    <div ref={containerBoxRef} className="w-full h-full relative">
+    <div ref={containerBoxRef} className="w-full h-full">
       <BlockDndContext editor={editor}>
         <YooptaEditor
           editor={editor}
