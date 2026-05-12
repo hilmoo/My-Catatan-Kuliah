@@ -9,20 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TiptapRouteImport } from './routes/tiptap'
-import { Route as StudyRouteImport } from './routes/study'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as PathlessLayoutRouteImport } from './routes/_pathlessLayout'
 import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as PostsRouteRouteImport } from './routes/posts.route'
-import { Route as PostsIndexRouteImport } from './routes/posts.index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
-import { Route as PostsPostIdRouteImport } from './routes/posts.$postId'
-import { Route as PathlessLayoutNestedLayoutRouteImport } from './routes/_pathlessLayout/_nested-layout'
 import { Route as LayoutWorkspaceIdRouteImport } from './routes/_layout.$workspaceId'
 import { Route as LayoutWorkspaceIdIndexRouteImport } from './routes/_layout.$workspaceId/index'
-import { Route as PathlessLayoutNestedLayoutRouteBRouteImport } from './routes/_pathlessLayout/_nested-layout/route-b'
-import { Route as PathlessLayoutNestedLayoutRouteARouteImport } from './routes/_pathlessLayout/_nested-layout/route-a'
 import { Route as LayoutCCourseIdRouteImport } from './routes/_layout.c.$courseId'
 import { Route as LayoutCCourseIdIndexRouteImport } from './routes/_layout.c.$courseId/index'
 import { Route as LayoutCCourseIdARouteImport } from './routes/_layout.c.$courseId/a'
@@ -30,54 +21,20 @@ import { Route as LayoutWorkspaceIdCChatIdRouteImport } from './routes/_layout.$
 import { Route as LayoutCCourseIdNNotesIdRouteImport } from './routes/_layout.c.$courseId/n.$notesId'
 import { Route as LayoutCCourseIdAAssignmentIdRouteImport } from './routes/_layout.c.$courseId/a.$assignmentId'
 
-const TiptapRoute = TiptapRouteImport.update({
-  id: '/tiptap',
-  path: '/tiptap',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudyRoute = StudyRouteImport.update({
-  id: '/study',
-  path: '/study',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PathlessLayoutRoute = PathlessLayoutRouteImport.update({
-  id: '/_pathlessLayout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostsRouteRoute = PostsRouteRouteImport.update({
-  id: '/posts',
-  path: '/posts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostsIndexRoute = PostsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PostsRouteRoute,
-} as any)
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const PostsPostIdRoute = PostsPostIdRouteImport.update({
-  id: '/$postId',
-  path: '/$postId',
-  getParentRoute: () => PostsRouteRoute,
-} as any)
-const PathlessLayoutNestedLayoutRoute =
-  PathlessLayoutNestedLayoutRouteImport.update({
-    id: '/_nested-layout',
-    getParentRoute: () => PathlessLayoutRoute,
-  } as any)
 const LayoutWorkspaceIdRoute = LayoutWorkspaceIdRouteImport.update({
   id: '/$workspaceId',
   path: '/$workspaceId',
@@ -88,18 +45,6 @@ const LayoutWorkspaceIdIndexRoute = LayoutWorkspaceIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutWorkspaceIdRoute,
 } as any)
-const PathlessLayoutNestedLayoutRouteBRoute =
-  PathlessLayoutNestedLayoutRouteBRouteImport.update({
-    id: '/route-b',
-    path: '/route-b',
-    getParentRoute: () => PathlessLayoutNestedLayoutRoute,
-  } as any)
-const PathlessLayoutNestedLayoutRouteARoute =
-  PathlessLayoutNestedLayoutRouteARouteImport.update({
-    id: '/route-a',
-    path: '/route-a',
-    getParentRoute: () => PathlessLayoutNestedLayoutRoute,
-  } as any)
 const LayoutCCourseIdRoute = LayoutCCourseIdRouteImport.update({
   id: '/c/$courseId',
   path: '/c/$courseId',
@@ -134,17 +79,10 @@ const LayoutCCourseIdAAssignmentIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/posts': typeof PostsRouteRouteWithChildren
   '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
-  '/study': typeof StudyRoute
-  '/tiptap': typeof TiptapRoute
   '/$workspaceId': typeof LayoutWorkspaceIdRouteWithChildren
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/posts/': typeof PostsIndexRoute
   '/c/$courseId': typeof LayoutCCourseIdRouteWithChildren
-  '/route-a': typeof PathlessLayoutNestedLayoutRouteARoute
-  '/route-b': typeof PathlessLayoutNestedLayoutRouteBRoute
   '/$workspaceId/': typeof LayoutWorkspaceIdIndexRoute
   '/$workspaceId/c/$chatId': typeof LayoutWorkspaceIdCChatIdRoute
   '/c/$courseId/a': typeof LayoutCCourseIdARouteWithChildren
@@ -153,14 +91,8 @@ export interface FileRoutesByFullPath {
   '/c/$courseId/n/$notesId': typeof LayoutCCourseIdNNotesIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
-  '/study': typeof StudyRoute
-  '/tiptap': typeof TiptapRoute
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/posts': typeof PostsIndexRoute
-  '/route-a': typeof PathlessLayoutNestedLayoutRouteARoute
-  '/route-b': typeof PathlessLayoutNestedLayoutRouteBRoute
+  '/': typeof LayoutIndexRoute
   '/$workspaceId': typeof LayoutWorkspaceIdIndexRoute
   '/$workspaceId/c/$chatId': typeof LayoutWorkspaceIdCChatIdRoute
   '/c/$courseId/a': typeof LayoutCCourseIdARouteWithChildren
@@ -170,20 +102,11 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/posts': typeof PostsRouteRouteWithChildren
   '/_layout': typeof LayoutRouteWithChildren
-  '/_pathlessLayout': typeof PathlessLayoutRouteWithChildren
   '/login': typeof LoginRoute
-  '/study': typeof StudyRoute
-  '/tiptap': typeof TiptapRoute
   '/_layout/$workspaceId': typeof LayoutWorkspaceIdRouteWithChildren
-  '/_pathlessLayout/_nested-layout': typeof PathlessLayoutNestedLayoutRouteWithChildren
-  '/posts/$postId': typeof PostsPostIdRoute
   '/_layout/': typeof LayoutIndexRoute
-  '/posts/': typeof PostsIndexRoute
   '/_layout/c/$courseId': typeof LayoutCCourseIdRouteWithChildren
-  '/_pathlessLayout/_nested-layout/route-a': typeof PathlessLayoutNestedLayoutRouteARoute
-  '/_pathlessLayout/_nested-layout/route-b': typeof PathlessLayoutNestedLayoutRouteBRoute
   '/_layout/$workspaceId/': typeof LayoutWorkspaceIdIndexRoute
   '/_layout/$workspaceId/c/$chatId': typeof LayoutWorkspaceIdCChatIdRoute
   '/_layout/c/$courseId/a': typeof LayoutCCourseIdARouteWithChildren
@@ -194,17 +117,10 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/posts'
     | '/'
     | '/login'
-    | '/study'
-    | '/tiptap'
     | '/$workspaceId'
-    | '/posts/$postId'
-    | '/posts/'
     | '/c/$courseId'
-    | '/route-a'
-    | '/route-b'
     | '/$workspaceId/'
     | '/$workspaceId/c/$chatId'
     | '/c/$courseId/a'
@@ -213,14 +129,8 @@ export interface FileRouteTypes {
     | '/c/$courseId/n/$notesId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
-    | '/study'
-    | '/tiptap'
-    | '/posts/$postId'
-    | '/posts'
-    | '/route-a'
-    | '/route-b'
+    | '/'
     | '/$workspaceId'
     | '/$workspaceId/c/$chatId'
     | '/c/$courseId/a'
@@ -229,20 +139,11 @@ export interface FileRouteTypes {
     | '/c/$courseId/n/$notesId'
   id:
     | '__root__'
-    | '/posts'
     | '/_layout'
-    | '/_pathlessLayout'
     | '/login'
-    | '/study'
-    | '/tiptap'
     | '/_layout/$workspaceId'
-    | '/_pathlessLayout/_nested-layout'
-    | '/posts/$postId'
     | '/_layout/'
-    | '/posts/'
     | '/_layout/c/$courseId'
-    | '/_pathlessLayout/_nested-layout/route-a'
-    | '/_pathlessLayout/_nested-layout/route-b'
     | '/_layout/$workspaceId/'
     | '/_layout/$workspaceId/c/$chatId'
     | '/_layout/c/$courseId/a'
@@ -252,42 +153,17 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  PostsRouteRoute: typeof PostsRouteRouteWithChildren
   LayoutRoute: typeof LayoutRouteWithChildren
-  PathlessLayoutRoute: typeof PathlessLayoutRouteWithChildren
   LoginRoute: typeof LoginRoute
-  StudyRoute: typeof StudyRoute
-  TiptapRoute: typeof TiptapRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tiptap': {
-      id: '/tiptap'
-      path: '/tiptap'
-      fullPath: '/tiptap'
-      preLoaderRoute: typeof TiptapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/study': {
-      id: '/study'
-      path: '/study'
-      fullPath: '/study'
-      preLoaderRoute: typeof StudyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_pathlessLayout': {
-      id: '/_pathlessLayout'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof PathlessLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_layout': {
@@ -297,40 +173,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/posts': {
-      id: '/posts'
-      path: '/posts'
-      fullPath: '/posts'
-      preLoaderRoute: typeof PostsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/posts/': {
-      id: '/posts/'
-      path: '/'
-      fullPath: '/posts/'
-      preLoaderRoute: typeof PostsIndexRouteImport
-      parentRoute: typeof PostsRouteRoute
-    }
     '/_layout/': {
       id: '/_layout/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
-    }
-    '/posts/$postId': {
-      id: '/posts/$postId'
-      path: '/$postId'
-      fullPath: '/posts/$postId'
-      preLoaderRoute: typeof PostsPostIdRouteImport
-      parentRoute: typeof PostsRouteRoute
-    }
-    '/_pathlessLayout/_nested-layout': {
-      id: '/_pathlessLayout/_nested-layout'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof PathlessLayoutNestedLayoutRouteImport
-      parentRoute: typeof PathlessLayoutRoute
     }
     '/_layout/$workspaceId': {
       id: '/_layout/$workspaceId'
@@ -345,20 +193,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/$workspaceId/'
       preLoaderRoute: typeof LayoutWorkspaceIdIndexRouteImport
       parentRoute: typeof LayoutWorkspaceIdRoute
-    }
-    '/_pathlessLayout/_nested-layout/route-b': {
-      id: '/_pathlessLayout/_nested-layout/route-b'
-      path: '/route-b'
-      fullPath: '/route-b'
-      preLoaderRoute: typeof PathlessLayoutNestedLayoutRouteBRouteImport
-      parentRoute: typeof PathlessLayoutNestedLayoutRoute
-    }
-    '/_pathlessLayout/_nested-layout/route-a': {
-      id: '/_pathlessLayout/_nested-layout/route-a'
-      path: '/route-a'
-      fullPath: '/route-a'
-      preLoaderRoute: typeof PathlessLayoutNestedLayoutRouteARouteImport
-      parentRoute: typeof PathlessLayoutNestedLayoutRoute
     }
     '/_layout/c/$courseId': {
       id: '/_layout/c/$courseId'
@@ -404,20 +238,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface PostsRouteRouteChildren {
-  PostsPostIdRoute: typeof PostsPostIdRoute
-  PostsIndexRoute: typeof PostsIndexRoute
-}
-
-const PostsRouteRouteChildren: PostsRouteRouteChildren = {
-  PostsPostIdRoute: PostsPostIdRoute,
-  PostsIndexRoute: PostsIndexRoute,
-}
-
-const PostsRouteRouteWithChildren = PostsRouteRoute._addFileChildren(
-  PostsRouteRouteChildren,
-)
 
 interface LayoutWorkspaceIdRouteChildren {
   LayoutWorkspaceIdIndexRoute: typeof LayoutWorkspaceIdIndexRoute
@@ -474,43 +294,9 @@ const LayoutRouteChildren: LayoutRouteChildren = {
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
-interface PathlessLayoutNestedLayoutRouteChildren {
-  PathlessLayoutNestedLayoutRouteARoute: typeof PathlessLayoutNestedLayoutRouteARoute
-  PathlessLayoutNestedLayoutRouteBRoute: typeof PathlessLayoutNestedLayoutRouteBRoute
-}
-
-const PathlessLayoutNestedLayoutRouteChildren: PathlessLayoutNestedLayoutRouteChildren =
-  {
-    PathlessLayoutNestedLayoutRouteARoute:
-      PathlessLayoutNestedLayoutRouteARoute,
-    PathlessLayoutNestedLayoutRouteBRoute:
-      PathlessLayoutNestedLayoutRouteBRoute,
-  }
-
-const PathlessLayoutNestedLayoutRouteWithChildren =
-  PathlessLayoutNestedLayoutRoute._addFileChildren(
-    PathlessLayoutNestedLayoutRouteChildren,
-  )
-
-interface PathlessLayoutRouteChildren {
-  PathlessLayoutNestedLayoutRoute: typeof PathlessLayoutNestedLayoutRouteWithChildren
-}
-
-const PathlessLayoutRouteChildren: PathlessLayoutRouteChildren = {
-  PathlessLayoutNestedLayoutRoute: PathlessLayoutNestedLayoutRouteWithChildren,
-}
-
-const PathlessLayoutRouteWithChildren = PathlessLayoutRoute._addFileChildren(
-  PathlessLayoutRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
-  PostsRouteRoute: PostsRouteRouteWithChildren,
   LayoutRoute: LayoutRouteWithChildren,
-  PathlessLayoutRoute: PathlessLayoutRouteWithChildren,
   LoginRoute: LoginRoute,
-  StudyRoute: StudyRoute,
-  TiptapRoute: TiptapRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

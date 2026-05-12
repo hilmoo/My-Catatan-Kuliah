@@ -39,8 +39,8 @@ type AssignmentsAssignmentStatus string
 type AssignmentsCreateRequest struct {
 	Content  *string                     `json:"content,omitempty" validate:"omitempty"`
 	CourseId string                      `json:"course_id" validate:"required"`
-	DueDate  time.Time                   `json:"due_date" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
-	Position int                         `json:"position" validate:"required"`
+	DueDate  time.Time                   `json:"due_date" validate:"required"`
+	Position float32                     `json:"position" validate:"required"`
 	Status   AssignmentsAssignmentStatus `json:"status" validate:"omitempty,oneof=Todo InProgress Done"`
 	Title    string                      `json:"title" validate:"required"`
 }
@@ -52,14 +52,14 @@ type AssignmentsCreateResponse = AssignmentsDetailResponse
 type AssignmentsDetailResponse struct {
 	Content   *string                     `json:"content,omitempty" validate:"omitempty"`
 	CourseId  string                      `json:"course_id" validate:"required"`
-	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string                     `json:"created_by,omitempty" validate:"required"`
-	DueDate   time.Time                   `json:"due_date" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	DueDate   time.Time                   `json:"due_date" validate:"required"`
 	Id        *string                     `json:"id,omitempty" validate:"required"`
-	Position  int                         `json:"position" validate:"required"`
+	Position  float32                     `json:"position" validate:"required"`
 	Status    AssignmentsAssignmentStatus `json:"status" validate:"omitempty,oneof=Todo InProgress Done"`
 	Title     string                      `json:"title" validate:"required"`
-	UpdatedAt *time.Time                  `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	UpdatedAt *time.Time                  `json:"updated_at,omitempty" validate:"required"`
 }
 
 // AssignmentsListResponse defines model for AssignmentsListResponse.
@@ -68,21 +68,21 @@ type AssignmentsListResponse = []AssignmentsResponse
 // AssignmentsResponse defines model for AssignmentsResponse.
 type AssignmentsResponse struct {
 	CourseId  string                      `json:"course_id" validate:"required"`
-	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string                     `json:"created_by,omitempty" validate:"required"`
-	DueDate   time.Time                   `json:"due_date" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	DueDate   time.Time                   `json:"due_date" validate:"required"`
 	Id        *string                     `json:"id,omitempty" validate:"required"`
-	Position  int                         `json:"position" validate:"required"`
+	Position  float32                     `json:"position" validate:"required"`
 	Status    AssignmentsAssignmentStatus `json:"status" validate:"omitempty,oneof=Todo InProgress Done"`
 	Title     string                      `json:"title" validate:"required"`
-	UpdatedAt *time.Time                  `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	UpdatedAt *time.Time                  `json:"updated_at,omitempty" validate:"required"`
 }
 
 // AssignmentsUpdateRequest The template for adding optional properties.
 type AssignmentsUpdateRequest struct {
 	Content  *string                      `json:"content,omitempty" validate:"omitempty"`
-	DueDate  *time.Time                   `json:"due_date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"`
-	Position *int                         `json:"position,omitempty" validate:"omitempty"`
+	DueDate  *time.Time                   `json:"due_date,omitempty" validate:"omitempty"`
+	Position *float32                     `json:"position,omitempty" validate:"omitempty"`
 	Status   *AssignmentsAssignmentStatus `json:"status,omitempty" validate:"omitempty,oneof=Todo InProgress Done"`
 	Title    *string                      `json:"title,omitempty" validate:"omitempty"`
 }
@@ -190,13 +190,13 @@ type CoursesListResponse = []CoursesResponse
 
 // CoursesResponse defines model for CoursesResponse.
 type CoursesResponse struct {
-	CreatedAt   *time.Time `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt   *time.Time `json:"created_at,omitempty" validate:"required"`
 	CreatedBy   *string    `json:"created_by,omitempty" validate:"required"`
 	Credits     int        `json:"credits" validate:"required"`
 	Id          *string    `json:"id,omitempty" validate:"required"`
 	Instructor  string     `json:"instructor" validate:"required"`
 	Title       string     `json:"title" validate:"required"`
-	UpdatedAt   *time.Time `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty" validate:"required"`
 	WorkspaceId string     `json:"workspace_id" validate:"required"`
 }
 
@@ -238,11 +238,11 @@ type NotesCreateResponse = NotesDetailResponse
 type NotesDetailResponse struct {
 	Content   *string    `json:"content,omitempty" validate:"omitempty"`
 	CourseId  string     `json:"course_id" validate:"required"`
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string    `json:"created_by,omitempty" validate:"required"`
 	Id        *string    `json:"id,omitempty" validate:"required"`
 	Title     string     `json:"title" validate:"required"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required"`
 }
 
 // NotesListResponse defines model for NotesListResponse.
@@ -251,11 +251,11 @@ type NotesListResponse = []NotesResponse
 // NotesResponse defines model for NotesResponse.
 type NotesResponse struct {
 	CourseId  string     `json:"course_id" validate:"required"`
-	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string    `json:"created_by,omitempty" validate:"required"`
 	Id        *string    `json:"id,omitempty" validate:"required"`
 	Title     string     `json:"title" validate:"required"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required"`
 }
 
 // NotesUpdateRequest The template for adding optional properties.

@@ -228,7 +228,7 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
           {courses.map((item) => (
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild>
-                <Link to="/c/$courseId" params={{ courseId: item.id }}>
+                <Link to="/c/$courseId/a" params={{ courseId: item.id }}>
                   <BookOpenIcon />
                   <span>{item.title}</span>
                 </Link>

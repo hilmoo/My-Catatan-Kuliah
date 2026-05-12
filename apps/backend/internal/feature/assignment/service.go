@@ -54,8 +54,9 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 			CourseId:  courseId,
 			CreatedAt: &w.CreatedAt,
 			CreatedBy: &userIid,
+			DueDate:   w.DueDate,
 			Id:        &id,
-			Position:  int(w.Position),
+			Position:  float32(w.Position),
 			Status:    models.AssignmentsAssignmentStatus(w.Status),
 			Title:     w.Title,
 			UpdatedAt: &w.UpdatedAt,
@@ -67,7 +68,7 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 
 type createAssignmentServiceParams struct {
 	queries *db.Queries
-	body    *models.AssignmentsCreateRequest
+	body    *models.AssignmentsServiceCreateAssignmentJSONRequestBody
 }
 
 func createAssignmentService(ctx context.Context, args createAssignmentServiceParams) (*models.AssignmentsCreateResponse, *herodot.DefaultError) {
@@ -93,7 +94,7 @@ func createAssignmentService(ctx context.Context, args createAssignmentServicePa
 		Title:     args.body.Title,
 		Content:   args.body.Content,
 		Status:    db.AssignmentStatus(args.body.Status),
-		Position:  int32(args.body.Position),
+		Position:  float64(args.body.Position),
 		DueDate:   args.body.DueDate,
 		CreatedBy: user.ID,
 	})
@@ -113,7 +114,7 @@ func createAssignmentService(ctx context.Context, args createAssignmentServicePa
 		CreatedBy: &userIid,
 		DueDate:   assignment.DueDate,
 		Id:        &id,
-		Position:  int(assignment.Position),
+		Position:  float32(assignment.Position),
 		Status:    models.AssignmentsAssignmentStatus(assignment.Status),
 		Title:     assignment.Title,
 		UpdatedAt: &assignment.UpdatedAt,
@@ -192,7 +193,7 @@ func getAssignmentDetailsService(ctx context.Context, args getAssignmentDetailsS
 		CreatedBy: &userIid,
 		DueDate:   assignment.DueDate,
 		Id:        &id,
-		Position:  int(assignment.Position),
+		Position:  float32(assignment.Position),
 		Status:    models.AssignmentsAssignmentStatus(assignment.Status),
 		Title:     assignment.Title,
 		UpdatedAt: &assignment.UpdatedAt,
@@ -237,7 +238,7 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 		Title:     args.body.Title,
 		Content:   args.body.Content,
 		Status:    status,
-		Position:  typex.Int32Ptr(*args.body.Position),
+		Position:  typex.Float64PtrFromFloat32Ptr(args.body.Position),
 		DueDate:   args.body.DueDate,
 	})
 	if err != nil {
@@ -260,18 +261,22 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 		CreatedBy: &userIid,
 		DueDate:   assignment.DueDate,
 		Id:        &id,
-		Position:  int(assignment.Position),
+		Position:  float32(assignment.Position),
 		Status:    models.AssignmentsAssignmentStatus(assignment.Status),
 		Title:     assignment.Title,
 		UpdatedAt: &assignment.UpdatedAt,
 	}, nil
 }
 
-func proxyHocuspocusService(hocuspocusUrl *url.URL) (*httputil.ReverseProxy, *herodot.DefaultError) {
+type proxyHocuspocusServiceParams struct {
+	hocuspocusUrl *url.URL
+	notesId        string
+}
+func proxyHocuspocusService(args proxyHocuspocusServiceParams) (*httputil.ReverseProxy, *herodot.DefaultError) {
 	proxy := &httputil.ReverseProxy{
 		Rewrite: func(pr *httputil.ProxyRequest) {
-			pr.SetURL(hocuspocusUrl)
-			pr.Out.URL.Path = "/assignments"
+			pr.SetURL(args.hocuspocusUrl)
+			pr.Out.URL.Path = "/assignments/" + args.notesId
 		},
 	}
 

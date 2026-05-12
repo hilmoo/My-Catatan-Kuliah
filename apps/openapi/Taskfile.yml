@@ -17,7 +17,7 @@ tasks:
 
   inject:
     vars:
-      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/38ce4724ed45e20ad82e2eac8805462f3fa0b1ba/transform_openapi.py
+      SCRIPT: https://gist.githubusercontent.com/hilmoo/e11a3076a6abfdb695f4ed6cb6b5e2a1/raw/3316682635f93b5601d8f0e1f6a36dfe554fad45/transform_openapi.py
       OPENAPI_JSON: openapi.json
     desc: "Inject oapi-codegen annotations into OpenAPI JSON"
     cmds:

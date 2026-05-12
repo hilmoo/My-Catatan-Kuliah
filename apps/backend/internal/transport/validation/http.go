@@ -50,18 +50,15 @@ func translateValidationError(err error) *herodot.DefaultError {
 }
 
 func parseHttpErr(err error) string {
-	var typeErr *json.UnmarshalTypeError
-	if errors.As(err, &typeErr) {
+	if typeErr, ok := errors.AsType[*json.UnmarshalTypeError](err); ok {
 		return fmt.Sprintf("Field '%s' expected type '%s', but got '%s'", typeErr.Field, typeErr.Type, typeErr.Value)
 	}
 
-	var syntaxErr *json.SyntaxError
-	if errors.As(err, &syntaxErr) {
+	if syntaxErr, ok := errors.AsType[*json.SyntaxError](err); ok {
 		return fmt.Sprintf("Request body contains malformed JSON at position %d", syntaxErr.Offset)
 	}
 
-	var echoErr *echo.HTTPError
-	if errors.As(err, &echoErr) {
+	if echoErr, ok := errors.AsType[*echo.HTTPError](err); ok {
 		return fmt.Sprintf("%v", echoErr.Message)
 	}
 

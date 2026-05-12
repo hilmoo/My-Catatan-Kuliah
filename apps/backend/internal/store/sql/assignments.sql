@@ -6,7 +6,9 @@ FROM assignments
 JOIN courses ON assignments.course_id = courses.id
 WHERE assignments.created_by = $1
 AND assignments.course_id = (SELECT id FROM courses WHERE courses.iid = sqlc.arg('courseIid'))
-ORDER BY assignments.created_at DESC;
+ORDER BY 
+    assignments.status ASC,
+    assignments.position ASC;
 
 -- name: CreateAssignment :one
 INSERT INTO assignments("course_id", "title", "content", "status", "position", "due_date", "created_by")

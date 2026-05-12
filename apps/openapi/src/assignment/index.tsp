@@ -18,7 +18,7 @@ model Response {
 
     title: string;
     status: AssignmentStatus;
-    position: integer;
+    position: float;
     due_date: utcDateTime;
 
     @visibility(Lifecycle.Read)
