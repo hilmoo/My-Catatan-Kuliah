@@ -51,12 +51,65 @@ func getFileService(ctx context.Context, args getFileServiceArgs) (*models.Files
 		ExpirySeconds: 3600,
 	})
 
+	var width, height *int
+	if file.Width != nil {
+		w := int(*file.Width)
+		width = &w
+	}
+	if file.Height != nil {
+		h := int(*file.Height)
+		height = &h
+	}
+
 	return &models.FilesResponse{
 		Id:        args.FileId,
 		MimeType:  file.MimeType,
 		SizeBytes: int(file.Size),
 		Url:       url,
+		Width:     width,
+		Height:    height,
 	}, nil
+}
+
+type getFileContentServiceArgs struct {
+	FileId  string
+	Queries *db.Queries
+	S3      *simples3.S3
+	Bucket  string
+}
+
+func getFileContentService(ctx context.Context, args getFileContentServiceArgs) (string, *herodot.DefaultError) {
+	// Note: We might want to allow public access if the note/document is shared,
+	// but for now let's keep it authenticated for the owner.
+	user, err := msession.GetUserFromContext(ctx)
+	if err != nil {
+		return "", herodot.ErrUnauthorized.WithReason("unauthenticated").WithDebug(err.Error())
+	}
+
+	file_uuid, errH := uuidx.HttpFromBase58(args.FileId, "file ID")
+	if errH != nil {
+		return "", errH
+	}
+
+	s3Key, err := args.Queries.GetS3KeyByID(ctx, db.GetS3KeyByIDParams{
+		ID:        file_uuid,
+		CreatedBy: user.ID,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return "", herodot.ErrNotFound.WithReason("file not found").WithDebug(err.Error())
+		}
+		return "", herodot.ErrInternalServerError.WithReasonf("failed to get file: %v", err)
+	}
+
+	url := args.S3.GeneratePresignedURL(simples3.PresignedInput{
+		Bucket:        args.Bucket,
+		ObjectKey:     s3Key,
+		Method:        "GET",
+		ExpirySeconds: 3600,
+	})
+
+	return url, nil
 }
 
 type uploadFileServiceArgs struct {
@@ -75,11 +128,23 @@ func uploadFileService(ctx context.Context, args uploadFileServiceArgs) (*models
 	s3Key := fmt.Sprintf("%s/%s", user.Iid, uuid.New().String())
 	sizeBytes := int64(args.Param.SizeBytes)
 
+	var width, height *int32
+	if args.Param.Width != nil {
+		w := int32(*args.Param.Width)
+		width = &w
+	}
+	if args.Param.Height != nil {
+		h := int32(*args.Param.Height)
+		height = &h
+	}
+
 	fileId, err := args.Queries.CreateFile(ctx, db.CreateFileParams{
 		S3Key:     s3Key,
 		MimeType:  args.Param.MimeType,
 		Size:      sizeBytes,
 		CreatedBy: user.ID,
+		Width:     width,
+		Height:    height,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReasonf("failed to create file record: %v", err)
@@ -104,6 +169,8 @@ func uploadFileService(ctx context.Context, args uploadFileServiceArgs) (*models
 		MimeType:  args.Param.MimeType,
 		SizeBytes: int(sizeBytes),
 		Url:       url,
+		Width:     args.Param.Width,
+		Height:    args.Param.Height,
 	}, nil
 }
 

@@ -12,8 +12,8 @@ import (
 )
 
 const createFile = `-- name: CreateFile :one
-INSERT INTO files (s3_key, mime_type, size, created_by)
-VALUES ($1, $2, $3, $4) RETURNING id
+INSERT INTO files (s3_key, mime_type, size, created_by, width, height)
+VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
 `
 
 type CreateFileParams struct {
@@ -21,6 +21,8 @@ type CreateFileParams struct {
 	MimeType  string
 	Size      int64
 	CreatedBy int32
+	Width     *int32
+	Height    *int32
 }
 
 func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (uuid.UUID, error) {
@@ -29,6 +31,8 @@ func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (uuid.UU
 		arg.MimeType,
 		arg.Size,
 		arg.CreatedBy,
+		arg.Width,
+		arg.Height,
 	)
 	var id uuid.UUID
 	err := row.Scan(&id)
@@ -51,7 +55,7 @@ func (q *Queries) DeleteFileByID(ctx context.Context, arg DeleteFileByIDParams) 
 }
 
 const getFileByID = `-- name: GetFileByID :one
-SELECT id, s3_key, mime_type, size, created_by, created_at
+SELECT id, s3_key, mime_type, size, created_by, created_at, width, height
 FROM files
 WHERE id = $1 AND created_by = $2
 `
@@ -71,6 +75,8 @@ func (q *Queries) GetFileByID(ctx context.Context, arg GetFileByIDParams) (File,
 		&i.Size,
 		&i.CreatedBy,
 		&i.CreatedAt,
+		&i.Width,
+		&i.Height,
 	)
 	return i, err
 }

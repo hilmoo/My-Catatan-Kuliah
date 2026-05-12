@@ -13,7 +13,9 @@ import * as zod from 'zod';
  */
 export const FilesServiceCreateFileBody = zod.object({
   "size_bytes": zod.number(),
-  "mime_type": zod.string()
+  "mime_type": zod.string(),
+  "width": zod.number().nullish(),
+  "height": zod.number().nullish()
 })
 
 /**
@@ -27,7 +29,9 @@ export const FilesServiceGetFileResponse = zod.object({
   "id": zod.string(),
   "size_bytes": zod.number(),
   "mime_type": zod.string(),
-  "url": zod.string()
+  "url": zod.string(),
+  "width": zod.number().nullish(),
+  "height": zod.number().nullish()
 })
 
 /**
@@ -35,5 +39,12 @@ export const FilesServiceGetFileResponse = zod.object({
  */
 export const FilesServiceDeleteFileParams = zod.object({
   "fileId": zod.string().describe('The unique identifier of the file to delete')
+})
+
+/**
+ * Get the content of a specific file by its unique identifier.
+ */
+export const FilesServiceGetFileContentParams = zod.object({
+  "fileId": zod.string().describe('The unique identifier of the file to retrieve content for')
 })
 
