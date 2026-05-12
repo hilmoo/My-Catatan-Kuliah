@@ -67,17 +67,17 @@ function RouteComponent() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-muted/30">
-      <Card className="w-full max-w-md shadow-lg border-2 border-primary/5">
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-muted/30">
+      <Card className="w-full max-w-sm shadow-lg border-2 border-primary/5">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
             <BuildingIcon className="size-6" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
-            Welcome to Catatan Kuliah
+            Welcome to My Catatan Kuliah
           </CardTitle>
           <CardDescription className="text-base">
-            You do&apos;t have any workspaces yet. Create your first one to start organizing your
+            You don&apos;t have any workspaces yet. Create your first one to start organizing your
             courses and notes.
           </CardDescription>
         </CardHeader>
