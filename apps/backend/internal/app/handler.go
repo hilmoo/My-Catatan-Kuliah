@@ -38,6 +38,7 @@ func initHandler(args initHandlerParams) *echo.Echo {
 	e := echo.New()
 	queries := db.New(args.dbPool)
 
+	e.Use(mlog.New(args.logger).EchoMiddleware())
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Recover())
 	e.Use(middleware.RequestID())
@@ -46,7 +47,6 @@ func initHandler(args initHandlerParams) *echo.Echo {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPost},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
-	e.Use(mlog.New(args.logger).EchoMiddleware())
 
 	e.Use(msession.New(queries, args.cfg.Secret).LoadSession)
 

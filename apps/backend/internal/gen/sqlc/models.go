@@ -147,7 +147,7 @@ type Assignment struct {
 	Content   *string
 	Contentb  []byte
 	Status    AssignmentStatus
-	Position  int32
+	Position  float64
 	DueDate   time.Time
 	CreatedBy int32
 	CreatedAt time.Time

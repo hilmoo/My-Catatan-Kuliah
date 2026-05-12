@@ -36,7 +36,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group.GET("/:id", h.getassignmentDetails)
 	group.PATCH("/:id", h.updateassignment)
 	group.DELETE("/:id", h.deleteassignment)
-	group.Any("/ws/:id/*", h.proxyHocuspocus)
+	group.Any("/ws/:id", h.proxyHocuspocus)
 }
 
 func (h *httpHandler) listassignments(c *echo.Context) error {
@@ -141,7 +141,10 @@ func (h *httpHandler) proxyHocuspocus(c *echo.Context) error {
 		return errort.HttpError(c, herodot.ErrNotFound.WithReason("page not found"))
 	}
 
-	proxy, err := proxyHocuspocusService(h.hocuspocusUrl)
+	proxy, err := proxyHocuspocusService(proxyHocuspocusServiceParams{
+		hocuspocusUrl: h.hocuspocusUrl,
+		notesId:        pageId,
+	})
 	if err != nil {
 		return errort.HttpError(c, err)
 	}

@@ -33,15 +33,6 @@ const EDITOR_STYLES = {
   overflowY: "auto" as const,
 };
 
-interface FullSetupEditorProps {
-  initialValue?: YooptaContentValue;
-  containerBoxRef?: React.RefObject<HTMLDivElement | null>;
-  onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
-  user: AuthMeResponse;
-  roomId: string;
-  type: "notes" | "assignments";
-}
-
 function stringToColor(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -54,6 +45,15 @@ function stringToColor(str: string): string {
     color += value.toString(16).padStart(2, "0");
   }
   return color;
+}
+
+interface FullSetupEditorProps {
+  initialValue?: YooptaContentValue;
+  containerBoxRef?: React.RefObject<HTMLDivElement | null>;
+  onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
+  user: AuthMeResponse;
+  roomId: string;
+  type: "notes" | "assignments";
 }
 
 const FullSetupEditor = ({

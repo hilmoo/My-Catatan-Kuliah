@@ -18,3 +18,11 @@ func IntFromInt32Ptr(i *int32) int {
 	}
 	return int(*i)
 }
+
+func Float64PtrFromFloat32Ptr(f *float32) *float64 {
+	if f == nil {
+		return nil
+	}
+	res := float64(*f)
+	return &res
+}

@@ -23,7 +23,7 @@ type CreateAssignmentParams struct {
 	Title     string
 	Content   *string
 	Status    AssignmentStatus
-	Position  int32
+	Position  float64
 	DueDate   time.Time
 	CreatedBy int32
 }
@@ -95,7 +95,7 @@ type GetAssignmentByIidAndUserRow struct {
 	Content   *string
 	Contentb  []byte
 	Status    AssignmentStatus
-	Position  int32
+	Position  float64
 	DueDate   time.Time
 	CreatedBy int32
 	CreatedAt time.Time
@@ -132,7 +132,9 @@ FROM assignments
 JOIN courses ON assignments.course_id = courses.id
 WHERE assignments.created_by = $1
 AND assignments.course_id = (SELECT id FROM courses WHERE courses.iid = $2)
-ORDER BY assignments.created_at DESC
+ORDER BY 
+    assignments.status ASC,
+    assignments.position ASC
 `
 
 type ListAssignmentsByUserIdParams struct {
@@ -148,7 +150,7 @@ type ListAssignmentsByUserIdRow struct {
 	Content   *string
 	Contentb  []byte
 	Status    AssignmentStatus
-	Position  int32
+	Position  float64
 	DueDate   time.Time
 	CreatedBy int32
 	CreatedAt time.Time
@@ -214,7 +216,7 @@ type UpdateAssignmentByIidAndUserParams struct {
 	Title     *string
 	Content   *string
 	Status    NullAssignmentStatus
-	Position  *int32
+	Position  *float64
 	DueDate   *time.Time
 }
 
@@ -226,7 +228,7 @@ type UpdateAssignmentByIidAndUserRow struct {
 	Content   *string
 	Contentb  []byte
 	Status    AssignmentStatus
-	Position  int32
+	Position  float64
 	DueDate   time.Time
 	CreatedBy int32
 	CreatedAt time.Time

@@ -13,8 +13,8 @@ CREATE TABLE "assignments"(
     "title" text NOT NULL DEFAULT 'Untitled Assignment',
     "content" text,
     "contentb" bytea,
-    "status" assignment_status NOT NULL DEFAULT 'Todo', -- Fixed capitalization here
-    "position" integer NOT NULL DEFAULT 0,
+    "status" assignment_status NOT NULL DEFAULT 'Todo',
+    "position" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "due_date" timestamptz NOT NULL,
     "created_by" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW(),

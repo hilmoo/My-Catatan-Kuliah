@@ -1995,7 +1995,7 @@
             "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
           },
           "position": {
-            "type": "integer",
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
@@ -2004,7 +2004,7 @@
             "type": "string",
             "format": "date-time",
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "content": {
@@ -2056,7 +2056,7 @@
             "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
           },
           "position": {
-            "type": "integer",
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
@@ -2065,7 +2065,7 @@
             "type": "string",
             "format": "date-time",
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "created_by": {
@@ -2080,7 +2080,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "updated_at": {
@@ -2088,7 +2088,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "content": {
@@ -2145,7 +2145,7 @@
             "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
           },
           "position": {
-            "type": "integer",
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
@@ -2154,7 +2154,7 @@
             "type": "string",
             "format": "date-time",
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "created_by": {
@@ -2169,7 +2169,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "updated_at": {
@@ -2177,7 +2177,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           }
         },
@@ -2207,7 +2207,7 @@
             "$ref": "#/components/schemas/AssignmentsAssignmentStatus"
           },
           "position": {
-            "type": "integer",
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "omitempty"
             }
@@ -2216,7 +2216,7 @@
             "type": "string",
             "format": "date-time",
             "x-oapi-codegen-extra-tags": {
-              "validate": "omitempty,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "omitempty"
             }
           },
           "content": {
@@ -2581,7 +2581,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "updated_at": {
@@ -2589,7 +2589,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           }
         },
@@ -2761,7 +2761,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "updated_at": {
@@ -2769,7 +2769,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "content": {
@@ -2831,7 +2831,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           },
           "updated_at": {
@@ -2839,7 +2839,7 @@
             "format": "date-time",
             "readOnly": true,
             "x-oapi-codegen-extra-tags": {
-              "validate": "required,datetime=2006-01-02T15:04:05Z07:00"
+              "validate": "required"
             }
           }
         },

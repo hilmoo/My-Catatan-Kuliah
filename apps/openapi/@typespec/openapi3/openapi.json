@@ -1943,7 +1943,7 @@
             "$ref": "#/components/schemas/Assignments.AssignmentStatus"
           },
           "position": {
-            "type": "integer"
+            "type": "number"
           },
           "due_date": {
             "type": "string",
@@ -1990,7 +1990,7 @@
             "$ref": "#/components/schemas/Assignments.AssignmentStatus"
           },
           "position": {
-            "type": "integer"
+            "type": "number"
           },
           "due_date": {
             "type": "string",
@@ -2049,7 +2049,7 @@
             "$ref": "#/components/schemas/Assignments.AssignmentStatus"
           },
           "position": {
-            "type": "integer"
+            "type": "number"
           },
           "due_date": {
             "type": "string",
@@ -2081,7 +2081,7 @@
             "$ref": "#/components/schemas/Assignments.AssignmentStatus"
           },
           "position": {
-            "type": "integer"
+            "type": "number"
           },
           "due_date": {
             "type": "string",
