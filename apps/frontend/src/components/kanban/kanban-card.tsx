@@ -47,7 +47,7 @@ export function KanbanCard({ assignment, onDragStart, onDrop }: KanbanCardProps)
       {isOver && (
         <div className="absolute -top-[6px] left-0 right-0 h-1.5 bg-primary rounded-full pointer-events-none z-10" />
       )}
-      
+
       <Link
         to="/c/$courseId/a/$assignmentId"
         params={{
@@ -56,24 +56,22 @@ export function KanbanCard({ assignment, onDragStart, onDrop }: KanbanCardProps)
         }}
         className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
       >
-        <Card 
-          className="w-full bg-background dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 group-hover:-translate-y-0.5"
-        >
+        <Card className="w-full bg-background dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 group-hover:-translate-y-0.5">
           <CardHeader className="p-3 pb-1 flex flex-row items-start justify-between gap-2 space-y-0">
             <CardTitle className="text-sm font-semibold line-clamp-2 leading-tight">
               {assignment.title}
             </CardTitle>
             <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity" />
           </CardHeader>
-          
+
           <CardContent className="p-3 pt-2">
             <div className="flex items-center text-xs font-medium text-muted-foreground">
               <CalendarIcon className="mr-1.5 h-3.5 w-3.5 opacity-70" />
               <span>
-                {new Date(assignment.due_date).toLocaleDateString(undefined, { 
-                  month: 'short', 
-                  day: 'numeric',
-                  year: 'numeric'
+                {new Date(assignment.due_date).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
                 })}
               </span>
             </div>

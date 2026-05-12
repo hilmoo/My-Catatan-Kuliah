@@ -1,6 +1,4 @@
-import {
-  useAssignmentsServiceUpdateAssignment,
-} from "@/api/assignments/assignments";
+import { useAssignmentsServiceUpdateAssignment } from "@/api/assignments/assignments";
 import { AssignmentsAssignmentStatus } from "@/api/model/assignmentsAssignmentStatus";
 import { KanbanColumn } from "./kanban-column";
 import { useQueryClient } from "@tanstack/react-query";
