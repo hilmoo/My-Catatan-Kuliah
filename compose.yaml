@@ -8,7 +8,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d mycatatankuliah"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d mycatatankuliah" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,9 +35,7 @@ services:
       - redis_data:/data
 
   apps:
-    build:
-      context: .
-      dockerfile: apps/Dockerfile
+    image: ghcr.io/hilmoo/my-catatan-kuliah-apps
     ports:
       - "8080:8080"
     environment:
@@ -53,6 +51,7 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
       NATS_URL: nats://nats:4222
       HOCUSPOCUS_URL: http://hocuspocus:3005
+      AI_SERVICE_URL: http://ai:3000
     depends_on:
       db:
         condition: service_healthy
@@ -70,9 +69,7 @@ services:
         condition: service_started
 
   ai:
-    build:
-      context: .
-      dockerfile: ai/Dockerfile
+    image: ghcr.io/hilmoo/my-catatan-kuliah-ai
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
       NATS_URL: nats://nats:4222
@@ -90,9 +87,7 @@ services:
         condition: service_started
 
   embedder:
-    build:
-      context: .
-      dockerfile: embedder/Dockerfile
+    image: ghcr.io/hilmoo/my-catatan-kuliah-embedder
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
       NATS_URL: nats://nats:4222
@@ -105,9 +100,7 @@ services:
         condition: service_started
 
   hocuspocus:
-    build:
-      context: .
-      dockerfile: hocuspocus/Dockerfile
+    image: ghcr.io/hilmoo/my-catatan-kuliah-hocuspocus
     environment:
       PORT: 3005
       DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
