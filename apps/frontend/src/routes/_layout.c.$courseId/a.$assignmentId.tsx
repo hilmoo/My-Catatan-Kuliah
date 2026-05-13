@@ -1,12 +1,12 @@
 import { getAuthGetMeQueryOptions } from "@/api/auth/auth";
 import { getAssignmentsServiceGetAssignmentQueryOptions } from "@/api/assignments/assignments";
 import { FullSetupEditor } from "@/components/editor/editor";
-import { initial } from "@/components/editor/initial";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { useRef, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import type { AssignmentsResponse } from "@/api/model";
+import { UpdateAssignmentDialog } from "@/components/kanban/update-assignment-dialog";
 
 export const Route = createFileRoute("/_layout/c/$courseId/a/$assignmentId")({
   component: RouteComponent,
@@ -45,6 +45,9 @@ const AssignmentHeader = memo(
             {new Date(assignment.due_date).toLocaleDateString()}
           </p>
         </div>
+        <div className="ml-auto">
+          <UpdateAssignmentDialog assignment={assignment} />
+        </div>
       </div>
     );
   },
@@ -76,7 +79,6 @@ function RouteComponent() {
             roomId={assignmentId}
             type="assignments"
             containerBoxRef={containerRef}
-            initialValue={initial}
           />
         </div>
       </div>

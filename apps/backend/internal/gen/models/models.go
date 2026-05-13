@@ -37,6 +37,7 @@ type AssignmentsAssignmentStatus string
 
 // AssignmentsCreateRequest defines model for AssignmentsCreateRequest.
 type AssignmentsCreateRequest struct {
+	Color    *string                     `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	Content  *string                     `json:"content,omitempty" validate:"omitempty"`
 	CourseId string                      `json:"course_id" validate:"required"`
 	DueDate  time.Time                   `json:"due_date" validate:"required"`
@@ -50,6 +51,7 @@ type AssignmentsCreateResponse = AssignmentsDetailResponse
 
 // AssignmentsDetailResponse defines model for AssignmentsDetailResponse.
 type AssignmentsDetailResponse struct {
+	Color     *string                     `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	Content   *string                     `json:"content,omitempty" validate:"omitempty"`
 	CourseId  string                      `json:"course_id" validate:"required"`
 	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required"`
@@ -67,6 +69,7 @@ type AssignmentsListResponse = []AssignmentsResponse
 
 // AssignmentsResponse defines model for AssignmentsResponse.
 type AssignmentsResponse struct {
+	Color     *string                     `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	CourseId  string                      `json:"course_id" validate:"required"`
 	CreatedAt *time.Time                  `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string                     `json:"created_by,omitempty" validate:"required"`
@@ -80,6 +83,7 @@ type AssignmentsResponse struct {
 
 // AssignmentsUpdateRequest The template for adding optional properties.
 type AssignmentsUpdateRequest struct {
+	Color    *string                      `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	Content  *string                      `json:"content,omitempty" validate:"omitempty"`
 	DueDate  *time.Time                   `json:"due_date,omitempty" validate:"omitempty"`
 	Position *float32                     `json:"position,omitempty" validate:"omitempty"`
@@ -171,11 +175,17 @@ type CommonErrorError500 = CommonErrorError
 
 // CoursesCreateRequest defines model for CoursesCreateRequest.
 type CoursesCreateRequest struct {
+	// Color The color associated with the course (hex color code)
+	Color *string `json:"color,omitempty" validate:"omitempty,hexcolor"`
+
 	// Credits The number of credits for the course
 	Credits *int `json:"credits,omitempty" validate:"omitempty"`
 
 	// Instructor The instructor of the course
 	Instructor string `json:"instructor" validate:"required"`
+
+	// Position The position of the course for ordering purposes
+	Position float32 `json:"position" validate:"required"`
 
 	// Title The title of the course
 	Title       string `json:"title" validate:"required"`
@@ -190,11 +200,13 @@ type CoursesListResponse = []CoursesResponse
 
 // CoursesResponse defines model for CoursesResponse.
 type CoursesResponse struct {
+	Color       *string    `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	CreatedAt   *time.Time `json:"created_at,omitempty" validate:"required"`
 	CreatedBy   *string    `json:"created_by,omitempty" validate:"required"`
 	Credits     int        `json:"credits" validate:"required"`
 	Id          *string    `json:"id,omitempty" validate:"required"`
 	Instructor  string     `json:"instructor" validate:"required"`
+	Position    float32    `json:"position" validate:"required"`
 	Title       string     `json:"title" validate:"required"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty" validate:"required"`
 	WorkspaceId string     `json:"workspace_id" validate:"required"`
@@ -202,9 +214,11 @@ type CoursesResponse struct {
 
 // CoursesUpdateRequest The template for adding optional properties.
 type CoursesUpdateRequest struct {
-	Credits    *int    `json:"credits,omitempty" validate:"omitempty"`
-	Instructor *string `json:"instructor,omitempty" validate:"omitempty"`
-	Title      *string `json:"title,omitempty" validate:"omitempty"`
+	Color      *string  `json:"color,omitempty" validate:"omitempty,hexcolor"`
+	Credits    *int     `json:"credits,omitempty" validate:"omitempty"`
+	Instructor *string  `json:"instructor,omitempty" validate:"omitempty"`
+	Position   *float32 `json:"position,omitempty" validate:"omitempty"`
+	Title      *string  `json:"title,omitempty" validate:"omitempty"`
 }
 
 // FilesCreateRequest defines model for FilesCreateRequest.

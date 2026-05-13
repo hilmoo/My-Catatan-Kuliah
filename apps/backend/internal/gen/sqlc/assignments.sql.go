@@ -13,9 +13,9 @@ import (
 )
 
 const createAssignment = `-- name: CreateAssignment :one
-INSERT INTO assignments("course_id", "title", "content", "status", "position", "due_date", "created_by")
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, iid, course_id, title, content, contentb, status, position, due_date, created_by, created_at, updated_at
+INSERT INTO assignments("course_id", "title", "content", "status", "position", "due_date", "created_by", "color")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, iid, course_id, title, content, contentb, status, position, due_date, color, created_by, created_at, updated_at
 `
 
 type CreateAssignmentParams struct {
@@ -26,6 +26,7 @@ type CreateAssignmentParams struct {
 	Position  float64
 	DueDate   time.Time
 	CreatedBy int32
+	Color     *string
 }
 
 func (q *Queries) CreateAssignment(ctx context.Context, arg CreateAssignmentParams) (Assignment, error) {
@@ -37,6 +38,7 @@ func (q *Queries) CreateAssignment(ctx context.Context, arg CreateAssignmentPara
 		arg.Position,
 		arg.DueDate,
 		arg.CreatedBy,
+		arg.Color,
 	)
 	var i Assignment
 	err := row.Scan(
@@ -49,6 +51,7 @@ func (q *Queries) CreateAssignment(ctx context.Context, arg CreateAssignmentPara
 		&i.Status,
 		&i.Position,
 		&i.DueDate,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -74,7 +77,7 @@ func (q *Queries) DeleteAssignmentByIidAndUser(ctx context.Context, arg DeleteAs
 
 const getAssignmentByIidAndUser = `-- name: GetAssignmentByIidAndUser :one
 SELECT 
-    assignments.id, assignments.iid, assignments.course_id, assignments.title, assignments.content, assignments.contentb, assignments.status, assignments.position, assignments.due_date, assignments.created_by, assignments.created_at, assignments.updated_at, 
+    assignments.id, assignments.iid, assignments.course_id, assignments.title, assignments.content, assignments.contentb, assignments.status, assignments.position, assignments.due_date, assignments.color, assignments.created_by, assignments.created_at, assignments.updated_at, 
     courses.iid AS course_iid
 FROM assignments
 JOIN courses ON assignments.course_id = courses.id
@@ -97,6 +100,7 @@ type GetAssignmentByIidAndUserRow struct {
 	Status    AssignmentStatus
 	Position  float64
 	DueDate   time.Time
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -116,6 +120,7 @@ func (q *Queries) GetAssignmentByIidAndUser(ctx context.Context, arg GetAssignme
 		&i.Status,
 		&i.Position,
 		&i.DueDate,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -126,7 +131,7 @@ func (q *Queries) GetAssignmentByIidAndUser(ctx context.Context, arg GetAssignme
 
 const listAssignmentsByUserId = `-- name: ListAssignmentsByUserId :many
 SELECT 
-    assignments.id, assignments.iid, assignments.course_id, assignments.title, assignments.content, assignments.contentb, assignments.status, assignments.position, assignments.due_date, assignments.created_by, assignments.created_at, assignments.updated_at, 
+    assignments.id, assignments.iid, assignments.course_id, assignments.title, assignments.content, assignments.contentb, assignments.status, assignments.position, assignments.due_date, assignments.color, assignments.created_by, assignments.created_at, assignments.updated_at, 
     courses.iid AS course_iid
 FROM assignments
 JOIN courses ON assignments.course_id = courses.id
@@ -152,6 +157,7 @@ type ListAssignmentsByUserIdRow struct {
 	Status    AssignmentStatus
 	Position  float64
 	DueDate   time.Time
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -177,6 +183,7 @@ func (q *Queries) ListAssignmentsByUserId(ctx context.Context, arg ListAssignmen
 			&i.Status,
 			&i.Position,
 			&i.DueDate,
+			&i.Color,
 			&i.CreatedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -200,13 +207,14 @@ SET
     "status" = COALESCE($5, a."status"),
     "position" = COALESCE($6, a."position"),
     "due_date" = COALESCE($7, a."due_date"),
+    "color" = COALESCE($8, a."color"),
     "updated_at" = NOW()
 FROM courses c
 WHERE a."course_id" = c."id"
     AND a."iid" = $1
     AND a."created_by" = $2
 RETURNING 
-    a.id, a.iid, a.course_id, a.title, a.content, a.contentb, a.status, a.position, a.due_date, a.created_by, a.created_at, a.updated_at, 
+    a.id, a.iid, a.course_id, a.title, a.content, a.contentb, a.status, a.position, a.due_date, a.color, a.created_by, a.created_at, a.updated_at, 
     c.iid AS course_iid
 `
 
@@ -218,6 +226,7 @@ type UpdateAssignmentByIidAndUserParams struct {
 	Status    NullAssignmentStatus
 	Position  *float64
 	DueDate   *time.Time
+	Color     *string
 }
 
 type UpdateAssignmentByIidAndUserRow struct {
@@ -230,6 +239,7 @@ type UpdateAssignmentByIidAndUserRow struct {
 	Status    AssignmentStatus
 	Position  float64
 	DueDate   time.Time
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -245,6 +255,7 @@ func (q *Queries) UpdateAssignmentByIidAndUser(ctx context.Context, arg UpdateAs
 		arg.Status,
 		arg.Position,
 		arg.DueDate,
+		arg.Color,
 	)
 	var i UpdateAssignmentByIidAndUserRow
 	err := row.Scan(
@@ -257,6 +268,7 @@ func (q *Queries) UpdateAssignmentByIidAndUser(ctx context.Context, arg UpdateAs
 		&i.Status,
 		&i.Position,
 		&i.DueDate,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,

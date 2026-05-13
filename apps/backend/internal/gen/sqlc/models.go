@@ -149,6 +149,7 @@ type Assignment struct {
 	Status    AssignmentStatus
 	Position  float64
 	DueDate   time.Time
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -161,6 +162,8 @@ type Course struct {
 	Title       string
 	Instructor  string
 	Credits     int32
+	Position    float64
+	Color       *string
 	CreatedBy   int32
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

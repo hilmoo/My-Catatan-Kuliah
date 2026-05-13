@@ -2073,6 +2073,13 @@
               "validate": "required"
             }
           },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
           "content": {
             "type": "string",
             "x-oapi-codegen-extra-tags": {
@@ -2132,6 +2139,13 @@
             "format": "date-time",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
+            }
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
             }
           },
           "created_by": {
@@ -2223,6 +2237,13 @@
               "validate": "required"
             }
           },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
           "created_by": {
             "type": "string",
             "readOnly": true,
@@ -2283,6 +2304,13 @@
             "format": "date-time",
             "x-oapi-codegen-extra-tags": {
               "validate": "omitempty"
+            }
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
             }
           },
           "content": {
@@ -2576,12 +2604,28 @@
             "x-oapi-codegen-extra-tags": {
               "validate": "omitempty"
             }
+          },
+          "color": {
+            "description": "The color associated with the course (hex color code)",
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "description": "The position of the course for ordering purposes",
+            "type": "number",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
           }
         },
         "required": [
           "workspace_id",
           "title",
-          "instructor"
+          "instructor",
+          "position"
         ]
       },
       "CoursesCreateResponse": {
@@ -2635,6 +2679,19 @@
               "validate": "required"
             }
           },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "type": "number",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
           "created_by": {
             "type": "string",
             "readOnly": true,
@@ -2665,6 +2722,7 @@
           "title",
           "instructor",
           "credits",
+          "position",
           "created_by",
           "created_at",
           "updated_at"
@@ -2688,6 +2746,19 @@
           },
           "credits": {
             "type": "integer",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "omitempty"
             }

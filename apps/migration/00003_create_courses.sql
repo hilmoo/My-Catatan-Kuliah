@@ -7,6 +7,8 @@ CREATE TABLE "courses"(
     "title" text NOT NULL,
     "instructor" text NOT NULL,
     "credits" integer NOT NULL,
+        "position" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "color" text,
     "created_by" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW(),
     "updated_at" timestamptz NOT NULL DEFAULT NOW()

@@ -21,6 +21,9 @@ model Response {
     position: float;
     due_date: utcDateTime;
 
+    @format("hexcolor")
+    color?: string;
+
     @visibility(Lifecycle.Read)
     created_by: string;
 

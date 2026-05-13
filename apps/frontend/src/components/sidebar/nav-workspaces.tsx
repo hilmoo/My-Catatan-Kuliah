@@ -36,8 +36,10 @@ import {
   PlusIcon,
   PencilIcon,
   SettingsIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -67,6 +69,8 @@ interface CourseItem {
   title: string;
   instructor: string;
   credits: number;
+  color?: string;
+  position: number;
 }
 
 export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
@@ -86,6 +90,13 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
   const [editingCourse, setEditingCourse] = useState<CourseItem | null>(null);
   const [showEditWorkspaceDialog, setShowEditWorkspaceDialog] = useState(false);
 
+  const courses = useMemo(() => {
+    if (coursesQuery.data?.status !== 200) return [];
+    return [...coursesQuery.data.data]
+      .filter((course) => course.workspace_id === workspaceId)
+      .sort((a, b) => a.position - b.position);
+  }, [coursesQuery.data?.status, coursesQuery.data?.data, workspaceId]);
+
   const {
     register: registerAdd,
     handleSubmit: handleSubmitAdd,
@@ -98,6 +109,8 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
       title: "",
       instructor: "",
       credits: 0,
+      position: 0,
+      color: "#3b82f6",
     },
   });
 
@@ -131,8 +144,6 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
     return null;
   }
 
-  const courses = coursesQuery.data.data.filter((course) => course.workspace_id === workspaceId);
-
   const onDeleteCourse = (courseId: string) => {
     if (confirm("Are you sure you want to delete this course?")) {
       deleteCourseMutation.mutate(
@@ -148,9 +159,50 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
     }
   };
 
+  const onReorderCourse = (courseId: string, direction: "up" | "down") => {
+    const currentIndex = courses.findIndex((c) => c.id === courseId);
+    let newPosition: number | null = null;
+
+    if (direction === "up" && currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      const prevPrevCourse = courses[prevIndex - 1];
+      const prevCourse = courses[prevIndex];
+
+      if (!prevPrevCourse) {
+        newPosition = prevCourse.position / 2;
+      } else {
+        newPosition = (prevPrevCourse.position + prevCourse.position) / 2;
+      }
+    } else if (direction === "down" && currentIndex < courses.length - 1) {
+      const nextIndex = currentIndex + 1;
+      const nextCourse = courses[nextIndex];
+      const nextNextCourse = courses[nextIndex + 1];
+
+      if (!nextNextCourse) {
+        newPosition = nextCourse.position + 1000;
+      } else {
+        newPosition = (nextCourse.position + nextNextCourse.position) / 2;
+      }
+    }
+
+    if (newPosition !== null) {
+      updateCourseMutation.mutate(
+        { courseId, data: { position: newPosition } },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: getCoursesServiceListCoursesQueryKey(workspaceId),
+            });
+          },
+        },
+      );
+    }
+  };
+
   const onAddSubmit = handleSubmitAdd((data) => {
+    const maxPosition = courses.length > 0 ? Math.max(...courses.map((c) => c.position)) : 0;
     createCourseMutation.mutate(
-      { data: { ...data, workspace_id: workspaceId } },
+      { data: { ...data, workspace_id: workspaceId, position: maxPosition + 1000 } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
@@ -184,6 +236,7 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
       title: course.title,
       instructor: course.instructor,
       credits: course.credits,
+      color: course.color || "#3b82f6",
     });
   };
 
@@ -229,8 +282,8 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild tooltip={item.title}>
                 <Link to="/c/$courseId/a" params={{ courseId: item.id }}>
-                  <BookOpenIcon />
-                  <span>{item.title}</span>
+                  <BookOpenIcon className="shrink-0" style={{ color: item.color || "#3b82f6" }} />
+                  <span className="truncate">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
               <DropdownMenu>
@@ -249,8 +302,19 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
                     <PencilIcon className="text-muted-foreground" />
                     <span>Edit Course</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDeleteCourse(item.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                    <Trash2Icon/>
+                  <DropdownMenuItem onClick={() => onReorderCourse(item.id, "up")}>
+                    <ArrowUpIcon className="text-muted-foreground" />
+                    <span>Move Up</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onReorderCourse(item.id, "down")}>
+                    <ArrowDownIcon className="text-muted-foreground" />
+                    <span>Move Down</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => onDeleteCourse(item.id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2Icon />
                     <span>Delete Course</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -319,6 +383,11 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
               />
               {errorsAdd.credits && <FieldError>{errorsAdd.credits.message}</FieldError>}
             </Field>
+            <Field>
+              <FieldLabel>Color</FieldLabel>
+              <Input type="color" {...registerAdd("color")} className="h-10 p-1 w-full" />
+              {errorsAdd.color && <FieldError>{errorsAdd.color.message}</FieldError>}
+            </Field>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
                 Cancel
@@ -355,6 +424,11 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
                 placeholder="e.g. 3"
               />
               {errorsEdit.credits && <FieldError>{errorsEdit.credits.message}</FieldError>}
+            </Field>
+            <Field>
+              <FieldLabel>Color</FieldLabel>
+              <Input type="color" {...registerEdit("color")} className="h-10 p-1 w-full" />
+              {errorsEdit.color && <FieldError>{errorsEdit.color.message}</FieldError>}
             </Field>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setEditingCourse(null)}>

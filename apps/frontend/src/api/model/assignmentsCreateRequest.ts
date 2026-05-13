@@ -13,5 +13,6 @@ export interface AssignmentsCreateRequest {
   status: AssignmentsAssignmentStatus;
   position: number;
   due_date: string;
+  color?: string;
   content?: string;
 }

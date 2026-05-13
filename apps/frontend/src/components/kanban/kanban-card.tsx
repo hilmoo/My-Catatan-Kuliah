@@ -76,7 +76,13 @@ export function KanbanCard({ assignment, isOverlay, onMove, onReorder }: KanbanC
           }
         }}
       >
-        <Card className="w-full bg-background dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 group-hover:-translate-y-0.5">
+        <Card className="w-full bg-background dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 group-hover:-translate-y-0.5 relative overflow-hidden">
+          {assignment.color && (
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1.5"
+              style={{ backgroundColor: assignment.color }}
+            />
+          )}
           <CardHeader
             className="p-3 pb-1 flex flex-row items-start justify-between gap-2 space-y-0"
             {...(isMobile ? {} : listeners)}

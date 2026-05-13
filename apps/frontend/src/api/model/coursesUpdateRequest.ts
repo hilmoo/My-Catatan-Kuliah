@@ -13,4 +13,6 @@ export interface CoursesUpdateRequest {
   title?: string;
   instructor?: string;
   credits?: number;
+  color?: string;
+  position?: number;
 }

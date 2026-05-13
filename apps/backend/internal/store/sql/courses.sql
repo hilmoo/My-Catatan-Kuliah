@@ -8,8 +8,8 @@ AND workspaces.iid = sqlc.arg('workspaceIid')
 ORDER BY courses.created_at DESC;
 
 -- name: CreateCourse :one
-INSERT INTO courses("workspace_id", "title", "instructor", "credits", "created_by")
-    VALUES ($1, $2, $3, $4, $5)
+INSERT INTO courses("workspace_id", "title", "instructor", "credits", "position", "color", "created_by")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
 
 -- name: GetCourseByIidAndUser :one
@@ -32,6 +32,8 @@ SET
     "title" = COALESCE(sqlc.narg('title'), c."title"),
     "instructor" = COALESCE(sqlc.narg('instructor'), c."instructor"),
     "credits" = COALESCE(sqlc.narg('credits'), c."credits"),
+    "position" = COALESCE(sqlc.narg('position'), c."position"),
+    "color" = COALESCE(sqlc.narg('color'), c."color"),
     "updated_at" = NOW()
 FROM workspaces w
 WHERE c."workspace_id" = w."id"

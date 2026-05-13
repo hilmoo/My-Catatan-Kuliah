@@ -40,7 +40,7 @@ func initHandler(args initHandlerParams) *echo.Echo {
 
 	e.Use(mlog.New(args.logger).EchoMiddleware())
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.Recover())
+	// e.Use(middleware.Recover())
 	e.Use(middleware.RequestID())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},

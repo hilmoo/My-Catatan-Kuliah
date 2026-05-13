@@ -15,7 +15,9 @@ export const CoursesServiceCreateCourseBody = zod.object({
   "workspace_id": zod.string(),
   "title": zod.string().describe('The title of the course'),
   "instructor": zod.string().describe('The instructor of the course'),
-  "credits": zod.number().optional().describe('The number of credits for the course')
+  "credits": zod.number().optional().describe('The number of credits for the course'),
+  "color": zod.string().optional().describe('The color associated with the course (hex color code)'),
+  "position": zod.number().describe('The position of the course for ordering purposes')
 })
 
 /**
@@ -31,6 +33,8 @@ export const CoursesServiceListCoursesResponseItem = zod.object({
   "title": zod.string(),
   "instructor": zod.string(),
   "credits": zod.number(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true})
@@ -50,6 +54,8 @@ export const CoursesServiceGetCourseResponse = zod.object({
   "title": zod.string(),
   "instructor": zod.string(),
   "credits": zod.number(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true})
@@ -72,7 +78,9 @@ export const CoursesServiceUpdateCourseParams = zod.object({
 export const CoursesServiceUpdateCourseBody = zod.object({
   "title": zod.string().optional(),
   "instructor": zod.string().optional(),
-  "credits": zod.number().optional()
+  "credits": zod.number().optional(),
+  "color": zod.string().optional(),
+  "position": zod.number().optional()
 }).describe('The template for adding optional properties.')
 
 export const CoursesServiceUpdateCourseResponse = zod.object({
@@ -81,6 +89,8 @@ export const CoursesServiceUpdateCourseResponse = zod.object({
   "title": zod.string(),
   "instructor": zod.string(),
   "credits": zod.number(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true})

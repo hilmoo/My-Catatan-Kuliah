@@ -17,6 +17,7 @@ export const AssignmentsServiceCreateAssignmentBody = zod.object({
   "status": zod.enum(['Todo', 'InProgress', 'Done']),
   "position": zod.number(),
   "due_date": zod.string().datetime({"offset":true}),
+  "color": zod.string().optional(),
   "content": zod.string().optional()
 })
 
@@ -34,6 +35,7 @@ export const AssignmentsServiceListAssignmentsResponseItem = zod.object({
   "status": zod.enum(['Todo', 'InProgress', 'Done']),
   "position": zod.number(),
   "due_date": zod.string().datetime({"offset":true}),
+  "color": zod.string().optional(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true})
@@ -61,6 +63,7 @@ export const AssignmentsServiceGetAssignmentResponse = zod.object({
   "status": zod.enum(['Todo', 'InProgress', 'Done']),
   "position": zod.number(),
   "due_date": zod.string().datetime({"offset":true}),
+  "color": zod.string().optional(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true}),
@@ -86,6 +89,7 @@ export const AssignmentsServiceUpdateAssignmentBody = zod.object({
   "status": zod.enum(['Todo', 'InProgress', 'Done']).optional(),
   "position": zod.number().optional(),
   "due_date": zod.string().datetime({"offset":true}).optional(),
+  "color": zod.string().optional(),
   "content": zod.string().optional()
 }).describe('The template for adding optional properties.')
 
@@ -96,6 +100,7 @@ export const AssignmentsServiceUpdateAssignmentResponse = zod.object({
   "status": zod.enum(['Todo', 'InProgress', 'Done']),
   "position": zod.number(),
   "due_date": zod.string().datetime({"offset":true}),
+  "color": zod.string().optional(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true}),
