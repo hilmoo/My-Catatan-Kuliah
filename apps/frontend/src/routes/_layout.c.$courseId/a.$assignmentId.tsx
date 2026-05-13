@@ -66,7 +66,7 @@ function RouteComponent() {
       <AssignmentHeader assignment={assignment} courseId={courseId} />
 
       <div
-        className="flex-1 overflow-hidden border rounded-md relative bg-background px-4 py-1 flex flex-col"
+        className="flex-1 overflow-hidden border rounded-md relative bg-background px-4 py-1 flex flex-col ml-[50px] lg:ml-0"
         ref={containerRef}
       >
         <div className="flex-1 h-full overflow-hidden">

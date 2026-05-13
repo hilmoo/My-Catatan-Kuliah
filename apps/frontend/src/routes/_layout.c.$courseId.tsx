@@ -11,6 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_layout/c/$courseId")({
   component: RouteComponent,
@@ -31,14 +32,19 @@ function RouteComponent() {
   const { courseId } = Route.useParams();
   const { course } = Route.useLoaderData();
   const { data: me } = useAuthGetMe();
-  const activeNotesId = useRouterState({
-    select: (state) => {
-      const noteMatch = state.matches.find(
-        (match) => match.routeId === "/_layout/c/$courseId/n/$notesId",
-      );
-      return noteMatch?.params.notesId;
-    },
-  });
+  const routerState = useRouterState();
+
+  const isAssignmentRoute = routerState.matches.some(
+    (m) =>
+      m.routeId === "/_layout/c/$courseId/a" ||
+      m.routeId === "/_layout/c/$courseId/a/$assignmentId",
+  );
+
+  const activeNotesId = routerState.matches.find(
+    (match) => match.routeId === "/_layout/c/$courseId/n/$notesId",
+  )?.params.notesId;
+
+  const isNoteRoute = !!activeNotesId;
 
   const userId = me?.status === 200 ? me.data.id : "";
   const workspaceId = course.workspace_id;
@@ -60,7 +66,14 @@ function RouteComponent() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden px-[100px]">
+        <div
+          className={cn(
+            "flex-1 flex flex-col min-w-0 overflow-hidden",
+            isAssignmentRoute && "px-2 lg:px-[100px]",
+            isNoteRoute && "pl-[60px] pr-0 lg:px-[100px]",
+            !isAssignmentRoute && !isNoteRoute && "px-[100px]",
+          )}
+        >
           <Outlet />
         </div>
       </SidebarInset>
