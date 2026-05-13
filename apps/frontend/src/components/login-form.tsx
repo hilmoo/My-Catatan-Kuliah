@@ -8,9 +8,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+        <CardHeader className="text-center">
+          <div className="flex flex-col items-center gap-2">
+            <a href="/" className="flex flex-col items-center gap-2 font-medium">
+              <div className="flex h-12 w-12 items-center justify-center rounded-md">
+                {/* Fixed the size class here */}
+                <img src="/favicon.svg" alt="My Catatan Kuliah" className="size-full object-contain" />
+              </div>
+              <span className="sr-only">My Catatan Kuliah</span>
+            </a>
+            <CardTitle className="text-xl">Welcome to My Catatan Kuliah</CardTitle>
+            <CardDescription>Login with your Google account to get started</CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <form>
