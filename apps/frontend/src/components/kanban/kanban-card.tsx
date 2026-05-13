@@ -25,14 +25,7 @@ interface KanbanCardProps {
 
 export function KanbanCard({ assignment, isOverlay, onMove, onReorder }: KanbanCardProps) {
   const { isMobile } = useSidebar();
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: assignment.id,
     disabled: isMobile,
     data: {
@@ -54,11 +47,7 @@ export function KanbanCard({ assignment, isOverlay, onMove, onReorder }: KanbanC
 
   if (isDragging && !isOverlay) {
     return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="mb-3 opacity-30 grayscale"
-      >
+      <div ref={setNodeRef} style={style} className="mb-3 opacity-30 grayscale">
         <div className="rounded-lg border-2 border-dashed border-primary/20 h-[100px] w-full" />
       </div>
     );

@@ -12,13 +12,7 @@ interface KanbanColumnProps {
   onReorder?: (id: string, direction: "up" | "down") => void;
 }
 
-export function KanbanColumn({
-  status,
-  title,
-  assignments,
-  onMove,
-  onReorder,
-}: KanbanColumnProps) {
+export function KanbanColumn({ status, title, assignments, onMove, onReorder }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   });

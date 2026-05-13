@@ -51,7 +51,6 @@ function stringToColor(str: string): string {
 }
 
 interface FullSetupEditorProps {
-  initialValue?: YooptaContentValue;
   containerBoxRef?: React.RefObject<HTMLDivElement | null>;
   onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
   user: AuthMeResponse;
@@ -145,6 +144,18 @@ const FullSetupEditor = ({
     }
   }, [editor, status]);
 
+  const handleChange = useCallback(
+    (value: YooptaContentValue, options: YooptaOnChangeOptions) => {
+      if (Object.keys(value).length === 0) {
+        editor.withoutSavingHistory(() => {
+          editor.setEditorValue(initial);
+        });
+      }
+      onChange?.(value, options);
+    },
+    [editor, onChange],
+  );
+
   const renderBlock = useCallback(({ children, blockId }: RenderBlockProps) => {
     return (
       <SortableBlock id={blockId} useDragHandle>
@@ -202,7 +213,7 @@ const FullSetupEditor = ({
           style={EDITOR_STYLES}
           renderBlock={renderBlock}
           placeholder="Type / to open menu, or start typing..."
-          onChange={onChange}
+          onChange={handleChange}
         >
           <RemoteCursors />
           <YooptaToolbar />
