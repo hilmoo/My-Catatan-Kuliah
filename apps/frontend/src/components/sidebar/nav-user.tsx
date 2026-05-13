@@ -34,7 +34,7 @@ export function NavUser() {
   const handleLogout = async () => {
     logoutMutation.mutate(undefined, {
       onSuccess: async () => {
-        await navigate({ to: "/login", reloadDocument: true});
+        await navigate({ to: "/login", reloadDocument: true });
       },
     });
   };

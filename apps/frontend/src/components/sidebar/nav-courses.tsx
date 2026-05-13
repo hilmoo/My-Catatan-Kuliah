@@ -37,7 +37,7 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NotesServiceCreateNoteBody, NotesServiceUpdateNoteBody } from "@/api/notes/notes.zod";
@@ -87,10 +87,10 @@ export function NavCourses({ courseId }: NavCoursesProps) {
   const deleteCourseMutation = useCoursesServiceDeleteCourse();
   const navigate = useNavigate();
 
-  const notes = useMemo(() => {
-    if (notesQuery.data?.status !== 200) return [];
-    return [...notesQuery.data.data].sort((a, b) => a.position - b.position);
-  }, [notesQuery.data?.status, notesQuery.data?.data]);
+  const notes =
+    notesQuery.data?.status === 200
+      ? [...notesQuery.data.data].sort((a, b) => a.position - b.position)
+      : [];
 
   const {
     register,

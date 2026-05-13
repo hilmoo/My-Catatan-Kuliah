@@ -39,7 +39,7 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -90,12 +90,12 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
   const [editingCourse, setEditingCourse] = useState<CourseItem | null>(null);
   const [showEditWorkspaceDialog, setShowEditWorkspaceDialog] = useState(false);
 
-  const courses = useMemo(() => {
-    if (coursesQuery.data?.status !== 200) return [];
-    return [...coursesQuery.data.data]
-      .filter((course) => course.workspace_id === workspaceId)
-      .sort((a, b) => a.position - b.position);
-  }, [coursesQuery.data?.status, coursesQuery.data?.data, workspaceId]);
+  const courses =
+    coursesQuery.data?.status === 200
+      ? [...coursesQuery.data.data]
+          .filter((course) => course.workspace_id === workspaceId)
+          .sort((a, b) => a.position - b.position)
+      : [];
 
   const {
     register: registerAdd,

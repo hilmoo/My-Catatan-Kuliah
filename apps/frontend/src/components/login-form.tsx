@@ -13,7 +13,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             <a href="/" className="flex flex-col items-center gap-2 font-medium">
               <div className="flex h-12 w-12 items-center justify-center rounded-md">
                 {/* Fixed the size class here */}
-                <img src="/favicon.svg" alt="My Catatan Kuliah" className="size-full object-contain" />
+                <img
+                  src="/favicon.svg"
+                  alt="My Catatan Kuliah"
+                  className="size-full object-contain"
+                />
               </div>
               <span className="sr-only">My Catatan Kuliah</span>
             </a>
