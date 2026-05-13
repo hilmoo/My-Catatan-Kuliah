@@ -184,10 +184,10 @@ type File struct {
 	S3Key     string
 	MimeType  string
 	Size      int64
-	CreatedBy int32
-	CreatedAt time.Time
 	Width     *int32
 	Height    *int32
+	CreatedBy int32
+	CreatedAt time.Time
 }
 
 type LlmChat struct {
@@ -220,6 +220,8 @@ type Note struct {
 	Title     string
 	Content   *string
 	Contentb  []byte
+	Position  float64
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time

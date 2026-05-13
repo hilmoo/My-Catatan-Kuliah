@@ -2801,6 +2801,19 @@
               "validate": "required"
             }
           },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "type": "number",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
           "content": {
             "type": "string",
             "x-oapi-codegen-extra-tags": {
@@ -2810,7 +2823,8 @@
         },
         "required": [
           "course_id",
-          "title"
+          "title",
+          "position"
         ]
       },
       "NotesCreateResponse": {
@@ -2839,6 +2853,19 @@
           },
           "title": {
             "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "required"
             }
@@ -2877,6 +2904,7 @@
           "id",
           "course_id",
           "title",
+          "position",
           "created_by",
           "created_at",
           "updated_at"
@@ -2913,6 +2941,19 @@
               "validate": "required"
             }
           },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "type": "number",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "required"
+            }
+          },
           "created_by": {
             "type": "string",
             "readOnly": true,
@@ -2941,6 +2982,7 @@
           "id",
           "course_id",
           "title",
+          "position",
           "created_by",
           "created_at",
           "updated_at"
@@ -2952,6 +2994,19 @@
         "properties": {
           "title": {
             "type": "string",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty"
+            }
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor",
+            "x-oapi-codegen-extra-tags": {
+              "validate": "omitempty,hexcolor"
+            }
+          },
+          "position": {
+            "type": "number",
             "x-oapi-codegen-extra-tags": {
               "validate": "omitempty"
             }

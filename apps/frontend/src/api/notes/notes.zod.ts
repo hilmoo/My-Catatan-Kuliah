@@ -14,6 +14,8 @@ import * as zod from 'zod';
 export const NotesServiceCreateNoteBody = zod.object({
   "course_id": zod.string(),
   "title": zod.string(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "content": zod.string().optional()
 })
 
@@ -28,6 +30,8 @@ export const NotesServiceListNotesResponseItem = zod.object({
   "id": zod.string(),
   "course_id": zod.string(),
   "title": zod.string(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true})
@@ -52,6 +56,8 @@ export const NotesServiceGetNoteResponse = zod.object({
   "id": zod.string(),
   "course_id": zod.string(),
   "title": zod.string(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true}),
@@ -74,6 +80,8 @@ export const NotesServiceUpdateNoteParams = zod.object({
 
 export const NotesServiceUpdateNoteBody = zod.object({
   "title": zod.string().optional(),
+  "color": zod.string().optional(),
+  "position": zod.number().optional(),
   "content": zod.string().optional()
 }).describe('The template for adding optional properties.')
 
@@ -81,6 +89,8 @@ export const NotesServiceUpdateNoteResponse = zod.object({
   "id": zod.string(),
   "course_id": zod.string(),
   "title": zod.string(),
+  "color": zod.string().optional(),
+  "position": zod.number(),
   "created_by": zod.string(),
   "created_at": zod.string().datetime({"offset":true}),
   "updated_at": zod.string().datetime({"offset":true}),

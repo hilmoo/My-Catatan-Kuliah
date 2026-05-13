@@ -37,6 +37,8 @@ CREATE TABLE "notes"(
     "title" text NOT NULL DEFAULT 'Untitled Note',
     "content" text,
     "contentb" bytea,
+    "position" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "color" text,
     "created_by" integer NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW(),
     "updated_at" timestamptz NOT NULL DEFAULT NOW()

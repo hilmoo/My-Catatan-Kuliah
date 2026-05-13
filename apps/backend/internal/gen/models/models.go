@@ -230,8 +230,10 @@ type FilesResponse struct {
 
 // NotesCreateRequest defines model for NotesCreateRequest.
 type NotesCreateRequest struct {
+	Color    *string `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	Content  *string `json:"content,omitempty" validate:"omitempty"`
 	CourseId string  `json:"course_id" validate:"required"`
+	Position float32 `json:"position" validate:"required"`
 	Title    string  `json:"title" validate:"required"`
 }
 
@@ -240,11 +242,13 @@ type NotesCreateResponse = NotesDetailResponse
 
 // NotesDetailResponse defines model for NotesDetailResponse.
 type NotesDetailResponse struct {
+	Color     *string    `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	Content   *string    `json:"content,omitempty" validate:"omitempty"`
 	CourseId  string     `json:"course_id" validate:"required"`
 	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string    `json:"created_by,omitempty" validate:"required"`
 	Id        *string    `json:"id,omitempty" validate:"required"`
+	Position  float32    `json:"position" validate:"required"`
 	Title     string     `json:"title" validate:"required"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required"`
 }
@@ -254,18 +258,22 @@ type NotesListResponse = []NotesResponse
 
 // NotesResponse defines model for NotesResponse.
 type NotesResponse struct {
+	Color     *string    `json:"color,omitempty" validate:"omitempty,hexcolor"`
 	CourseId  string     `json:"course_id" validate:"required"`
 	CreatedAt *time.Time `json:"created_at,omitempty" validate:"required"`
 	CreatedBy *string    `json:"created_by,omitempty" validate:"required"`
 	Id        *string    `json:"id,omitempty" validate:"required"`
+	Position  float32    `json:"position" validate:"required"`
 	Title     string     `json:"title" validate:"required"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty" validate:"required"`
 }
 
 // NotesUpdateRequest The template for adding optional properties.
 type NotesUpdateRequest struct {
-	Content *string `json:"content,omitempty" validate:"omitempty"`
-	Title   *string `json:"title,omitempty" validate:"omitempty"`
+	Color    *string  `json:"color,omitempty" validate:"omitempty,hexcolor"`
+	Content  *string  `json:"content,omitempty" validate:"omitempty"`
+	Position *float32 `json:"position,omitempty" validate:"omitempty"`
+	Title    *string  `json:"title,omitempty" validate:"omitempty"`
 }
 
 // NotesUpdateResponse defines model for NotesUpdateResponse.

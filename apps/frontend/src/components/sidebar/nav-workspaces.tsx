@@ -249,8 +249,8 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
                     <PencilIcon className="text-muted-foreground" />
                     <span>Edit Course</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDeleteCourse(item.id)}>
-                    <Trash2Icon className="text-muted-foreground" />
+                  <DropdownMenuItem onClick={() => onDeleteCourse(item.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                    <Trash2Icon/>
                     <span>Delete Course</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

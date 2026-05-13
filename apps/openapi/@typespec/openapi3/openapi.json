@@ -2512,7 +2512,8 @@
         "type": "object",
         "required": [
           "course_id",
-          "title"
+          "title",
+          "position"
         ],
         "properties": {
           "course_id": {
@@ -2520,6 +2521,13 @@
           },
           "title": {
             "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor"
+          },
+          "position": {
+            "type": "number"
           },
           "content": {
             "type": "string"
@@ -2540,6 +2548,7 @@
           "id",
           "course_id",
           "title",
+          "position",
           "created_by",
           "created_at",
           "updated_at"
@@ -2554,6 +2563,13 @@
           },
           "title": {
             "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor"
+          },
+          "position": {
+            "type": "number"
           },
           "created_by": {
             "type": "string",
@@ -2586,6 +2602,7 @@
           "id",
           "course_id",
           "title",
+          "position",
           "created_by",
           "created_at",
           "updated_at"
@@ -2600,6 +2617,13 @@
           },
           "title": {
             "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor"
+          },
+          "position": {
+            "type": "number"
           },
           "created_by": {
             "type": "string",
@@ -2622,6 +2646,13 @@
         "properties": {
           "title": {
             "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "format": "hexcolor"
+          },
+          "position": {
+            "type": "number"
           },
           "content": {
             "type": "string"

@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS files (
     s3_key text NOT NULL,
     mime_type text NOT NULL,
     size bigint NOT NULL,
+    width integer,
+    height integer,
     created_by integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at timestamptz NOT NULL DEFAULT NOW()
 );

@@ -13,9 +13,9 @@ import (
 )
 
 const createNote = `-- name: CreateNote :one
-INSERT INTO notes("course_id", "title", "content", "created_by")
-    VALUES ($1, $2, $3, $4)
-RETURNING id, iid, course_id, title, content, contentb, created_by, created_at, updated_at
+INSERT INTO notes("course_id", "title", "content", "created_by", "position", "color")
+    VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, iid, course_id, title, content, contentb, position, color, created_by, created_at, updated_at
 `
 
 type CreateNoteParams struct {
@@ -23,6 +23,8 @@ type CreateNoteParams struct {
 	Title     string
 	Content   *string
 	CreatedBy int32
+	Position  float64
+	Color     *string
 }
 
 func (q *Queries) CreateNote(ctx context.Context, arg CreateNoteParams) (Note, error) {
@@ -31,6 +33,8 @@ func (q *Queries) CreateNote(ctx context.Context, arg CreateNoteParams) (Note, e
 		arg.Title,
 		arg.Content,
 		arg.CreatedBy,
+		arg.Position,
+		arg.Color,
 	)
 	var i Note
 	err := row.Scan(
@@ -40,6 +44,8 @@ func (q *Queries) CreateNote(ctx context.Context, arg CreateNoteParams) (Note, e
 		&i.Title,
 		&i.Content,
 		&i.Contentb,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -65,7 +71,7 @@ func (q *Queries) DeleteNoteByIidAndUser(ctx context.Context, arg DeleteNoteByIi
 
 const getNoteByIidAndUser = `-- name: GetNoteByIidAndUser :one
 SELECT 
-notes.id, notes.iid, notes.course_id, notes.title, notes.content, notes.contentb, notes.created_by, notes.created_at, notes.updated_at,
+notes.id, notes.iid, notes.course_id, notes.title, notes.content, notes.contentb, notes.position, notes.color, notes.created_by, notes.created_at, notes.updated_at,
 courses.iid AS course_iid
 FROM notes
 JOIN courses ON notes.course_id = courses.id
@@ -85,6 +91,8 @@ type GetNoteByIidAndUserRow struct {
 	Title     string
 	Content   *string
 	Contentb  []byte
+	Position  float64
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -101,6 +109,8 @@ func (q *Queries) GetNoteByIidAndUser(ctx context.Context, arg GetNoteByIidAndUs
 		&i.Title,
 		&i.Content,
 		&i.Contentb,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -111,13 +121,13 @@ func (q *Queries) GetNoteByIidAndUser(ctx context.Context, arg GetNoteByIidAndUs
 
 const listNotesByUserId = `-- name: ListNotesByUserId :many
 SELECT 
-notes.id, notes.iid, notes.course_id, notes.title, notes.content, notes.contentb, notes.created_by, notes.created_at, notes.updated_at,
+notes.id, notes.iid, notes.course_id, notes.title, notes.content, notes.contentb, notes.position, notes.color, notes.created_by, notes.created_at, notes.updated_at,
 courses.iid AS course_iid
 FROM notes
 JOIN courses ON notes.course_id = courses.id
 WHERE notes.created_by = $1
 AND notes.course_id = (SELECT id FROM courses WHERE courses.iid = $2)
-ORDER BY notes.created_at DESC
+ORDER BY notes.position ASC
 `
 
 type ListNotesByUserIdParams struct {
@@ -132,6 +142,8 @@ type ListNotesByUserIdRow struct {
 	Title     string
 	Content   *string
 	Contentb  []byte
+	Position  float64
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -154,6 +166,8 @@ func (q *Queries) ListNotesByUserId(ctx context.Context, arg ListNotesByUserIdPa
 			&i.Title,
 			&i.Content,
 			&i.Contentb,
+			&i.Position,
+			&i.Color,
 			&i.CreatedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -174,13 +188,15 @@ UPDATE notes n
 SET 
     "title" = COALESCE($3, n."title"),
     "content" = COALESCE($4, n."content"),
+    "position" = COALESCE($5, n."position"),
+    "color" = COALESCE($6, n."color"),
     "updated_at" = NOW()
 FROM courses c
 WHERE n."course_id" = c."id"
     AND n."iid" = $1
     AND n."created_by" = $2
 RETURNING 
-    n.id, n.iid, n.course_id, n.title, n.content, n.contentb, n.created_by, n.created_at, n.updated_at, 
+    n.id, n.iid, n.course_id, n.title, n.content, n.contentb, n.position, n.color, n.created_by, n.created_at, n.updated_at, 
     c.iid AS course_iid
 `
 
@@ -189,6 +205,8 @@ type UpdateNoteByIidAndUserParams struct {
 	CreatedBy int32
 	Title     *string
 	Content   *string
+	Position  *float64
+	Color     *string
 }
 
 type UpdateNoteByIidAndUserRow struct {
@@ -198,6 +216,8 @@ type UpdateNoteByIidAndUserRow struct {
 	Title     string
 	Content   *string
 	Contentb  []byte
+	Position  float64
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -210,6 +230,8 @@ func (q *Queries) UpdateNoteByIidAndUser(ctx context.Context, arg UpdateNoteByIi
 		arg.CreatedBy,
 		arg.Title,
 		arg.Content,
+		arg.Position,
+		arg.Color,
 	)
 	var i UpdateNoteByIidAndUserRow
 	err := row.Scan(
@@ -219,6 +241,8 @@ func (q *Queries) UpdateNoteByIidAndUser(ctx context.Context, arg UpdateNoteByIi
 		&i.Title,
 		&i.Content,
 		&i.Contentb,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
