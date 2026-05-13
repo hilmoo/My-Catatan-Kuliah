@@ -14,6 +14,7 @@ export interface AssignmentsDetailResponse {
   status: AssignmentsAssignmentStatus;
   position: number;
   due_date: string;
+  color?: string;
   readonly created_by: string;
   readonly created_at: string;
   readonly updated_at: string;

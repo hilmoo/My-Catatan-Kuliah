@@ -11,6 +11,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -33,6 +34,8 @@ import {
   SettingsIcon,
   PencilIcon,
   ClipboardListIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -73,12 +76,21 @@ export function NavCourses({ courseId }: NavCoursesProps) {
   const createNoteMutation = useNotesServiceCreateNote();
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditNoteDialog, setShowEditNoteDialog] = useState(false);
-  const [editingNote, setEditingNote] = useState<{ id: string; title: string } | null>(null);
+  const [editingNote, setEditingNote] = useState<{
+    id: string;
+    title: string;
+    color?: string;
+  } | null>(null);
   const [showEditCourseDialog, setShowEditCourseDialog] = useState(false);
   const courseQuery = useCoursesServiceGetCourse(courseId);
   const updateCourseMutation = useCoursesServiceUpdateCourse();
   const deleteCourseMutation = useCoursesServiceDeleteCourse();
   const navigate = useNavigate();
+
+  const notes =
+    notesQuery.data?.status === 200
+      ? [...notesQuery.data.data].sort((a, b) => a.position - b.position)
+      : [];
 
   const {
     register,
@@ -91,6 +103,8 @@ export function NavCourses({ courseId }: NavCoursesProps) {
       course_id: courseId,
       title: "",
       content: "",
+      position: 0,
+      color: "#3b82f6",
     },
   });
 
@@ -131,7 +145,6 @@ export function NavCourses({ courseId }: NavCoursesProps) {
     return null;
   }
 
-  const notes = notesQuery.data.data;
   const course = courseQuery.data.data;
 
   const onDeleteNote = (noteId: string) => {
@@ -149,17 +162,59 @@ export function NavCourses({ courseId }: NavCoursesProps) {
     }
   };
 
-  const onEditNote = (note: { id: string; title: string }) => {
+  const onEditNote = (note: { id: string; title: string; color?: string }) => {
     setEditingNote(note);
     resetEditNote({
       title: note.title,
+      color: note.color || "#3b82f6",
     });
     setShowEditNoteDialog(true);
   };
 
+  const onReorderNote = (noteId: string, direction: "up" | "down") => {
+    const currentIndex = notes.findIndex((n) => n.id === noteId);
+    let newPosition: number | null = null;
+
+    if (direction === "up" && currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      const prevPrevNote = notes[prevIndex - 1];
+      const prevNote = notes[prevIndex];
+
+      if (!prevPrevNote) {
+        newPosition = prevNote.position / 2;
+      } else {
+        newPosition = (prevPrevNote.position + prevNote.position) / 2;
+      }
+    } else if (direction === "down" && currentIndex < notes.length - 1) {
+      const nextIndex = currentIndex + 1;
+      const nextNote = notes[nextIndex];
+      const nextNextNote = notes[nextIndex + 1];
+
+      if (!nextNextNote) {
+        newPosition = nextNote.position + 1000;
+      } else {
+        newPosition = (nextNote.position + nextNextNote.position) / 2;
+      }
+    }
+
+    if (newPosition !== null) {
+      updateNoteMutation.mutate(
+        { noteId, data: { position: newPosition } },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: getNotesServiceListNotesQueryKey(courseId),
+            });
+          },
+        },
+      );
+    }
+  };
+
   const onSubmit = handleSubmit((data) => {
+    const maxPosition = notes.length > 0 ? Math.max(...notes.map((n) => n.position)) : 0;
     createNoteMutation.mutate(
-      { data: { ...data, course_id: courseId } },
+      { data: { ...data, course_id: courseId, position: maxPosition + 1000 } },
       {
         onSuccess: (data) => {
           queryClient.invalidateQueries({
@@ -287,8 +342,8 @@ export function NavCourses({ courseId }: NavCoursesProps) {
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild tooltip={item.title}>
                 <Link to="/c/$courseId/n/$notesId" params={{ notesId: item.id, courseId }}>
-                  <FileTextIcon />
-                  <span>{item.title}</span>
+                  <FileTextIcon className="shrink-0" style={{ color: item.color || "#3b82f6" }} />
+                  <span className="truncate">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
               <DropdownMenu>
@@ -303,12 +358,28 @@ export function NavCourses({ courseId }: NavCoursesProps) {
                   side={isMobile ? "bottom" : "right"}
                   align={isMobile ? "end" : "start"}
                 >
-                  <DropdownMenuItem onClick={() => onEditNote({ id: item.id, title: item.title })}>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      onEditNote({ id: item.id, title: item.title, color: item.color })
+                    }
+                  >
                     <PencilIcon className="text-muted-foreground" />
                     <span>Edit Note</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDeleteNote(item.id)}>
-                    <Trash2Icon className="text-muted-foreground" />
+                  <DropdownMenuItem onClick={() => onReorderNote(item.id, "up")}>
+                    <ArrowUpIcon className="text-muted-foreground" />
+                    <span>Move Up</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onReorderNote(item.id, "down")}>
+                    <ArrowDownIcon className="text-muted-foreground" />
+                    <span>Move Down</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => onDeleteNote(item.id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2Icon />
                     <span>Delete Note</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -363,6 +434,11 @@ export function NavCourses({ courseId }: NavCoursesProps) {
               <Input {...register("title")} placeholder="e.g. Lecture 1: Introduction" />
               {errors.title && <FieldError>{errors.title.message}</FieldError>}
             </Field>
+            <Field>
+              <FieldLabel>Color</FieldLabel>
+              <Input type="color" {...register("color")} className="h-10 p-1 w-full" />
+              {errors.color && <FieldError>{errors.color.message}</FieldError>}
+            </Field>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
                 Cancel
@@ -385,6 +461,11 @@ export function NavCourses({ courseId }: NavCoursesProps) {
               <FieldLabel>Note Title</FieldLabel>
               <Input {...registerEditNote("title")} placeholder="e.g. Lecture 1: Introduction" />
               {errorsEditNote.title && <FieldError>{errorsEditNote.title.message}</FieldError>}
+            </Field>
+            <Field>
+              <FieldLabel>Color</FieldLabel>
+              <Input type="color" {...registerEditNote("color")} className="h-10 p-1 w-full" />
+              {errorsEditNote.color && <FieldError>{errorsEditNote.color.message}</FieldError>}
             </Field>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowEditNoteDialog(false)}>

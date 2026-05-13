@@ -11,5 +11,7 @@
  */
 export interface NotesUpdateRequest {
   title?: string;
+  color?: string;
+  position?: number;
   content?: string;
 }

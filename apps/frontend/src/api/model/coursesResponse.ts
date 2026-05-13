@@ -12,6 +12,8 @@ export interface CoursesResponse {
   title: string;
   instructor: string;
   credits: number;
+  color?: string;
+  position: number;
   readonly created_by: string;
   readonly created_at: string;
   readonly updated_at: string;

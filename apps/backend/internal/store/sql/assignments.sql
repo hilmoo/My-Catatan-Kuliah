@@ -11,8 +11,8 @@ ORDER BY
     assignments.position ASC;
 
 -- name: CreateAssignment :one
-INSERT INTO assignments("course_id", "title", "content", "status", "position", "due_date", "created_by")
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO assignments("course_id", "title", "content", "status", "position", "due_date", "created_by", "color")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
 
 -- name: GetAssignmentByIidAndUser :one
@@ -37,6 +37,7 @@ SET
     "status" = COALESCE(sqlc.narg('status'), a."status"),
     "position" = COALESCE(sqlc.narg('position'), a."position"),
     "due_date" = COALESCE(sqlc.narg('due_date'), a."due_date"),
+    "color" = COALESCE(sqlc.narg('color'), a."color"),
     "updated_at" = NOW()
 FROM courses c
 WHERE a."course_id" = c."id"

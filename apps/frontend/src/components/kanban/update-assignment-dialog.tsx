@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { PlusIcon, ChevronDownIcon } from "lucide-react";
+import { PencilIcon, ChevronDownIcon } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 
@@ -30,9 +30,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/editor/the
 import { Calendar } from "@/components/ui/calendar";
 import { AssignmentsAssignmentStatus } from "@/api/model/assignmentsAssignmentStatus";
 import {
-  useAssignmentsServiceCreateAssignment,
+  useAssignmentsServiceUpdateAssignment,
+  getAssignmentsServiceGetAssignmentQueryKey,
   getAssignmentsServiceListAssignmentsQueryKey,
 } from "@/api/assignments/assignments";
+import type { AssignmentsResponse } from "@/api/model/assignmentsResponse";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -46,58 +48,59 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface CreateAssignmentDialogProps {
-  courseId: string;
+interface UpdateAssignmentDialogProps {
+  assignment: AssignmentsResponse;
 }
 
-export function CreateAssignmentDialog({ courseId }: CreateAssignmentDialogProps) {
+export function UpdateAssignmentDialog({ assignment }: UpdateAssignmentDialogProps) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const createAssignment = useAssignmentsServiceCreateAssignment();
+  const updateAssignment = useAssignmentsServiceUpdateAssignment();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      due_date: new Date(),
-      status: AssignmentsAssignmentStatus.Todo,
-      content: "",
-      color: "#000000",
+      title: assignment.title,
+      due_date: new Date(assignment.due_date),
+      status: assignment.status,
+      content: "", // We might not want to update content here if it's in the editor
+      color: assignment.color || "#000000",
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await createAssignment.mutateAsync({
+      await updateAssignment.mutateAsync({
+        assignmentId: assignment.id,
         data: {
           ...values,
           due_date: values.due_date.toISOString(),
-          course_id: courseId,
-          position: 0.00001, // Default position
         },
       });
       queryClient.invalidateQueries({
-        queryKey: getAssignmentsServiceListAssignmentsQueryKey(courseId),
+        queryKey: getAssignmentsServiceGetAssignmentQueryKey(assignment.id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getAssignmentsServiceListAssignmentsQueryKey(assignment.course_id),
       });
       setOpen(false);
-      form.reset();
     } catch (error) {
-      console.error("Failed to create assignment", error);
+      console.error("Failed to update assignment", error);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Add Assignment
+        <Button size="sm" variant="outline">
+          <PencilIcon className="mr-2 h-4 w-4" />
+          Edit
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Assignment</DialogTitle>
-          <DialogDescription>Add a new assignment to this course.</DialogDescription>
+          <DialogTitle>Update Assignment</DialogTitle>
+          <DialogDescription>Modify the assignment details.</DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
           <Field>
@@ -163,15 +166,9 @@ export function CreateAssignmentDialog({ courseId }: CreateAssignmentDialogProps
             <FieldError errors={[form.formState.errors.status]} />
           </Field>
 
-          <Field>
-            <FieldTitle>Description</FieldTitle>
-            <Input {...form.register("content")} placeholder="Optional description" />
-            <FieldError errors={[form.formState.errors.content]} />
-          </Field>
-
           <DialogFooter>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Creating..." : "Create"}
+              {form.formState.isSubmitting ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>
         </form>

@@ -51,6 +51,7 @@ func listAssignmentsService(ctx context.Context, args listAssignmentsServicePara
 			return nil, herodot.ErrInternalServerError.WithReason("failed to encode course id").WithDebug(err.Error())
 		}
 		assignmentModels = append(assignmentModels, models.AssignmentsResponse{
+			Color:     w.Color,
 			CourseId:  courseId,
 			CreatedAt: &w.CreatedAt,
 			CreatedBy: &userIid,
@@ -90,6 +91,7 @@ func createAssignmentService(ctx context.Context, args createAssignmentServicePa
 	}
 
 	assignment, err := args.queries.CreateAssignment(ctx, db.CreateAssignmentParams{
+		Color:     args.body.Color,
 		CourseID:  course.ID,
 		Title:     args.body.Title,
 		Content:   args.body.Content,
@@ -108,6 +110,7 @@ func createAssignmentService(ctx context.Context, args createAssignmentServicePa
 	}
 
 	return &models.AssignmentsCreateResponse{
+		Color:     assignment.Color,
 		Content:   assignment.Content,
 		CourseId:  args.body.CourseId,
 		CreatedAt: &assignment.CreatedAt,
@@ -187,6 +190,7 @@ func getAssignmentDetailsService(ctx context.Context, args getAssignmentDetailsS
 	}
 
 	return &models.AssignmentsDetailResponse{
+		Color:     assignment.Color,
 		Content:   assignment.Content,
 		CourseId:  courseIid,
 		CreatedAt: &assignment.CreatedAt,
@@ -235,6 +239,7 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 	assignment, err := args.queries.UpdateAssignmentByIidAndUser(ctx, db.UpdateAssignmentByIidAndUserParams{
 		Iid:       assignmentId,
 		CreatedBy: user.ID,
+		Color:     args.body.Color,
 		Title:     args.body.Title,
 		Content:   args.body.Content,
 		Status:    status,
@@ -255,6 +260,7 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 	}
 
 	return &models.AssignmentsUpdateResponse{
+		Color:     assignment.Color,
 		Content:   assignment.Content,
 		CourseId:  courseIid,
 		CreatedAt: &assignment.CreatedAt,
@@ -270,8 +276,9 @@ func updateAssignmentService(ctx context.Context, args updateAssignmentServicePa
 
 type proxyHocuspocusServiceParams struct {
 	hocuspocusUrl *url.URL
-	notesId        string
+	notesId       string
 }
+
 func proxyHocuspocusService(args proxyHocuspocusServiceParams) (*httputil.ReverseProxy, *herodot.DefaultError) {
 	proxy := &httputil.ReverseProxy{
 		Rewrite: func(pr *httputil.ProxyRequest) {

@@ -2,12 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
-  getCoursesServiceListCoursesQueryKey,
-  useCoursesServiceCreateCourse,
-  useCoursesServiceListCourses,
-} from "@/api/courses/courses";
-import { getNotesServiceListNotesQueryKey, useNotesServiceCreateNote } from "@/api/notes/notes";
-import {
   chatListChats,
   getChatListChatsQueryKey,
   useChatListChats,
@@ -34,16 +28,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { ChatMessage } from "./chat-message";
 import { useChat } from "./use-chat";
 
@@ -219,9 +203,6 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const drawerTitleInputRef = useRef<HTMLInputElement>(null);
-  const coursesQuery = useCoursesServiceListCourses(workspaceId);
-  const createCourseMutation = useCoursesServiceCreateCourse();
-  const createNoteMutation = useNotesServiceCreateNote();
   const updateTitleMutation = useChatUpdateChatTitle();
   const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
@@ -233,24 +214,9 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
   /** Stores the first message text so we can auto-generate a title. */
   const firstMessageRef = useRef<string>("");
 
-  // Create note dialog
-  const [showCreateNoteDialog, setShowCreateNoteDialog] = useState(false);
-  const [showNewCourseForm, setShowNewCourseForm] = useState(false);
-  const [noteTitle, setNoteTitle] = useState("");
-  const [noteError, setNoteError] = useState<string | null>(null);
-  const [newCourseTitle, setNewCourseTitle] = useState("");
-  const [newCourseInstructor, setNewCourseInstructor] = useState("");
-  const [newCourseCredits, setNewCourseCredits] = useState("0");
-  const [newCourseError, setNewCourseError] = useState<string | null>(null);
-
   const isLanding = messages.length === 0;
   const firstName = userName ? userName.split(" ")[0] : "";
   const landingGreeting = useMemo(() => getLandingGreeting(firstName), [firstName]);
-
-  const courses =
-    coursesQuery.data?.status === 200
-      ? coursesQuery.data.data.filter((course) => course.workspace_id === workspaceId)
-      : [];
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -296,10 +262,6 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
       e.preventDefault();
       handleSubmit(e);
     }
-  };
-
-  const handleCreateNote = () => {
-    setShowCreateNoteDialog(true);
   };
 
   const handleLoadChat = (chatId: string) => {
@@ -352,97 +314,6 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
     );
   };
 
-  const resetNewCourseForm = () => {
-    setShowNewCourseForm(false);
-    setNewCourseTitle("");
-    setNewCourseInstructor("");
-    setNewCourseCredits("0");
-    setNewCourseError(null);
-  };
-
-  const resetCreateNoteDialog = () => {
-    resetNewCourseForm();
-    setNoteTitle("");
-    setNoteError(null);
-  };
-
-  const createNoteInCourse = (courseId: string) => {
-    const title = noteTitle.trim() || "Untitled Note";
-
-    createNoteMutation.mutate(
-      {
-        data: {
-          course_id: courseId,
-          title,
-          content: "",
-        },
-      },
-      {
-        onSuccess: (response) => {
-          if (response.status !== 201) {
-            setNoteError("Failed to create note.");
-            return;
-          }
-
-          queryClient.invalidateQueries({
-            queryKey: getNotesServiceListNotesQueryKey(courseId),
-          });
-          setShowCreateNoteDialog(false);
-          resetCreateNoteDialog();
-          navigate({
-            to: "/c/$courseId/n/$notesId",
-            params: { courseId, notesId: response.data.id },
-          });
-        },
-        onError: () => {
-          setNoteError("Failed to create note.");
-        },
-      },
-    );
-  };
-
-  const handleSelectCourse = (courseId: string) => {
-    createNoteInCourse(courseId);
-  };
-
-  const handleCreateCourse = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const title = newCourseTitle.trim();
-    const instructor = newCourseInstructor.trim();
-    if (!title || !instructor) {
-      setNewCourseError("Course title and instructor are required.");
-      return;
-    }
-
-    createCourseMutation.mutate(
-      {
-        data: {
-          workspace_id: workspaceId,
-          title,
-          instructor,
-          credits: Number(newCourseCredits) || 0,
-        },
-      },
-      {
-        onSuccess: (response) => {
-          if (response.status !== 201) {
-            setNewCourseError("Failed to create course.");
-            return;
-          }
-
-          queryClient.invalidateQueries({
-            queryKey: getCoursesServiceListCoursesQueryKey(workspaceId),
-          });
-          createNoteInCourse(response.data.id);
-        },
-        onError: () => {
-          setNewCourseError("Failed to create course.");
-        },
-      },
-    );
-  };
-
   const answerStyleSelect = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -459,115 +330,6 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-
-  // --- Create note dialog (shared between landing & chat) ---
-  const createNoteDialog = (
-    <Dialog
-      open={showCreateNoteDialog}
-      onOpenChange={(open) => {
-        setShowCreateNoteDialog(open);
-        if (!open) resetCreateNoteDialog();
-      }}
-    >
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Create note</DialogTitle>
-          <DialogDescription>
-            Name the note, then choose a course or create a new one.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-3">
-          <Field>
-            <FieldLabel>Note Title</FieldLabel>
-            <Input
-              value={noteTitle}
-              onChange={(e) => setNoteTitle(e.target.value)}
-              placeholder="e.g. Lecture 2: Trees"
-            />
-          </Field>
-          {noteError && <FieldError>{noteError}</FieldError>}
-
-          {courses.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">Courses</div>
-              <div className="max-h-56 space-y-1 overflow-y-auto rounded-lg border p-1">
-                {courses.map((course) => (
-                  <button
-                    key={course.id}
-                    type="button"
-                    onClick={() => handleSelectCourse(course.id)}
-                    disabled={createNoteMutation.isPending}
-                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <BookOpenIcon className="size-4 shrink-0 text-muted-foreground" />
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium">{course.title}</div>
-                      <div className="truncate text-xs text-muted-foreground">
-                        {course.instructor || "No instructor"} - {course.credits} credits
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {!showNewCourseForm ? (
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => setShowNewCourseForm(true)}
-            >
-              <PlusIcon className="size-4" />
-              Create new course
-            </Button>
-          ) : (
-            <form onSubmit={handleCreateCourse} className="space-y-3 rounded-lg border p-3">
-              <Field>
-                <FieldLabel>Course Title</FieldLabel>
-                <Input
-                  value={newCourseTitle}
-                  onChange={(e) => setNewCourseTitle(e.target.value)}
-                  placeholder="e.g. Data Structures"
-                />
-              </Field>
-              <Field>
-                <FieldLabel>Instructor</FieldLabel>
-                <Input
-                  value={newCourseInstructor}
-                  onChange={(e) => setNewCourseInstructor(e.target.value)}
-                  placeholder="e.g. Prof. Smith"
-                />
-              </Field>
-              <Field>
-                <FieldLabel>Credits</FieldLabel>
-                <Input
-                  type="number"
-                  min="0"
-                  value={newCourseCredits}
-                  onChange={(e) => setNewCourseCredits(e.target.value)}
-                />
-              </Field>
-              {newCourseError && <FieldError>{newCourseError}</FieldError>}
-              <DialogFooter className="-mx-3 -mb-3">
-                <Button type="button" variant="outline" onClick={resetNewCourseForm}>
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createCourseMutation.isPending || createNoteMutation.isPending}
-                >
-                  {createCourseMutation.isPending ? "Creating..." : "Create course"}
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
   );
 
   // --- History drawer (right-side slide-over) ---
@@ -737,14 +499,6 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
                 {s.label}
               </button>
             ))}
-            <button
-              type="button"
-              onClick={handleCreateNote}
-              className="flex items-center gap-2 rounded-full border bg-background px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-            >
-              <PlusIcon className="size-3.5" />
-              Create note
-            </button>
           </div>
 
           {/* Recent chats — subtle, max 3 */}
@@ -788,7 +542,6 @@ export function WorkspaceChat({ workspaceId, userId, userName, chatId }: Workspa
             </div>
           )}
         </div>
-        {createNoteDialog}
         {historyDrawer}
       </div>
     );

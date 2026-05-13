@@ -46,11 +46,13 @@ func listCoursesService(ctx context.Context, args listCoursesServiceParams) (mod
 			return nil, herodot.ErrInternalServerError.WithReason("failed to encode course id").WithDebug(err.Error())
 		}
 		courseModels = append(courseModels, models.CoursesResponse{
+			Color:       w.Color,
 			CreatedAt:   &w.CreatedAt,
-			CreatedBy:   typex.StringPtr(userIid),
+			CreatedBy:   new(userIid),
 			Credits:     int(w.Credits),
 			Id:          &id,
 			Instructor:  w.Instructor,
+			Position:    float32(w.Position),
 			Title:       w.Title,
 			UpdatedAt:   &w.UpdatedAt,
 			WorkspaceId: args.workspaceId,
@@ -95,6 +97,8 @@ func createCourseService(ctx context.Context, args createCourseServiceParams) (*
 		Title:       args.body.Title,
 		Instructor:  args.body.Instructor,
 		Credits:     credits,
+		Color:       args.body.Color,
+		Position:    float64(args.body.Position),
 		CreatedBy:   user.ID,
 	})
 	if err != nil {
@@ -107,11 +111,13 @@ func createCourseService(ctx context.Context, args createCourseServiceParams) (*
 	}
 
 	return &models.CoursesCreateResponse{
+		Color:      course.Color,
 		CreatedAt:  &course.CreatedAt,
 		CreatedBy:  typex.StringPtr(userIid),
 		Credits:    int(credits),
 		Id:         &id,
 		Instructor: course.Instructor,
+		Position:   float32(course.Position),
 		Title:      course.Title,
 		UpdatedAt:  &course.UpdatedAt,
 	}, nil
@@ -183,12 +189,14 @@ func getCourseDetailsService(ctx context.Context, args getCourseDetailsServicePa
 	}
 
 	return &models.CoursesResponse{
+		Color:       course.Color,
 		CreatedAt:   &course.CreatedAt,
 		CreatedBy:   typex.StringPtr(userIid),
 		Credits:     int(course.Credits),
 		Id:          &id,
 		Instructor:  course.Instructor,
 		Title:       course.Title,
+		Position:    float32(course.Position),
 		UpdatedAt:   &course.UpdatedAt,
 		WorkspaceId: workspaceId,
 	}, nil
@@ -219,9 +227,11 @@ func updateCourseService(ctx context.Context, args updateCourseServiceParams) (*
 	course, err := args.queries.UpdateCourseByIidAndUser(ctx, db.UpdateCourseByIidAndUserParams{
 		Iid:        courseId,
 		CreatedBy:  user.ID,
+		Color:      args.body.Color,
 		Title:      args.body.Title,
 		Instructor: args.body.Instructor,
-		Credits:    typex.Int32Ptr(*args.body.Credits),
+		Position:   typex.Float64PtrFromFloat32Ptr(args.body.Position),
+		Credits:    typex.PtrIntToInt32(args.body.Credits),
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to update course").WithDebug(err.Error())
@@ -237,11 +247,13 @@ func updateCourseService(ctx context.Context, args updateCourseServiceParams) (*
 	}
 
 	return &models.CoursesResponse{
+		Color:       course.Color,
 		CreatedAt:   &course.CreatedAt,
 		CreatedBy:   typex.StringPtr(userIid),
 		Credits:     int(course.Credits),
 		Id:          &id,
 		Instructor:  course.Instructor,
+		Position:    float32(course.Position),
 		Title:       course.Title,
 		UpdatedAt:   &course.UpdatedAt,
 		WorkspaceId: courseIid,

@@ -9,5 +9,7 @@
 export interface NotesCreateRequest {
   course_id: string;
   title: string;
+  color?: string;
+  position: number;
   content?: string;
 }

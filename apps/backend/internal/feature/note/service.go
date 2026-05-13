@@ -50,10 +50,12 @@ func listNotesService(ctx context.Context, args listNotesServiceParams) (models.
 			return nil, herodot.ErrInternalServerError.WithReason("failed to encode course id").WithDebug(err.Error())
 		}
 		noteModels = append(noteModels, models.NotesResponse{
+			Color:     w.Color,
 			CourseId:  courseId,
 			CreatedAt: &w.CreatedAt,
 			CreatedBy: &userIid,
 			Id:        &id,
+			Position:  float32(w.Position),
 			Title:     w.Title,
 			UpdatedAt: &w.UpdatedAt,
 		})
@@ -90,6 +92,8 @@ func createNoteService(ctx context.Context, args createNoteServiceParams) (*mode
 		Title:     args.body.Title,
 		Content:   args.body.Content,
 		CreatedBy: user.ID,
+		Position:  float64(args.body.Position),
+		Color:     args.body.Color,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to create note").WithDebug(err.Error())
@@ -101,10 +105,13 @@ func createNoteService(ctx context.Context, args createNoteServiceParams) (*mode
 	}
 
 	return &models.NotesCreateResponse{
+		Color:     note.Color,
+		Content:   note.Content,
 		CourseId:  args.body.CourseId,
 		CreatedAt: &note.CreatedAt,
 		CreatedBy: &userIid,
 		Id:        &id,
+		Position:  float32(note.Position),
 		Title:     note.Title,
 		UpdatedAt: &note.UpdatedAt,
 	}, nil
@@ -176,11 +183,13 @@ func getNoteDetailsService(ctx context.Context, args getNoteDetailsServiceParams
 	}
 
 	return &models.NotesDetailResponse{
+		Color:     note.Color,
 		Content:   note.Content,
 		CourseId:  courseIid,
 		CreatedAt: &note.CreatedAt,
 		CreatedBy: &userIid,
 		Id:        &id,
+		Position:  float32(note.Position),
 		Title:     note.Title,
 		UpdatedAt: &note.UpdatedAt,
 	}, nil
@@ -208,11 +217,19 @@ func updateNoteService(ctx context.Context, args updateNoteServiceParams) (*mode
 		return nil, herodot.ErrBadRequest.WithReason("invalid note ID").WithDebug(err.Error())
 	}
 
+	var position *float64
+	if args.body.Position != nil {
+		p := float64(*args.body.Position)
+		position = &p
+	}
+
 	note, err := args.queries.UpdateNoteByIidAndUser(ctx, db.UpdateNoteByIidAndUserParams{
 		Iid:       noteId,
 		CreatedBy: user.ID,
 		Title:     args.body.Title,
 		Content:   args.body.Content,
+		Position:  position,
+		Color:     args.body.Color,
 	})
 	if err != nil {
 		return nil, herodot.ErrInternalServerError.WithReason("failed to update note").WithDebug(err.Error())
@@ -228,11 +245,13 @@ func updateNoteService(ctx context.Context, args updateNoteServiceParams) (*mode
 	}
 
 	return &models.NotesUpdateResponse{
+		Color:     note.Color,
 		Content:   note.Content,
 		CourseId:  courseIid,
 		CreatedAt: &note.CreatedAt,
 		CreatedBy: &userIid,
 		Id:        &id,
+		Position:  float32(note.Position),
 		Title:     note.Title,
 		UpdatedAt: &note.UpdatedAt,
 	}, nil

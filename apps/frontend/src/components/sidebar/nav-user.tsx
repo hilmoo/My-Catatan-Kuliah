@@ -14,10 +14,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useNavigate } from "@tanstack/react-router";
 import { ChevronsUpDownIcon, LogOutIcon } from "lucide-react";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
   const logoutMutation = useAuthLogout();
   const { data: userData, isLoading } = useAuthGetMe();
   if (isLoading || userData?.status !== 200) {
@@ -29,8 +31,12 @@ export function NavUser() {
     .join("")
     .toUpperCase();
 
-  const handleLogout = () => {
-    logoutMutation.mutate();
+  const handleLogout = async () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: async () => {
+        await navigate({ to: "/login", reloadDocument: true });
+      },
+    });
   };
 
   return (

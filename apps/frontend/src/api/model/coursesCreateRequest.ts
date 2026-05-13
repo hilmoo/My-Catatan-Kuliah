@@ -14,4 +14,8 @@ export interface CoursesCreateRequest {
   instructor: string;
   /** The number of credits for the course */
   credits?: number;
+  /** The color associated with the course (hex color code) */
+  color?: string;
+  /** The position of the course for ordering purposes */
+  position: number;
 }

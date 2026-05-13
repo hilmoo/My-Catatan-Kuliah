@@ -1,7 +1,6 @@
 import { getAuthGetMeQueryOptions } from "@/api/auth/auth";
 import { getNotesServiceGetNoteQueryOptions } from "@/api/notes/notes";
 import { FullSetupEditor } from "@/components/editor/editor";
-import { initial } from "@/components/editor/initial";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useRef } from "react";
 
@@ -37,7 +36,6 @@ function RouteComponent() {
         roomId={notesId}
         type="notes"
         containerBoxRef={containerRef}
-        initialValue={initial}
       />
     </div>
   );

@@ -13,9 +13,9 @@ import (
 )
 
 const createCourse = `-- name: CreateCourse :one
-INSERT INTO courses("workspace_id", "title", "instructor", "credits", "created_by")
-    VALUES ($1, $2, $3, $4, $5)
-RETURNING id, iid, workspace_id, title, instructor, credits, created_by, created_at, updated_at
+INSERT INTO courses("workspace_id", "title", "instructor", "credits", "position", "color", "created_by")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, iid, workspace_id, title, instructor, credits, position, color, created_by, created_at, updated_at
 `
 
 type CreateCourseParams struct {
@@ -23,6 +23,8 @@ type CreateCourseParams struct {
 	Title       string
 	Instructor  string
 	Credits     int32
+	Position    float64
+	Color       *string
 	CreatedBy   int32
 }
 
@@ -32,6 +34,8 @@ func (q *Queries) CreateCourse(ctx context.Context, arg CreateCourseParams) (Cou
 		arg.Title,
 		arg.Instructor,
 		arg.Credits,
+		arg.Position,
+		arg.Color,
 		arg.CreatedBy,
 	)
 	var i Course
@@ -42,6 +46,8 @@ func (q *Queries) CreateCourse(ctx context.Context, arg CreateCourseParams) (Cou
 		&i.Title,
 		&i.Instructor,
 		&i.Credits,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -66,7 +72,7 @@ func (q *Queries) DeleteCourseByIidAndUser(ctx context.Context, arg DeleteCourse
 }
 
 const getCourseByIid = `-- name: GetCourseByIid :one
-SELECT id, iid, workspace_id, title, instructor, credits, created_by, created_at, updated_at
+SELECT id, iid, workspace_id, title, instructor, credits, position, color, created_by, created_at, updated_at
 FROM courses
 WHERE "iid" = $1
 `
@@ -81,6 +87,8 @@ func (q *Queries) GetCourseByIid(ctx context.Context, iid uuid.UUID) (Course, er
 		&i.Title,
 		&i.Instructor,
 		&i.Credits,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -90,7 +98,7 @@ func (q *Queries) GetCourseByIid(ctx context.Context, iid uuid.UUID) (Course, er
 
 const getCourseByIidAndUser = `-- name: GetCourseByIidAndUser :one
 SELECT 
-courses.id, courses.iid, courses.workspace_id, courses.title, courses.instructor, courses.credits, courses.created_by, courses.created_at, courses.updated_at,
+courses.id, courses.iid, courses.workspace_id, courses.title, courses.instructor, courses.credits, courses.position, courses.color, courses.created_by, courses.created_at, courses.updated_at,
 workspaces.iid AS workspace_iid
 FROM courses
 JOIN workspaces ON courses.workspace_id = workspaces.id
@@ -110,6 +118,8 @@ type GetCourseByIidAndUserRow struct {
 	Title        string
 	Instructor   string
 	Credits      int32
+	Position     float64
+	Color        *string
 	CreatedBy    int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -126,6 +136,8 @@ func (q *Queries) GetCourseByIidAndUser(ctx context.Context, arg GetCourseByIidA
 		&i.Title,
 		&i.Instructor,
 		&i.Credits,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -136,7 +148,7 @@ func (q *Queries) GetCourseByIidAndUser(ctx context.Context, arg GetCourseByIidA
 
 const listCoursesByUserId = `-- name: ListCoursesByUserId :many
 SELECT 
-courses.id, courses.iid, courses.workspace_id, courses.title, courses.instructor, courses.credits, courses.created_by, courses.created_at, courses.updated_at
+courses.id, courses.iid, courses.workspace_id, courses.title, courses.instructor, courses.credits, courses.position, courses.color, courses.created_by, courses.created_at, courses.updated_at
 FROM courses
 JOIN workspaces ON courses.workspace_id = workspaces.id
 WHERE courses.created_by = $1
@@ -165,6 +177,8 @@ func (q *Queries) ListCoursesByUserId(ctx context.Context, arg ListCoursesByUser
 			&i.Title,
 			&i.Instructor,
 			&i.Credits,
+			&i.Position,
+			&i.Color,
 			&i.CreatedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -185,13 +199,15 @@ SET
     "title" = COALESCE($3, c."title"),
     "instructor" = COALESCE($4, c."instructor"),
     "credits" = COALESCE($5, c."credits"),
+    "position" = COALESCE($6, c."position"),
+    "color" = COALESCE($7, c."color"),
     "updated_at" = NOW()
 FROM workspaces w
 WHERE c."workspace_id" = w."id"
     AND c."iid" = $1
     AND c."created_by" = $2
 RETURNING 
-    c.id, c.iid, c.workspace_id, c.title, c.instructor, c.credits, c.created_by, c.created_at, c.updated_at,
+    c.id, c.iid, c.workspace_id, c.title, c.instructor, c.credits, c.position, c.color, c.created_by, c.created_at, c.updated_at,
     w.iid AS workspace_iid
 `
 
@@ -201,6 +217,8 @@ type UpdateCourseByIidAndUserParams struct {
 	Title      *string
 	Instructor *string
 	Credits    *int32
+	Position   *float64
+	Color      *string
 }
 
 type UpdateCourseByIidAndUserRow struct {
@@ -210,6 +228,8 @@ type UpdateCourseByIidAndUserRow struct {
 	Title        string
 	Instructor   string
 	Credits      int32
+	Position     float64
+	Color        *string
 	CreatedBy    int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -223,6 +243,8 @@ func (q *Queries) UpdateCourseByIidAndUser(ctx context.Context, arg UpdateCourse
 		arg.Title,
 		arg.Instructor,
 		arg.Credits,
+		arg.Position,
+		arg.Color,
 	)
 	var i UpdateCourseByIidAndUserRow
 	err := row.Scan(
@@ -232,6 +254,8 @@ func (q *Queries) UpdateCourseByIidAndUser(ctx context.Context, arg UpdateCourse
 		&i.Title,
 		&i.Instructor,
 		&i.Credits,
+		&i.Position,
+		&i.Color,
 		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,

@@ -26,3 +26,11 @@ func Float64PtrFromFloat32Ptr(f *float32) *float64 {
 	res := float64(*f)
 	return &res
 }
+
+func PtrIntToInt32(i *int) *int32 {
+	if i == nil {
+		return nil
+	}
+	res := int32(*i)
+	return &res
+}

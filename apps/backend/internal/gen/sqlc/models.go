@@ -149,6 +149,7 @@ type Assignment struct {
 	Status    AssignmentStatus
 	Position  float64
 	DueDate   time.Time
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -161,6 +162,8 @@ type Course struct {
 	Title       string
 	Instructor  string
 	Credits     int32
+	Position    float64
+	Color       *string
 	CreatedBy   int32
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -184,10 +187,10 @@ type File struct {
 	S3Key     string
 	MimeType  string
 	Size      int64
-	CreatedBy int32
-	CreatedAt time.Time
 	Width     *int32
 	Height    *int32
+	CreatedBy int32
+	CreatedAt time.Time
 }
 
 type LlmChat struct {
@@ -220,6 +223,8 @@ type Note struct {
 	Title     string
 	Content   *string
 	Contentb  []byte
+	Position  float64
+	Color     *string
 	CreatedBy int32
 	CreatedAt time.Time
 	UpdatedAt time.Time

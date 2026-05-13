@@ -12,6 +12,11 @@ model Response {
 
     title: string;
 
+    @format("hexcolor")
+    color?: string;
+
+    position: float;
+
     @visibility(Lifecycle.Read)
     created_by: string;
 

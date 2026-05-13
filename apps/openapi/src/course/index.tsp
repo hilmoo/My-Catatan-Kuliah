@@ -14,6 +14,11 @@ model Response {
     instructor: string;
     credits: integer;
 
+    @format("hexcolor")
+    color?: string;
+
+    position: float;
+
     @visibility(Lifecycle.Read)
     created_by: string;
 
@@ -37,6 +42,13 @@ model CreateRequest {
 
     @doc("The number of credits for the course")
     credits?: integer;
+
+    @doc("The color associated with the course (hex color code)")
+    @format("hexcolor")
+    color?: string;
+
+    @doc("The position of the course for ordering purposes")
+    position: float;
 }
 
 model CreateResponse extends Response {

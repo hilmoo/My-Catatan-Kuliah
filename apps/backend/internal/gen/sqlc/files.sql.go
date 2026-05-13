@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -65,9 +66,20 @@ type GetFileByIDParams struct {
 	CreatedBy int32
 }
 
-func (q *Queries) GetFileByID(ctx context.Context, arg GetFileByIDParams) (File, error) {
+type GetFileByIDRow struct {
+	ID        uuid.UUID
+	S3Key     string
+	MimeType  string
+	Size      int64
+	CreatedBy int32
+	CreatedAt time.Time
+	Width     *int32
+	Height    *int32
+}
+
+func (q *Queries) GetFileByID(ctx context.Context, arg GetFileByIDParams) (GetFileByIDRow, error) {
 	row := q.db.QueryRow(ctx, getFileByID, arg.ID, arg.CreatedBy)
-	var i File
+	var i GetFileByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.S3Key,

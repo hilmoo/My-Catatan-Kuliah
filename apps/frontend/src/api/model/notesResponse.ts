@@ -10,6 +10,8 @@ export interface NotesResponse {
   readonly id: string;
   course_id: string;
   title: string;
+  color?: string;
+  position: number;
   readonly created_by: string;
   readonly created_at: string;
   readonly updated_at: string;
