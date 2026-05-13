@@ -68,6 +68,22 @@ const FullSetupEditor = ({
   const targetPath = type === "notes" ? "/api/notes/ws" : "/api/assignments/ws";
   const url = `ws://${window.location.host}${targetPath}`;
 
+  const deviceId =
+    typeof window !== "undefined"
+      ? (() => {
+          const key = "collab-device-id";
+
+          let id = localStorage.getItem(key);
+
+          if (!id) {
+            id = crypto.randomUUID();
+            localStorage.setItem(key, id);
+          }
+
+          return id;
+        })()
+      : "server";
+
   const editor = useMemo(() => {
     return withCollaboration(
       withEmoji(
@@ -82,17 +98,17 @@ const FullSetupEditor = ({
         ),
       ),
       {
-        url: url,
-        roomId: roomId,
+        url,
+        roomId,
         user: {
-          id: user.id,
+          id: `${user.id}-${deviceId}`,
           name: user.name,
           avatar: user.avatar_url,
           color: stringToColor(user.id),
         },
       },
     );
-  }, [user.avatar_url, user.id, user.name, url, roomId]);
+  }, [user.avatar_url, user.id, user.name, url, roomId, deviceId]);
 
   useEffect(() => {
     editor.collaboration.connect();
