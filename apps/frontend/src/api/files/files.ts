@@ -376,3 +376,134 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
       > => {
       return useMutation(getFilesServiceDeleteFileMutationOptions(options), queryClient);
     }
+    export type filesServiceGetFileContentResponse302 = {
+  data: void
+  status: 302
+}
+
+export type filesServiceGetFileContentResponse401 = {
+  data: CommonErrorError401
+  status: 401
+}
+
+export type filesServiceGetFileContentResponse404 = {
+  data: CommonErrorError404
+  status: 404
+}
+
+export type filesServiceGetFileContentResponse500 = {
+  data: CommonErrorError500
+  status: 500
+}
+
+;
+export type filesServiceGetFileContentResponseError = (filesServiceGetFileContentResponse302 | filesServiceGetFileContentResponse401 | filesServiceGetFileContentResponse404 | filesServiceGetFileContentResponse500) & {
+  headers: Headers;
+};
+
+export type filesServiceGetFileContentResponse = (filesServiceGetFileContentResponseError)
+
+export const getFilesServiceGetFileContentUrl = (fileId: string,) => {
+
+
+
+
+  return `/api/files/${fileId}/content`
+}
+
+/**
+ * Get the content of a specific file by its unique identifier.
+ */
+export const filesServiceGetFileContent = async (fileId: string, options?: RequestInit): Promise<filesServiceGetFileContentResponse> => {
+
+  const res = await fetch(getFilesServiceGetFileContentUrl(fileId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: filesServiceGetFileContentResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as filesServiceGetFileContentResponse
+}
+
+
+
+
+
+export const getFilesServiceGetFileContentQueryKey = (fileId: string,) => {
+    return [
+    `/api/files/${fileId}/content`
+    ] as const;
+    }
+
+
+export const getFilesServiceGetFileContentQueryOptions = <TData = Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError = void | CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(fileId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFilesServiceGetFileContentQueryKey(fileId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof filesServiceGetFileContent>>> = ({ signal }) => filesServiceGetFileContent(fileId, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(fileId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FilesServiceGetFileContentQueryResult = NonNullable<Awaited<ReturnType<typeof filesServiceGetFileContent>>>
+export type FilesServiceGetFileContentQueryError = void | CommonErrorError401 | CommonErrorError404 | CommonErrorError500
+
+
+export function useFilesServiceGetFileContent<TData = Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError = void | CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ fileId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof filesServiceGetFileContent>>,
+          TError,
+          Awaited<ReturnType<typeof filesServiceGetFileContent>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFilesServiceGetFileContent<TData = Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError = void | CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ fileId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof filesServiceGetFileContent>>,
+          TError,
+          Awaited<ReturnType<typeof filesServiceGetFileContent>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFilesServiceGetFileContent<TData = Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError = void | CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ fileId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useFilesServiceGetFileContent<TData = Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError = void | CommonErrorError401 | CommonErrorError404 | CommonErrorError500>(
+ fileId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof filesServiceGetFileContent>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFilesServiceGetFileContentQueryOptions(fileId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+

@@ -209,8 +209,10 @@ type CoursesUpdateRequest struct {
 
 // FilesCreateRequest defines model for FilesCreateRequest.
 type FilesCreateRequest struct {
+	Height    *int   `json:"height,omitempty" validate:"omitempty"`
 	MimeType  string `json:"mime_type" validate:"required"`
 	SizeBytes int    `json:"size_bytes" validate:"required"`
+	Width     *int   `json:"width,omitempty" validate:"omitempty"`
 }
 
 // FilesCreateResponse defines model for FilesCreateResponse.
@@ -218,10 +220,12 @@ type FilesCreateResponse = FilesResponse
 
 // FilesResponse defines model for FilesResponse.
 type FilesResponse struct {
+	Height    *int   `json:"height,omitempty" validate:"omitempty"`
 	Id        string `json:"id" validate:"required"`
 	MimeType  string `json:"mime_type" validate:"required"`
 	SizeBytes int    `json:"size_bytes" validate:"required"`
 	Url       string `json:"url" validate:"required"`
+	Width     *int   `json:"width,omitempty" validate:"omitempty"`
 }
 
 // NotesCreateRequest defines model for NotesCreateRequest.

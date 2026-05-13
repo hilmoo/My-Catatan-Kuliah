@@ -9,4 +9,8 @@
 export interface FilesCreateRequest {
   size_bytes: number;
   mime_type: string;
+  /** @nullable */
+  width?: number | null;
+  /** @nullable */
+  height?: number | null;
 }

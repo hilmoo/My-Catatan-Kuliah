@@ -20,6 +20,18 @@ interface FilesService {
         fileId: string,
     ): Files.Response | CommonError.GetCommonErrorAuth;
 
+    @route("/{fileId}/content")
+    @doc("Get the content of a specific file by its unique identifier.")
+    @get
+    getFileContent(
+        @doc("The unique identifier of the file to retrieve content for")
+        @path
+        fileId: string,
+    ): {
+        @statusCode statusCode: 302;
+        @header("Location") location: string;
+    } | CommonError.GetCommonErrorAuth;
+
     @route("")
     @doc("Upload a new file to the system. The request should include the file's name, size in bytes, MIME type, and the file content itself. The response will include the unique identifier for the newly created file, along with its details and a URL for downloading it.")
     @post

@@ -11,4 +11,8 @@ export interface FilesResponse {
   size_bytes: number;
   mime_type: string;
   url: string;
+  /** @nullable */
+  width?: number | null;
+  /** @nullable */
+  height?: number | null;
 }

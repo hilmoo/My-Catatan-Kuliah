@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import YooptaEditor, {
   createYooptaEditor,
   type RenderBlockProps,
@@ -25,6 +25,9 @@ import { withCollaboration, RemoteCursors } from "@yoopta/collaboration";
 import type { AuthMeResponse } from "@/api/model";
 import { initial } from "./initial";
 import { applyTheme } from "./applyTheme";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, WifiOff } from "lucide-react";
 
 const EDITOR_STYLES = {
   width: "100%",
@@ -48,7 +51,6 @@ function stringToColor(str: string): string {
 }
 
 interface FullSetupEditorProps {
-  initialValue?: YooptaContentValue;
   containerBoxRef?: React.RefObject<HTMLDivElement | null>;
   onChange?: (value: YooptaContentValue, options: YooptaOnChangeOptions) => void;
   user: AuthMeResponse;
@@ -68,6 +70,22 @@ const FullSetupEditor = ({
   const targetPath = type === "notes" ? "/api/notes/ws" : "/api/assignments/ws";
   const url = `ws://${window.location.host}${targetPath}`;
 
+  const deviceId =
+    typeof window !== "undefined"
+      ? (() => {
+          const key = "collab-device-id";
+
+          let id = localStorage.getItem(key);
+
+          if (!id) {
+            id = crypto.randomUUID();
+            localStorage.setItem(key, id);
+          }
+
+          return id;
+        })()
+      : "server";
+
   const editor = useMemo(() => {
     return withCollaboration(
       withEmoji(
@@ -82,25 +100,33 @@ const FullSetupEditor = ({
         ),
       ),
       {
-        url: url,
-        roomId: roomId,
+        url,
+        roomId,
         user: {
-          id: user.id,
+          id: `${user.id}-${deviceId}`,
           name: user.name,
           avatar: user.avatar_url,
           color: stringToColor(user.id),
         },
       },
     );
-  }, [user.avatar_url, user.id, user.name, url, roomId]);
+  }, [user.avatar_url, user.id, user.name, url, roomId, deviceId]);
+
+  const [status, setStatus] = useState<"connected" | "connecting" | "disconnected" | "error">(
+    editor.collaboration.state.status,
+  );
 
   useEffect(() => {
+    const handleStatusChange = (payload: { status: typeof status }) => setStatus(payload.status);
+    (editor as any).on("collaboration:status-change", handleStatusChange);
+
     editor.collaboration.connect();
 
     return () => {
+      (editor as any).off("collaboration:status-change", handleStatusChange);
       editor.collaboration.disconnect();
     };
-  }, [editor.collaboration]);
+  }, [editor]);
 
   useEffect(() => {
     const data = initial;
@@ -108,10 +134,27 @@ const FullSetupEditor = ({
     if (data) {
       editor.withoutSavingHistory(() => {
         editor.setEditorValue(data);
-        editor.focus();
       });
     }
   }, [editor]);
+
+  useEffect(() => {
+    if (status === "connected") {
+      editor.focus();
+    }
+  }, [editor, status]);
+
+  const handleChange = useCallback(
+    (value: YooptaContentValue, options: YooptaOnChangeOptions) => {
+      if (Object.keys(value).length === 0) {
+        editor.withoutSavingHistory(() => {
+          editor.setEditorValue(initial);
+        });
+      }
+      onChange?.(value, options);
+    },
+    [editor, onChange],
+  );
 
   const renderBlock = useCallback(({ children, blockId }: RenderBlockProps) => {
     return (
@@ -121,6 +164,47 @@ const FullSetupEditor = ({
     );
   }, []);
 
+  if (status === "connecting") {
+    return (
+      <div className="flex flex-col gap-4 p-8 w-full h-full">
+        <Skeleton className="h-8 w-[200px]" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-[80%]" />
+        <Skeleton className="h-64 w-full mt-4" />
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="p-8">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Connection Error</AlertTitle>
+          <AlertDescription>
+            Failed to connect to the collaboration server. Please refresh the page or check your
+            internet connection.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  if (status === "disconnected") {
+    return (
+      <div className="p-8">
+        <Alert>
+          <WifiOff className="h-4 w-4" />
+          <AlertTitle>Disconnected</AlertTitle>
+          <AlertDescription>
+            You are currently offline. Changes will not be synced until connection is restored.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div ref={containerBoxRef} className="w-full h-full">
       <BlockDndContext editor={editor}>
@@ -129,7 +213,7 @@ const FullSetupEditor = ({
           style={EDITOR_STYLES}
           renderBlock={renderBlock}
           placeholder="Type / to open menu, or start typing..."
-          onChange={onChange}
+          onChange={handleChange}
         >
           <RemoteCursors />
           <YooptaToolbar />

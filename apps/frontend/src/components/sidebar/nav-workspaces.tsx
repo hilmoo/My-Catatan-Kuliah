@@ -222,12 +222,12 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
 
   return (
     <>
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroup>
         <SidebarGroupLabel>Courses</SidebarGroupLabel>
         <SidebarMenu>
           {courses.map((item) => (
             <SidebarMenuItem key={item.id}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild tooltip={item.title}>
                 <Link to="/c/$courseId/a" params={{ courseId: item.id }}>
                   <BookOpenIcon />
                   <span>{item.title}</span>
@@ -260,6 +260,7 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="text-sidebar-foreground/70"
+              tooltip={"Add Course"}
               onClick={() => setShowAddDialog(true)}
             >
               <PlusIcon className="text-sidebar-foreground/70" />

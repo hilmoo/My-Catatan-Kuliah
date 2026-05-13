@@ -186,6 +186,8 @@ type File struct {
 	Size      int64
 	CreatedBy int32
 	CreatedAt time.Time
+	Width     *int32
+	Height    *int32
 }
 
 type LlmChat struct {

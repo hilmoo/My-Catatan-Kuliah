@@ -1,11 +1,11 @@
 -- name: GetFileByID :one
-SELECT *
+SELECT id, s3_key, mime_type, size, created_by, created_at, width, height
 FROM files
 WHERE id = $1 AND created_by = $2;
 
 -- name: CreateFile :one
-INSERT INTO files (s3_key, mime_type, size, created_by)
-VALUES ($1, $2, $3, $4) RETURNING id;
+INSERT INTO files (s3_key, mime_type, size, created_by, width, height)
+VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;
 
 -- name: DeleteFileByID :exec
 DELETE FROM files

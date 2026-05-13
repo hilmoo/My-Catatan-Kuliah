@@ -31,6 +31,7 @@ func (h *httpHandler) RegisterRoutes(e *echo.Group) {
 	group := e.Group("/files")
 
 	group.GET("/:file_id", h.getFile)
+	group.GET("/:file_id/content", h.getFileContent)
 	group.POST("", h.uploadFile)
 	group.DELETE("/:file_id", h.deleteFile)
 }
@@ -51,6 +52,22 @@ func (h *httpHandler) getFile(c *echo.Context) error {
 	return c.JSON(200, resp)
 }
 
+func (h *httpHandler) getFileContent(c *echo.Context) error {
+	fileId := c.Param("file_id")
+
+	url, err := getFileContentService(c.Request().Context(), getFileContentServiceArgs{
+		FileId:  fileId,
+		Queries: h.queries,
+		S3:      h.s3,
+		Bucket:  h.bucket,
+	})
+	if err != nil {
+		return errort.HttpError(c, err)
+	}
+
+	return c.Redirect(302, url)
+}
+
 func (h *httpHandler) uploadFile(c *echo.Context) error {
 	params, err := validation.BindValidatePayload[models.FilesServiceCreateFileJSONRequestBody](c, h.validate)
 	if err != nil {
@@ -67,7 +84,7 @@ func (h *httpHandler) uploadFile(c *echo.Context) error {
 		return errort.HttpError(c, errH)
 	}
 
-	return c.JSON(200, resp)
+	return c.JSON(201, resp)
 }
 
 func (h *httpHandler) deleteFile(c *echo.Context) error {
