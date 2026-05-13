@@ -64,7 +64,7 @@ interface NavCoursesProps {
 }
 
 export function NavCourses({ courseId }: NavCoursesProps) {
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const queryClient = useQueryClient();
   const router = useRouter();
   const notesQuery = useNotesServiceListNotes(courseId);
@@ -223,25 +223,54 @@ export function NavCourses({ courseId }: NavCoursesProps) {
   return (
     <>
       <SidebarGroup>
-        <Card className="shadow-none border-none bg-sidebar-accent/50 p-2 flex flex-col gap-1 px-3">
-          <div className="text-sm font-semibold leading-tight truncate">{course.title}</div>
-          <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
-            <div className="flex items-center gap-1.5 truncate pr-2">
-              <UserIcon className="size-3 shrink-0" />
-              <span className="truncate">{course.instructor}</span>
+        {state === "collapsed" ? (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip={{
+                  children: (
+                    <div className="flex flex-col gap-1 p-1">
+                      <div className="font-semibold">{course.title}</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <UserIcon className="size-3" />
+                        <span>{course.instructor}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <GraduationCapIcon className="size-3" />
+                        <span>{course.credits} Credits</span>
+                      </div>
+                    </div>
+                  ),
+                  side: "right",
+                  align: "start",
+                }}
+              >
+                <GraduationCapIcon />
+                <span>{course.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        ) : (
+          <Card className="shadow-none border-none bg-sidebar-accent/50 p-2 flex flex-col gap-1 px-3">
+            <div className="text-sm font-semibold leading-tight truncate">{course.title}</div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
+              <div className="flex items-center gap-1.5 truncate pr-2">
+                <UserIcon className="size-3 shrink-0" />
+                <span className="truncate">{course.instructor}</span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <GraduationCapIcon className="size-3" />
+                <span>{course.credits}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <GraduationCapIcon className="size-3" />
-              <span>{course.credits}</span>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        )}
       </SidebarGroup>
 
       <SidebarGroup>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild tooltip="Assignments">
               <Link to="/c/$courseId/a" params={{ courseId }}>
                 <ClipboardListIcon />
                 <span>Assignments</span>
@@ -251,12 +280,12 @@ export function NavCourses({ courseId }: NavCoursesProps) {
         </SidebarMenu>
       </SidebarGroup>
 
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroup>
         <SidebarGroupLabel>Notes</SidebarGroupLabel>
         <SidebarMenu>
           {notes.map((item) => (
             <SidebarMenuItem key={item.id}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild tooltip={item.title}>
                 <Link to="/c/$courseId/n/$notesId" params={{ notesId: item.id, courseId }}>
                   <FileTextIcon />
                   <span>{item.title}</span>
@@ -289,6 +318,7 @@ export function NavCourses({ courseId }: NavCoursesProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="text-sidebar-foreground/70"
+              tooltip={"Add Note"}
               onClick={() => setShowAddDialog(true)}
             >
               <PlusIcon className="text-sidebar-foreground/70" />
