@@ -68,7 +68,8 @@ const FullSetupEditor = ({
   const internalRef = useRef<HTMLDivElement>(null);
   const containerBoxRef = externalRef ?? internalRef;
   const targetPath = type === "notes" ? "/api/notes/ws" : "/api/assignments/ws";
-  const url = `ws://${window.location.host}${targetPath}`;
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const url = `${protocol}//${window.location.host}${targetPath}`;
 
   const deviceId =
     typeof window !== "undefined"
