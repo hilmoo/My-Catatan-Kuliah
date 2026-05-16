@@ -2,13 +2,13 @@ services:
   db:
     image: pgvector/pgvector:pg18-trixie
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mycatatankuliah
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d mycatatankuliah" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,8 +23,8 @@ services:
     image: pgsty/minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
 
@@ -39,19 +39,19 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DOMAIN: http://localhost:8080
-      SECRET: <SECRET>
-      GOOGLE_CLIENT_ID: <GOOGLE_CLIENT_ID>
-      GOOGLE_CLIENT_SECRET: <GOOGLE_CLIENT_SECRET>
-      S3_ENDPOINT: http://minio:9000
-      S3_ACCESS_KEY_ID: minioadmin
-      S3_SECRET_ACCESS_KEY: minioadmin
-      S3_REGION: us-east-1
-      S3_BUCKET: mycatatankuliah
-      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
-      NATS_URL: nats://nats:4222
-      HOCUSPOCUS_URL: http://hocuspocus:3005
-      AI_SERVICE_URL: http://ai:3000
+      DOMAIN: ${DOMAIN}
+      SECRET: ${SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_REGION: ${S3_REGION}
+      S3_BUCKET: ${S3_BUCKET}
+      DATABASE_URL: ${DATABASE_URL}
+      NATS_URL: ${NATS_URL}
+      HOCUSPOCUS_URL: ${HOCUSPOCUS_URL}
+      AI_SERVICE_URL: ${AI_SERVICE_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -71,13 +71,13 @@ services:
   ai:
     image: ghcr.io/hilmoo/my-catatan-kuliah-ai
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
-      NATS_URL: nats://nats:4222
-      REDIS_URL: redis://redis:6379
-      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
-      LLM_BASE_URL: https://api.openai.com/v1
-      LLM_API_KEY: <LLM_API_KEY>
-      LLM_MODEL: minimaxai/minimax-m2.7
+      DATABASE_URL: ${DATABASE_URL}
+      NATS_URL: ${NATS_URL}
+      REDIS_URL: ${REDIS_URL}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL}
+      LLM_BASE_URL: ${LLM_BASE_URL}
+      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_MODEL: ${LLM_MODEL}
     depends_on:
       db:
         condition: service_healthy
@@ -89,10 +89,10 @@ services:
   embedder:
     image: ghcr.io/hilmoo/my-catatan-kuliah-embedder
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
-      NATS_URL: nats://nats:4222
-      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
-      CHUNK_SIZE: 500
+      DATABASE_URL: ${DATABASE_URL}
+      NATS_URL: ${NATS_URL}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL}
+      CHUNK_SIZE: ${CHUNK_SIZE}
     depends_on:
       db:
         condition: service_healthy
@@ -102,9 +102,9 @@ services:
   hocuspocus:
     image: ghcr.io/hilmoo/my-catatan-kuliah-hocuspocus
     environment:
-      PORT: 3005
-      DATABASE_URL: postgres://postgres:postgres@db:5432/mycatatankuliah
-      NATS_URL: nats://nats:4222
+      PORT: ${HOCUSPOCUS_PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      NATS_URL: ${NATS_URL}
     depends_on:
       db:
         condition: service_healthy
