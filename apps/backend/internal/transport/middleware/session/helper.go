@@ -20,6 +20,10 @@ func HashSessionToken(secret, token string) string {
 	return base64.URLEncoding.EncodeToString(hashToken.Sum(nil))
 }
 
+func SetUserInContext(ctx context.Context, user db.User) context.Context {
+	return context.WithValue(ctx, userContextKey, user)
+}
+
 func GetUserFromContext(ctx context.Context) (db.User, error) {
 	val := ctx.Value(userContextKey)
 	if val == nil {
