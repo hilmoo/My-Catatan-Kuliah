@@ -38,6 +38,8 @@ import {
   SettingsIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  SunIcon,
+  MoonIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,6 +60,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTheme } from "@/hooks/use-theme";
 
 interface NavWorkspacesProps {
   workspaceId: string;
@@ -71,6 +74,21 @@ interface CourseItem {
   credits: number;
   color?: string;
   position: number;
+}
+
+function ThemeToggleItem() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        tooltip={theme === "dark" ? "Light Mode" : "Dark Mode"}
+        onClick={toggleTheme}
+      >
+        {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 }
 
 export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
@@ -336,6 +354,7 @@ export function NavWorkspaces({ workspaceId }: NavWorkspacesProps) {
 
       <SidebarGroup className="mt-auto">
         <SidebarMenu>
+          <ThemeToggleItem />
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Workspace Settings"

@@ -36,6 +36,8 @@ import {
   ClipboardListIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  SunIcon,
+  MoonIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -61,9 +63,25 @@ import {
   getCoursesServiceGetCourseQueryKey,
 } from "@/api/courses/courses";
 import { Card } from "@/components/ui/card";
+import { useTheme } from "@/hooks/use-theme";
 
 interface NavCoursesProps {
   courseId: string;
+}
+
+function ThemeToggleItem() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        tooltip={theme === "dark" ? "Light Mode" : "Dark Mode"}
+        onClick={toggleTheme}
+      >
+        {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 }
 
 export function NavCourses({ courseId }: NavCoursesProps) {
@@ -401,6 +419,7 @@ export function NavCourses({ courseId }: NavCoursesProps) {
 
       <SidebarGroup className="mt-auto">
         <SidebarMenu>
+          <ThemeToggleItem />
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Course Settings"
