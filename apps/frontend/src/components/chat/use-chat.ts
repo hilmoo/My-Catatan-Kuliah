@@ -41,8 +41,8 @@ interface UseChatReturn {
 /**
  * Hook encapsulating chat state, SSE streaming, and message management.
  *
- * Each call to `sendMessage` generates a fresh UUIDv7-compatible chat ID,
- * appends the user message optimistically, then streams the assistant reply.
+ * The first call to `sendMessage` generates a new UUID chat ID; subsequent
+ * messages reuse the same `activeChatId` so they belong to one conversation.
  *
  * `loadChat(chatId)` fetches the history for a previous conversation and
  * restores it into the local message list so the user can continue chatting.
@@ -108,8 +108,11 @@ export function useChat({
 
       setMessages((prev) => [...prev, userMsg, assistantMsg]);
 
+      // Reuse the active chat ID if we already have one (continuing a conversation),
+      // otherwise generate a new UUID for a brand-new chat.
+      const chatId = activeChatId ?? crypto.randomUUID();
+
       try {
-        const chatId = crypto.randomUUID();
         const stream = streamChat(workspaceId, {
           id: chatId,
           user_id: userId,
@@ -133,11 +136,16 @@ export function useChat({
         setMessages((prev) =>
           prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m)),
         );
+        // Persist the chat ID so subsequent messages reuse the same conversation
+        if (!activeChatId) {
+          setActiveChatId(chatId);
+        }
         setIsLoading(false);
         onChatCreated?.();
       }
     },
     [
+      activeChatId,
       answerStyle,
       courseId,
       handleStreamEvent,
