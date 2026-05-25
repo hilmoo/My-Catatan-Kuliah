@@ -32,11 +32,11 @@ export function NavUser() {
     .toUpperCase();
 
   const handleLogout = async () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: async () => {
-        await navigate({ to: "/login", reloadDocument: true });
-      },
-    });
+    try {
+      await logoutMutation.mutateAsync(undefined);
+    } finally {
+      await navigate({ to: "/login", reloadDocument: true });
+    }
   };
 
   return (
